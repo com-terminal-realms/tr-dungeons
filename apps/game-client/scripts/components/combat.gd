@@ -1,0 +1,125 @@
+## Combat component for entities
+## Handles attack logic, cooldowns, and damage application
+## Uses CombatData model for data storage (future orb-schema-generator output)
+class_name Combat
+extends Node
+
+signal attack_performed(target: Node3D, damage: int)
+
+@export var attack_damage: int = 10
+@export var attack_range: float = 2.0
+@export var attack_cooldown: float = 1.0
+
+var _data: CombatData
+var _cooldown_timer: float = 0.0
+var _owner_node: Node3D
+
+func _ready() -> void:
+	_data = CombatData.new({
+		"attack_damage": attack_damage,
+		"attack_range": attack_range,
+		"attack_cooldown": attack_cooldown
+	})
+	var validation: Dictionary = _data.validate()
+	if not validation["valid"]:
+		push_error("Combat component invalid: %s" % validation["errors"])
+		attack_damage = 10
+		attack_range = 2.0
+		attack_cooldown = 1.0
+		_data = CombatData.new({
+			"attack_damage": 10,
+			"attack_range": 2.0,
+			"attack_cooldown": 1.0
+		})
+	
+	# Find Node3D parent for position
+	_owner_node = _find_node3d(get_parent())
+	if not _owner_node:
+		push_error("Combat component requires Node3D parent or ancestor")
+
+func _process(delta: float) -> void:
+	# Update cooldown timer
+	if _cooldown_timer > 0:
+		_cooldown_timer -= delta
+
+## Attempt to attack a target
+## target: The target Node3D to attack
+## Returns: true if attack was successful, false if on cooldown or out of range
+func attack(target: Node3D) -> bool:
+	if not _owner_node:
+		push_error("Cannot attack: Node3D owner not found")
+		return false
+	
+	if not target:
+		push_error("Cannot attack: target is null")
+		return false
+	
+	# Check cooldown
+	if _cooldown_timer > 0:
+		return false
+	
+	# Check range
+	var distance := _owner_node.global_position.distance_to(target.global_position)
+	if distance > _data.attack_range:
+		return false
+	
+	# Apply damage to target's Health component
+	var target_health := _find_health_component(target)
+	if target_health:
+		target_health.take_damage(_data.attack_damage)
+	
+	# Start cooldown
+	_cooldown_timer = _data.attack_cooldown
+	
+	# Emit signal
+	attack_performed.emit(target, _data.attack_damage)
+	
+	return true
+
+## Check if attack is ready (not on cooldown)
+func is_attack_ready() -> bool:
+	return _cooldown_timer <= 0
+
+## Get remaining cooldown time
+func get_cooldown_remaining() -> float:
+	return max(0.0, _cooldown_timer)
+
+## Get cooldown progress (0.0 = ready, 1.0 = just attacked)
+func get_cooldown_progress() -> float:
+	if _data.attack_cooldown <= 0:
+		return 0.0
+	return clamp(_cooldown_timer / _data.attack_cooldown, 0.0, 1.0)
+
+## Check if target is in attack range
+func is_in_range(target: Node3D) -> bool:
+	if not _owner_node or not target:
+		return false
+	var distance := _owner_node.global_position.distance_to(target.global_position)
+	return distance <= _data.attack_range
+
+## Get combat data model (for serialization)
+func get_data() -> CombatData:
+	return _data
+
+## Set combat from data model (for deserialization)
+func set_data(data: CombatData) -> void:
+	_data = data
+	attack_damage = _data.attack_damage
+	attack_range = _data.attack_range
+	attack_cooldown = _data.attack_cooldown
+
+## Find Node3D in parent hierarchy
+func _find_node3d(node: Node) -> Node3D:
+	if node is Node3D:
+		return node
+	if node.get_parent():
+		return _find_node3d(node.get_parent())
+	return null
+
+## Find Health component in target node
+func _find_health_component(node: Node) -> Health:
+	# Check direct children
+	for child in node.get_children():
+		if child is Health:
+			return child
+	return null

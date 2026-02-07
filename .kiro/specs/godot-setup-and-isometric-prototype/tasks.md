@@ -60,27 +60,27 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Generate random movement directions
     - Verify character faces movement direction (±5° tolerance)
 
-- [ ] 4. Implement Combat component with property-based tests
-  - [ ] 4.1 Create Combat component script (scripts/components/combat.gd)
+- [x] 4. Implement Combat component with property-based tests
+  - [x] 4.1 Create Combat component script (scripts/components/combat.gd)
     - Implement attack() method with range checking
     - Implement cooldown timer management
     - Implement attack_performed signal
     - Add damage application to target Health component
     - _Requirements: 3.5, 3.6_
   
-  - [ ] 4.2 Write property test for damage application
+  - [x] 4.2 Write property test for damage application
     - **Property 6: Damage Application**
     - **Validates: Requirements 3.5, 3.6**
     - Generate random damage amounts and initial health values
     - Verify new_health = max(0, old_health - damage)
   
-  - [ ] 4.3 Write property test for attack cooldown enforcement
+  - [x] 4.3 Write property test for attack cooldown enforcement
     - **Property 7: Attack Cooldown Enforcement**
     - **Validates: Requirements 3.5**
     - Generate random sequences of attack attempts
     - Verify time between successful attacks >= cooldown
   
-  - [ ] 4.4 Write property test for attack range validation
+  - [x] 4.4 Write property test for attack range validation
     - **Property 8: Attack Range Validation**
     - **Validates: Requirements 3.5, 3.6**
     - Generate random attacker/target positions
