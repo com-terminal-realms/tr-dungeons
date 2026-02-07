@@ -144,8 +144,8 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Verify enemy node is removed from scene when health reaches 0
     - _Requirements: 3.8_
 
-- [ ] 8. Implement IsometricCamera with property-based tests
-  - [ ] 8.1 Create IsometricCamera script (scripts/camera/isometric_camera.gd)
+- [x] 8. Implement IsometricCamera with property-based tests
+  - [x] 8.1 Create IsometricCamera script (scripts/camera/isometric_camera.gd)
     - Implement calculate_camera_position() with 45° angle math
     - Implement smooth follow with lerp
     - Implement zoom input handling (mouse wheel)
@@ -153,25 +153,25 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Add target reference validation
     - _Requirements: 3.3_
   
-  - [ ] 8.2 Write property test for camera angle invariant
+  - [x] 8.2 Write property test for camera angle invariant
     - **Property 1: Isometric Camera Angle Invariant**
     - **Validates: Requirements 3.3**
     - Generate random player positions
     - Verify camera maintains 45° angle from horizontal (±1° tolerance)
   
-  - [ ] 8.3 Write property test for camera distance bounds
+  - [x] 8.3 Write property test for camera distance bounds
     - **Property 2: Camera Distance Bounds**
     - **Validates: Requirements 3.3**
     - Generate random zoom input sequences
     - Verify camera distance stays in [zoom_min, zoom_max]
   
-  - [ ] 8.4 Write property test for camera rotation invariant
+  - [x] 8.4 Write property test for camera rotation invariant
     - **Property 3: Camera Rotation Invariant**
     - **Validates: Requirements 3.3**
     - Generate random player movements
     - Verify camera Y rotation remains constant at 45°
 
-- [ ] 9. Checkpoint - Ensure entity and camera tests pass
+- [x] 9. Checkpoint - Ensure entity and camera tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Import and configure Synty assets
