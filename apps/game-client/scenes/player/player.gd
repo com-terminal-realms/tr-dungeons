@@ -75,10 +75,13 @@ func _process(_delta: float) -> void:
 	# Handle left mouse click for attack
 	if Input.is_action_just_pressed("attack"):
 		_handle_attack()
-	
+
+func _input(event: InputEvent) -> void:
 	# Handle right mouse click for movement
-	if Input.is_action_just_pressed("move_to_target"):
-		_handle_move_to_click()
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
+			_handle_move_to_click()
 
 ## Get input direction from WASD keys
 func _get_input_direction() -> Vector3:
