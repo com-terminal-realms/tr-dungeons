@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://player_scene_001"]
+
+[ext_resource type="Script" path="res://scenes/player/player.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/components/health.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/components/movement.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/components/combat.gd" id="4"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
+radius = 0.5
+height = 2.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
+radius = 0.5
+height = 2.0
+
+[node name="Player" type="CharacterBody3D" groups=["player"]]
+script = ExtResource("1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape_player")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2")
+max_health = 100
+
+[node name="Movement" type="Node" parent="."]
+script = ExtResource("3")
+move_speed = 5.0
+rotation_speed = 10.0
+
+[node name="Combat" type="Node" parent="."]
+script = ExtResource("4")
+attack_damage = 10
+attack_range = 2.0
+attack_cooldown = 1.0

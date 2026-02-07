@@ -86,11 +86,11 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Generate random attacker/target positions
     - Verify attacks only succeed when distance <= attack_range
 
-- [ ] 5. Checkpoint - Ensure component tests pass
+- [x] 5. Checkpoint - Ensure component tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Create Player scene with components
-  - [ ] 6.1 Create Player scene (scenes/player/player.tscn)
+- [x] 6. Create Player scene with components
+  - [x] 6.1 Create Player scene (scenes/player/player.tscn)
     - Add CharacterBody3D root node with CapsuleMesh placeholder
     - Add CollisionShape3D with capsule shape
     - Add Health, Movement, Combat component nodes
@@ -98,7 +98,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Add to "player" group for AI targeting
     - _Requirements: 3.4, 3.5, 3.8_
   
-  - [ ] 6.2 Create Player controller script (scenes/player/player.gd)
+  - [x] 6.2 Create Player controller script (scenes/player/player.gd)
     - Implement _process() to read WASD input
     - Transform input to world space (isometric camera orientation)
     - Call Movement.move() with transformed direction
@@ -106,7 +106,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Implement respawn on death (connect to Health.died signal)
     - _Requirements: 3.4, 3.5, 3.8_
   
-  - [ ] 6.3 Write unit test for player respawn on death
+  - [x] 6.3 Write unit test for player respawn on death
     - Verify player returns to spawn point when health reaches 0
     - _Requirements: 3.8_
 
