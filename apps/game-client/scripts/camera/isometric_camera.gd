@@ -14,8 +14,19 @@ const ISOMETRIC_ANGLE_DEG: float = 45.0
 const ISOMETRIC_ROTATION_DEG: float = 45.0
 
 func _ready() -> void:
-	if target:
-		update_camera_position()
+	print("IsometricCamera: _ready() called")
+	print("IsometricCamera: Target is ", target)
+	
+	if not target:
+		push_error("IsometricCamera: No target set!")
+		return
+	
+	# Wait one frame for target to be ready
+	await get_tree().process_frame
+	
+	print("IsometricCamera: Target found at ", target.global_position)
+	update_camera_position()
+	print("IsometricCamera: Camera positioned at ", global_position)
 
 func _process(delta: float) -> void:
 	# Handle zoom input

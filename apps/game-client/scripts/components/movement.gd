@@ -26,13 +26,14 @@ func _ready() -> void:
 
 ## Move the character in the given direction
 ## direction: Normalized direction vector (will be normalized if not already)
-## delta: Frame delta time (optional, uses get_physics_process_delta_time if not provided)
-func move(direction: Vector3, delta: float = -1.0) -> void:
+## delta: Frame delta time
+func move(direction: Vector3, delta: float = 0.0) -> void:
 	if not _character_body:
 		push_error("Cannot move: CharacterBody3D not found")
 		return
 	
-	if delta < 0:
+	# Use physics delta if not provided
+	if delta <= 0.0:
 		delta = get_physics_process_delta_time()
 	
 	# Normalize direction if not already
@@ -41,6 +42,7 @@ func move(direction: Vector3, delta: float = -1.0) -> void:
 	else:
 		# No movement
 		_character_body.velocity = Vector3.ZERO
+		_character_body.move_and_slide()
 		return
 	
 	# Apply velocity

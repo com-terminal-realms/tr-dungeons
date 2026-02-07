@@ -66,7 +66,10 @@ func attack(target: Node3D) -> bool:
 	# Apply damage to target's Health component
 	var target_health := _find_health_component(target)
 	if target_health:
+		print("Combat: Found health component, applying %d damage" % _data.attack_damage)
 		target_health.take_damage(_data.attack_damage)
+	else:
+		print("Combat: No health component found on target ", target.name)
 	
 	# Start cooldown
 	_cooldown_timer = _data.attack_cooldown
@@ -118,8 +121,19 @@ func _find_node3d(node: Node) -> Node3D:
 
 ## Find Health component in target node
 func _find_health_component(node: Node) -> Health:
+	print("Combat: Searching for Health component in ", node.name)
+	print("Combat: Node has ", node.get_child_count(), " children")
+	
 	# Check direct children
 	for child in node.get_children():
+		print("Combat: Checking child: ", child.name, " type: ", child.get_class())
 		if child is Health:
+			print("Combat: Found Health component!")
 			return child
+		# Also check by class name string (fallback)
+		if child.get_class() == "Health" or child.name == "Health":
+			print("Combat: Found Health by name!")
+			return child
+	
+	print("Combat: No Health component found")
 	return null

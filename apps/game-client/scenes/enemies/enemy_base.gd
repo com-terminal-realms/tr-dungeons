@@ -14,5 +14,6 @@ func _ready() -> void:
 
 ## Handle death and remove from scene
 func _on_death() -> void:
+	print("Enemy: Died! Removing from scene...")
 	# Remove enemy from scene
 	queue_free()

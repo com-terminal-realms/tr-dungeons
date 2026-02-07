@@ -42,7 +42,7 @@ func _ready() -> void:
 	if not _combat:
 		push_error("EnemyAI requires Combat component")
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not _owner_node or not _movement or not _combat:
 		return
 	

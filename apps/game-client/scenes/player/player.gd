@@ -9,10 +9,19 @@ var _movement: Movement
 var _combat: Combat
 
 func _ready() -> void:
+	print("Player: Initializing at ", global_position)
+	
 	# Get component references
 	_health = $Health
 	_movement = $Movement
 	_combat = $Combat
+	
+	if not _health:
+		push_error("Player: Health component not found!")
+	if not _movement:
+		push_error("Player: Movement component not found!")
+	if not _combat:
+		push_error("Player: Combat component not found!")
 	
 	# Connect to death signal for respawn
 	if _health:
@@ -20,8 +29,10 @@ func _ready() -> void:
 	
 	# Set initial spawn point
 	spawn_point = global_position
+	
+	print("Player: Ready! Components - Health:", _health != null, " Movement:", _movement != null, " Combat:", _combat != null)
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	# Handle WASD input
 	var input_dir := _get_input_direction()
 	
@@ -31,7 +42,8 @@ func _process(delta: float) -> void:
 	# Apply movement
 	if _movement:
 		_movement.move(world_dir, delta)
-	
+
+func _process(_delta: float) -> void:
 	# Handle mouse click for attack
 	if Input.is_action_just_pressed("attack"):
 		_handle_attack()
@@ -61,12 +73,17 @@ func _transform_to_world_space(input_dir: Vector3) -> Vector3:
 ## Handle attack targeting
 func _handle_attack() -> void:
 	if not _combat:
+		print("Player: No combat component!")
 		return
 	
 	# Find nearest enemy in range
 	var nearest_enemy := _find_nearest_enemy()
 	if nearest_enemy:
-		_combat.attack(nearest_enemy)
+		print("Player: Attacking enemy at ", nearest_enemy.global_position)
+		var success := _combat.attack(nearest_enemy)
+		print("Player: Attack success = ", success)
+	else:
+		print("Player: No enemy in range to attack")
 
 ## Find nearest enemy in attack range
 func _find_nearest_enemy() -> Node3D:

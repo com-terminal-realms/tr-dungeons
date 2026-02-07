@@ -32,11 +32,14 @@ func take_damage(amount: int) -> void:
 	if not _is_alive:
 		return  # Already dead, ignore damage
 	
+	var old_health := _data.current_health
 	_data.current_health = max(0, _data.current_health - amount)
+	print("Health: Took %d damage. HP: %d -> %d" % [amount, old_health, _data.current_health])
 	health_changed.emit(_data.current_health, _data.max_health)
 	
 	if _data.current_health == 0 and _is_alive:
 		_is_alive = false
+		print("Health: Entity died!")
 		died.emit()
 
 ## Restore health
