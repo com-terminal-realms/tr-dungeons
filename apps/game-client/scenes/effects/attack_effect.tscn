@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://attack_effect_scene_001"]
+[gd_scene load_steps=6 format=3 uid="uid://attack_effect_scene_001"]
 
 [ext_resource type="Script" path="res://scenes/effects/attack_effect.gd" id="1"]
 
@@ -13,8 +13,20 @@ emission_energy_multiplier = 2.0
 material = SubResource("Material_particle")
 radial_segments = 8
 rings = 4
-radius = 0.3
-height = 0.6
+radius = 0.1
+height = 0.2
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_attack"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+particle_flag_disable_z = false
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, -5, 0)
+scale_min = 0.5
+scale_max = 1.5
 
 [sub_resource type="Curve" id="Curve_lifetime"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.0, 0.0, 0, 0]
@@ -29,10 +41,6 @@ one_shot = true
 explosiveness = 1.0
 randomness = 0.5
 visibility_aabb = AABB(-4, -4, -4, 8, 8, 8)
+process_material = SubResource("ParticleProcessMaterial_attack")
 draw_pass_1 = SubResource("SphereMesh_particle")
-
-[node name="Timer" type="Timer" parent="."]
-wait_time = 0.6
-one_shot = true
-autostart = true
 

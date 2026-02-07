@@ -3,10 +3,9 @@
 extends GPUParticles3D
 
 func _ready() -> void:
+	# Start emitting
+	emitting = true
+	
 	# Auto-remove after lifetime + small buffer
-	var timer := Timer.new()
-	add_child(timer)
-	timer.wait_time = lifetime + 0.2
-	timer.one_shot = true
-	timer.timeout.connect(queue_free)
-	timer.start()
+	await get_tree().create_timer(lifetime + 0.2).timeout
+	queue_free()
