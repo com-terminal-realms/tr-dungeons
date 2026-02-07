@@ -76,8 +76,11 @@ func attack(target: Node3D) -> bool:
 	# Start cooldown
 	_cooldown_timer = _data.attack_cooldown
 	
-	# Spawn attack effect at target position
-	_spawn_attack_effect(target.global_position)
+	# Get target color from mesh
+	var target_color := _get_target_color(target)
+	
+	# Spawn attack effect at target position with target's color
+	_spawn_attack_effect(target.global_position, target_color)
 	
 	# Emit signal
 	attack_performed.emit(target, _data.attack_damage)
@@ -143,11 +146,34 @@ func _find_health_component(node: Node) -> Health:
 	print("Combat: No Health component found")
 	return null
 
-## Spawn attack effect at position
-func _spawn_attack_effect(position: Vector3) -> void:
+## Spawn attack effect at position with color
+func _spawn_attack_effect(position: Vector3, color: Color = Color.ORANGE) -> void:
 	if not ATTACK_EFFECT:
 		return
 	
 	var effect := ATTACK_EFFECT.instantiate()
 	get_tree().root.add_child(effect)
 	effect.global_position = position
+	
+	# Set particle color if the effect has the method
+	if effect.has_method("set_particle_color"):
+		effect.set_particle_color(color)
+
+## Get target's color from its mesh
+func _get_target_color(target: Node3D) -> Color:
+	# Find MeshInstance3D in target
+	for child in target.get_children():
+		if child is MeshInstance3D:
+			var mesh_instance := child as MeshInstance3D
+			# Check for material override first
+			var material := mesh_instance.get_surface_override_material(0)
+			if material and material is StandardMaterial3D:
+				return material.albedo_color
+			# Check mesh material
+			if mesh_instance.mesh:
+				material = mesh_instance.mesh.surface_get_material(0)
+				if material and material is StandardMaterial3D:
+					return material.albedo_color
+	
+	# Default to orange if no color found
+	return Color.ORANGE

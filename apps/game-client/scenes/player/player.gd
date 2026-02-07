@@ -7,6 +7,9 @@ extends CharacterBody3D
 var _health: Health
 var _movement: Movement
 var _combat: Combat
+var _move_target: Vector3 = Vector3.ZERO
+var _is_moving_to_target: bool = false
+var _camera: Camera3D
 
 func _ready() -> void:
 	print("Player: Initializing at ", global_position)
@@ -30,11 +33,36 @@ func _ready() -> void:
 	# Set initial spawn point
 	spawn_point = global_position
 	
+	# Find camera
+	_camera = get_viewport().get_camera_3d()
+	if not _camera:
+		push_warning("Player: Camera not found!")
+	
 	print("Player: Ready! Components - Health:", _health != null, " Movement:", _movement != null, " Combat:", _combat != null)
 
 func _physics_process(delta: float) -> void:
-	# Handle WASD input
-	var input_dir := _get_input_direction()
+	var input_dir := Vector3.ZERO
+	
+	# Check for RMB movement
+	if _is_moving_to_target:
+		# Calculate direction to target
+		var direction := global_position.direction_to(_move_target)
+		direction.y = 0  # Keep movement horizontal
+		
+		# Check if we've reached the target
+		var distance := global_position.distance_to(_move_target)
+		if distance < 0.5:  # Within 0.5 units
+			_is_moving_to_target = false
+			input_dir = Vector3.ZERO
+		else:
+			input_dir = direction
+	else:
+		# Handle WASD input (overrides RMB movement)
+		input_dir = _get_input_direction()
+		
+		# If WASD is pressed, cancel RMB movement
+		if input_dir.length() > 0:
+			_is_moving_to_target = false
 	
 	# Transform input to world space (accounting for isometric camera)
 	var world_dir := _transform_to_world_space(input_dir)
@@ -44,9 +72,13 @@ func _physics_process(delta: float) -> void:
 		_movement.move(world_dir, delta)
 
 func _process(_delta: float) -> void:
-	# Handle mouse click for attack
+	# Handle left mouse click for attack
 	if Input.is_action_just_pressed("attack"):
 		_handle_attack()
+	
+	# Handle right mouse click for movement
+	if Input.is_action_just_pressed("move_to_target"):
+		_handle_move_to_click()
 
 ## Get input direction from WASD keys
 func _get_input_direction() -> Vector3:
@@ -110,3 +142,30 @@ func _on_death() -> void:
 		_health._data.current_health = _health._data.max_health
 		_health._is_alive = true
 		_health.health_changed.emit(_health._data.current_health, _health._data.max_health)
+
+## Handle RMB click for movement
+func _handle_move_to_click() -> void:
+	if not _camera:
+		return
+	
+	# Get mouse position
+	var mouse_pos := get_viewport().get_mouse_position()
+	
+	# Raycast from camera to world
+	var from := _camera.project_ray_origin(mouse_pos)
+	var to := from + _camera.project_ray_normal(mouse_pos) * 1000.0
+	
+	# Perform raycast
+	var space_state := get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	
+	var result := space_state.intersect_ray(query)
+	
+	if result:
+		# Set move target to clicked position
+		_move_target = result.position
+		_move_target.y = global_position.y  # Keep same height
+		_is_moving_to_target = true
+		print("Player: Moving to ", _move_target)
