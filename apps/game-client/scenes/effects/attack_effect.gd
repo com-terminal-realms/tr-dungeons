@@ -6,7 +6,7 @@ func _ready() -> void:
 	# Auto-remove after lifetime + small buffer
 	var timer := Timer.new()
 	add_child(timer)
-	timer.wait_time = lifetime + 0.1
+	timer.wait_time = lifetime + 0.2
 	timer.one_shot = true
 	timer.timeout.connect(queue_free)
 	timer.start()
