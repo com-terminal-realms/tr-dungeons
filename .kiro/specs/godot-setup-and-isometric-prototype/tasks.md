@@ -110,8 +110,8 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Verify player returns to spawn point when health reaches 0
     - _Requirements: 3.8_
 
-- [ ] 7. Create Enemy scene with AI component
-  - [ ] 7.1 Create Enemy base scene (scenes/enemies/enemy_base.tscn)
+- [x] 7. Create Enemy scene with AI component
+  - [x] 7.1 Create Enemy base scene (scenes/enemies/enemy_base.tscn)
     - Add CharacterBody3D root node with CapsuleMesh placeholder
     - Add CollisionShape3D with capsule shape
     - Add NavigationAgent3D node with configuration
@@ -120,7 +120,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Add to "enemies" group
     - _Requirements: 3.6, 3.8_
   
-  - [ ] 7.2 Create EnemyAI component script (scripts/components/enemy_ai.gd)
+  - [x] 7.2 Create EnemyAI component script (scripts/components/enemy_ai.gd)
     - Implement player detection logic (detection_range check)
     - Implement NavigationAgent3D path updates (5Hz update rate)
     - Implement state machine (idle, chase, attack)
@@ -128,19 +128,19 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Call Combat.attack() when in range
     - _Requirements: 3.6_
   
-  - [ ] 7.3 Write property test for detection range behavior
+  - [x] 7.3 Write property test for detection range behavior
     - **Property 9: Detection Range Behavior**
     - **Validates: Requirements 3.6**
     - Generate random enemy/player positions
     - Verify enemy chases if distance <= detection_range
   
-  - [ ] 7.4 Write property test for navigation path validity
+  - [x] 7.4 Write property test for navigation path validity
     - **Property 10: Navigation Path Validity**
     - **Validates: Requirements 3.6**
     - Generate random target positions
     - Verify each path step moves closer to target
   
-  - [ ] 7.5 Write unit test for enemy removed on death
+  - [x] 7.5 Write unit test for enemy removed on death
     - Verify enemy node is removed from scene when health reaches 0
     - _Requirements: 3.8_
 
