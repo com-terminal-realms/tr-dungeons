@@ -233,13 +233,13 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Position above character using Control node
     - _Requirements: 3.8, 3.9_
   
-  - [ ] 12.3 Write integration test for combat flow
+  - [x] 12.3 Write integration test for combat flow
     - Test player attacks enemy until death
     - Verify damage application, cooldown, and enemy removal
     - _Requirements: 3.5, 3.6, 3.8_
 
 - [ ] 13. Add visual feedback for combat
-  - [ ] 13.1 Create attack effect particle system
+  - [x] 13.1 Create attack effect particle system
     - Create attack_effect.tscn with GPUParticles3D
     - Configure particle emission (burst on attack)
     - Spawn effect at attack position on attack_performed signal

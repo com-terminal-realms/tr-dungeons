@@ -10,6 +10,8 @@ signal attack_performed(target: Node3D, damage: int)
 @export var attack_range: float = 2.0
 @export var attack_cooldown: float = 1.0
 
+const ATTACK_EFFECT = preload("res://scenes/effects/attack_effect.tscn")
+
 var _data: CombatData
 var _cooldown_timer: float = 0.0
 var _owner_node: Node3D
@@ -74,6 +76,9 @@ func attack(target: Node3D) -> bool:
 	# Start cooldown
 	_cooldown_timer = _data.attack_cooldown
 	
+	# Spawn attack effect at target position
+	_spawn_attack_effect(target.global_position)
+	
 	# Emit signal
 	attack_performed.emit(target, _data.attack_damage)
 	
@@ -137,3 +142,12 @@ func _find_health_component(node: Node) -> Health:
 	
 	print("Combat: No Health component found")
 	return null
+
+## Spawn attack effect at position
+func _spawn_attack_effect(position: Vector3) -> void:
+	if not ATTACK_EFFECT:
+		return
+	
+	var effect := ATTACK_EFFECT.instantiate()
+	get_tree().root.add_child(effect)
+	effect.global_position = position
