@@ -1,0 +1,38 @@
+# orb-schema-generator configuration for Terminal Realms: Dungeons
+# Future GDScript support tracked in issues #86-89
+
+version: "1.0"
+
+# Schema source directory
+schema_dir: schemas
+
+# Output directories for generated code
+output:
+  python:
+    models: apps/api/models
+    enums: apps/api/enums
+    graphql: apps/api/graphql
+  
+  # GDScript output (future - awaiting orb-schema-generator support)
+  # gdscript:
+  #   models: apps/game-client/scripts/models
+  #   enums: apps/game-client/scripts/enums
+  
+  cdk:
+    constructs: infrastructure/cdk/generated
+
+# Generation options
+options:
+  python:
+    use_pydantic: true
+    generate_validators: true
+    generate_serializers: true
+  
+  cdk:
+    generate_dynamodb: true
+    generate_lambda_layers: true
+
+# Template overrides (optional)
+templates:
+  python_model: null
+  cdk_construct: null

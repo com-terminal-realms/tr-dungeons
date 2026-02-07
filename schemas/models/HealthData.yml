@@ -1,0 +1,29 @@
+# Health data model schema
+# This will generate Python models for backend and (future) GDScript models for game client
+
+type: standard
+name: HealthData
+description: Health state for game entities (players, enemies, NPCs)
+
+attributes:
+  max_health:
+    type: integer
+    required: true
+    minimum: 1
+    description: Maximum health points
+
+  current_health:
+    type: integer
+    required: true
+    minimum: 0
+    description: Current health points
+
+# Validation rules
+validation:
+  - rule: current_health <= max_health
+    message: "Current health cannot exceed maximum health"
+
+# Serialization options
+serialization:
+  json: true
+  binary: false

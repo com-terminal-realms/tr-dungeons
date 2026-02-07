@@ -6,7 +6,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
 
 ## Tasks
 
-- [ ] 1. Set up GoDot project structure and testing framework
+- [x] 1. Set up GoDot project structure and testing framework
   - Create project directory structure (scenes/, scripts/, assets/, tests/)
   - Configure project.godot with input mappings (WASD, zoom, attack)
   - Install and configure Gut testing framework
@@ -14,27 +14,27 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
   - Verify project opens and runs without errors
   - _Requirements: 3.1, 3.2, 7.1_
 
-- [ ] 2. Implement Health component with property-based tests
-  - [ ] 2.1 Create Health component script (scripts/components/health.gd)
+- [x] 2. Implement Health component with property-based tests
+  - [x] 2.1 Create Health component script (scripts/components/health.gd)
     - Implement max_health and current_health tracking
     - Implement take_damage() and heal() methods with bounds checking
     - Implement health_changed and died signals
     - Add type hints and documentation comments
     - _Requirements: 3.8_
   
-  - [ ] 2.2 Write property test for Health bounds invariant
+  - [x] 2.2 Write property test for Health bounds invariant
     - **Property 11: Health Bounds Invariant**
     - **Validates: Requirements 3.8**
     - Generate random sequences of damage/heal operations
     - Verify current_health always in [0, max_health]
   
-  - [ ] 2.3 Write property test for Health signal emission
+  - [x] 2.3 Write property test for Health signal emission
     - **Property 12: Health Signal Emission**
     - **Validates: Requirements 3.8**
     - Verify health_changed emits on damage/heal
     - Verify died emits exactly once when health reaches 0
   
-  - [ ] 2.4 Write unit tests for Health edge cases
+  - [x] 2.4 Write unit tests for Health edge cases
     - Test negative damage/heal amounts (should error)
     - Test damage exceeding current health (should clamp to 0)
     - Test healing above max health (should clamp to max)
