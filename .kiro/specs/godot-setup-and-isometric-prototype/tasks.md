@@ -246,39 +246,39 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Auto-remove effect after animation completes
     - _Requirements: 3.9_
   
-  - [ ] 13.2 Add enemy detection indicator (optional)
+  - [x] 13.2 Add enemy detection indicator (optional)
     - Add visual indicator above enemy when player detected
     - Show/hide based on EnemyAI state
     - _Requirements: 3.9_
 
 - [ ] 14. Implement scene structure validation tests
-  - [ ] 14.1 Write property test for component presence
+  - [x] 14.1 Write property test for component presence
     - **Property 15: Component Presence Validation**
     - **Validates: Requirements 3.4, 3.5, 3.6, 3.8**
     - Load Player and Enemy scenes
     - Verify each contains Health, Movement, Combat components
   
-  - [ ] 14.2 Write property test for scene file format
+  - [x] 14.2 Write property test for scene file format
     - **Property 16: Scene File Format Consistency**
     - **Validates: Requirements 7.1**
     - Parse all .tscn files as text
     - Verify valid GDScript resource format (not binary)
 
 - [ ] 15. Performance optimization and profiling
-  - [ ] 15.1 Profile frame time and optimize bottlenecks
+  - [x] 15.1 Profile frame time and optimize bottlenecks
     - Run GoDot profiler with 1 player + 5 enemies
     - Identify frame time bottlenecks (target: <16.67ms)
     - Optimize high-cost operations (physics, rendering, scripts)
     - Verify 60 FPS maintained during gameplay
     - _Requirements: 3.10_
   
-  - [ ] 15.2 Optimize navigation updates
+  - [x] 15.2 Optimize navigation updates
     - Verify enemy AI updates paths at 5Hz (not 60Hz)
     - Add update_timer to prevent excessive pathfinding
     - Test with 10 enemies to ensure performance
     - _Requirements: 3.10_
 
-- [ ] 16. Final checkpoint - Full playthrough validation
+- [x] 16. Final checkpoint - Full playthrough validation
   - Run complete playthrough with all mechanics
   - Verify WASD movement works smoothly
   - Verify camera follows and zoom works

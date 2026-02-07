@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://player_scene_001" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://enemy_base_scene_001" path="res://scenes/enemies/enemy_base.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/camera/isometric_camera.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/utils/performance_monitor.gd" id="4"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -114,3 +115,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
 script = ExtResource("3")
 target = NodePath("../Player")
 distance = 15.0
+
+[node name="PerformanceMonitor" type="Node" parent="."]
+script = ExtResource("4")
+enabled = true
+log_interval = 10.0

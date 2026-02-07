@@ -19,6 +19,7 @@ var _navigation_agent: NavigationAgent3D
 var _movement: Movement
 var _combat: Combat
 var _path_update_timer: float = 0.0
+var _detection_indicator: Node3D = null
 
 func _ready() -> void:
 	# Find owner node
@@ -41,6 +42,11 @@ func _ready() -> void:
 	_combat = _find_component(Combat)
 	if not _combat:
 		push_error("EnemyAI requires Combat component")
+	
+	# Find DetectionIndicator
+	_detection_indicator = _find_detection_indicator(_owner_node)
+	if _detection_indicator and _detection_indicator.has_method("hide_indicator"):
+		_detection_indicator.hide_indicator()
 
 func _physics_process(delta: float) -> void:
 	if not _owner_node or not _movement or not _combat:
@@ -72,6 +78,10 @@ func _update_ai_state() -> void:
 	if distance <= detection_range:
 		_target = player
 		
+		# Show detection indicator
+		if _detection_indicator and _detection_indicator.has_method("show_indicator"):
+			_detection_indicator.show_indicator()
+		
 		# Check if in attack range
 		if _combat.is_in_range(player):
 			_state = State.ATTACK
@@ -80,6 +90,10 @@ func _update_ai_state() -> void:
 	else:
 		_state = State.IDLE
 		_target = null
+		
+		# Hide detection indicator
+		if _detection_indicator and _detection_indicator.has_method("hide_indicator"):
+			_detection_indicator.hide_indicator()
 
 ## Update navigation path to target
 func _update_navigation() -> void:
@@ -157,5 +171,12 @@ func _find_component(component_type) -> Node:
 	
 	for child in parent.get_children():
 		if is_instance_of(child, component_type):
+			return child
+	return null
+
+## Find DetectionIndicator in siblings
+func _find_detection_indicator(parent: Node) -> Node3D:
+	for child in parent.get_children():
+		if child.name == "DetectionIndicator":
 			return child
 	return null

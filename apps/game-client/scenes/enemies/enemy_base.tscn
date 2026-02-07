@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/components/combat.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/components/enemy_ai.gd" id="5"]
 [ext_resource type="PackedScene" uid="uid://health_bar_scene_001" path="res://scenes/ui/health_bar.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://detection_indicator_001" path="res://scenes/ui/detection_indicator.tscn" id="7"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
 radius = 0.4
@@ -59,3 +60,6 @@ detection_range = 10.0
 [node name="HealthBarUI" parent="." instance=ExtResource("6")]
 health_component = NodePath("../Health")
 offset_y = 2.2
+
+[node name="DetectionIndicator" parent="." instance=ExtResource("7")]
+offset_y = 2.5
