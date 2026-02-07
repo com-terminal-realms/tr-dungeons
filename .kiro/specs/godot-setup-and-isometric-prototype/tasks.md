@@ -218,7 +218,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - _Requirements: 3.6_
 
 - [ ] 12. Create main game scene and wire components
-  - [ ] 12.1 Create main scene (scenes/main.tscn)
+  - [x] 12.1 Create main scene (scenes/main.tscn)
     - Add test_room as child
     - Instantiate Player at spawn point (0, 0, 0)
     - Instantiate 3-5 Enemy instances at various positions
