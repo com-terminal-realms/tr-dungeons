@@ -1,4 +1,4 @@
-# Implementation Plan: GoDot Setup and Isometric 3D Prototype
+`# Implementation Plan: GoDot Setup and Isometric 3D Prototype
 
 ## Overview
 
@@ -40,21 +40,21 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Test healing above max health (should clamp to max)
     - _Requirements: 3.8_
 
-- [ ] 3. Implement Movement component with property-based tests
-  - [ ] 3.1 Create Movement component script (scripts/components/movement.gd)
+- [x] 3. Implement Movement component with property-based tests
+  - [x] 3.1 Create Movement component script (scripts/components/movement.gd)
     - Implement move() method with velocity application
     - Implement character rotation to face movement direction
     - Add CharacterBody3D reference and validation
     - Add type hints and documentation
     - _Requirements: 3.4_
   
-  - [ ] 3.2 Write property test for movement velocity magnitude
+  - [x] 3.2 Write property test for movement velocity magnitude
     - **Property 4: Movement Velocity Magnitude**
     - **Validates: Requirements 3.4**
     - Generate random input directions
     - Verify velocity magnitude equals move_speed (±0.01 tolerance)
   
-  - [ ] 3.3 Write property test for movement direction alignment
+  - [x] 3.3 Write property test for movement direction alignment
     - **Property 5: Movement Direction Alignment**
     - **Validates: Requirements 3.4**
     - Generate random movement directions

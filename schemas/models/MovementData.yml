@@ -1,0 +1,23 @@
+# Movement data model schema
+# This will generate Python models for backend and (future) GDScript models for game client
+type: standard
+version: '1.0'
+name: MovementData
+
+model:
+  attributes:
+    move_speed:
+      type: number
+      required: true
+      description: "Movement speed in units per second"
+      validation:
+        minimum: 0
+      default: 5.0
+
+    rotation_speed:
+      type: number
+      required: true
+      description: "Rotation speed in radians per second"
+      validation:
+        minimum: 0
+      default: 10.0
