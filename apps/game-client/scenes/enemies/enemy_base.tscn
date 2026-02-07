@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://enemy_base_scene_001"]
+[gd_scene load_steps=8 format=3 uid="uid://enemy_base_scene_001"]
 
 [ext_resource type="Script" path="res://scenes/enemies/enemy_base.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/components/health.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/components/movement.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/components/combat.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/components/enemy_ai.gd" id="5"]
+[ext_resource type="PackedScene" uid="uid://health_bar_scene_001" path="res://scenes/ui/health_bar.tscn" id="6"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
 radius = 0.4
@@ -54,3 +55,7 @@ attack_cooldown = 1.5
 [node name="EnemyAI" type="Node" parent="."]
 script = ExtResource("5")
 detection_range = 10.0
+
+[node name="HealthBarUI" parent="." instance=ExtResource("6")]
+health_component = NodePath("../Health")
+offset_y = 2.2

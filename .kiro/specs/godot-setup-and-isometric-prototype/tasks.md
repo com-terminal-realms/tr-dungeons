@@ -226,7 +226,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Configure input action mappings
     - _Requirements: 3.3, 3.4, 3.5, 3.6_
   
-  - [ ] 12.2 Implement health bar UI component
+  - [x] 12.2 Implement health bar UI component
     - Create HealthBar scene (scenes/ui/health_bar.tscn) with ProgressBar
     - Create health_bar.gd script to update bar on health_changed signal
     - Attach HealthBar to Player and Enemy scenes
