@@ -217,7 +217,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Verify navmesh covers floor area
     - _Requirements: 3.6_
 
-- [ ] 12. Create main game scene and wire components
+- [x] 12. Create main game scene and wire components
   - [x] 12.1 Create main scene (scenes/main.tscn)
     - Add test_room as child
     - Instantiate Player at spawn point (0, 0, 0)
@@ -238,7 +238,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Verify damage application, cooldown, and enemy removal
     - _Requirements: 3.5, 3.6, 3.8_
 
-- [ ] 13. Add visual feedback for combat
+- [x] 13. Add visual feedback for combat
   - [x] 13.1 Create attack effect particle system
     - Create attack_effect.tscn with GPUParticles3D
     - Configure particle emission (burst on attack)
@@ -251,7 +251,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Show/hide based on EnemyAI state
     - _Requirements: 3.9_
 
-- [ ] 14. Implement scene structure validation tests
+- [x] 14. Implement scene structure validation tests
   - [x] 14.1 Write property test for component presence
     - **Property 15: Component Presence Validation**
     - **Validates: Requirements 3.4, 3.5, 3.6, 3.8**
@@ -264,7 +264,7 @@ This implementation plan breaks down the GoDot isometric dungeon crawler prototy
     - Parse all .tscn files as text
     - Verify valid GDScript resource format (not binary)
 
-- [ ] 15. Performance optimization and profiling
+- [x] 15. Performance optimization and profiling
   - [x] 15.1 Profile frame time and optimize bottlenecks
     - Run GoDot profiler with 1 player + 5 enemies
     - Identify frame time bottlenecks (target: <16.67ms)
