@@ -55,13 +55,13 @@ Our POC dungeon uses a linear north-south layout along the Z-axis:
 
 ```
 Room 1 (small)    - Position: (0, 0, 0)
-  Corridor (5x)   - Position: (0, 0, 10) - pieces at z: 6, 8, 10, 12, 14
+  Corridor (3x)   - Position: (0, 0, 10) - pieces at z: 8, 10, 12
 Room 2 (small)    - Position: (0, 0, 20)
-  Corridor (5x)   - Position: (0, 0, 30) - pieces at z: 26, 28, 30, 32, 34
+  Corridor (3x)   - Position: (0, 0, 30) - pieces at z: 28, 30, 32
 Room 3 (wide)     - Position: (0, 0, 40)
-  Corridor (5x)   - Position: (0, 0, 50) - pieces at z: 46, 48, 50, 52, 54
+  Corridor (3x)   - Position: (0, 0, 50) - pieces at z: 48, 50, 52
 Room 4 (wide)     - Position: (0, 0, 60)
-  Corridor (5x)   - Position: (0, 0, 70) - pieces at z: 66, 68, 70, 72, 74
+  Corridor (3x)   - Position: (0, 0, 70) - pieces at z: 68, 70, 72
 Room 5 (large)    - Position: (0, 0, 80) - Boss room
 ```
 
@@ -69,7 +69,7 @@ Room 5 (large)    - Position: (0, 0, 80) - Boss room
 
 - **Room spacing**: 20 units apart (center to center)
 - **Corridor placement**: Centered between rooms (at z = room1_z + 10)
-- **Corridor pieces**: 5 pieces per corridor, spaced 2 units apart
+- **Corridor pieces**: 3 pieces per corridor, spaced 2 units apart
 - **Collision boxes**: 20x0.2x20 units, positioned at room center
 
 ## Quick Assembly Guide
@@ -112,22 +112,16 @@ Room 5 (large)    - Position: (0, 0, 80) - Boss room
    transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, midpoint_z)
    ```
 
-3. **Add 5 corridor pieces** (for 20-unit gap):
+3. **Add 3 corridor pieces** (for 20-unit gap):
    ```gdscript
    [node name="CorridorPiece1" instance=ExtResource("corridor")]
-   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
-   
-   [node name="CorridorPiece2" instance=ExtResource("corridor")]
    transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
    
-   [node name="CorridorPiece3" instance=ExtResource("corridor")]
+   [node name="CorridorPiece2" instance=ExtResource("corridor")]
    transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
    
-   [node name="CorridorPiece4" instance=ExtResource("corridor")]
+   [node name="CorridorPiece3" instance=ExtResource("corridor")]
    transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
-   
-   [node name="CorridorPiece5" instance=ExtResource("corridor")]
-   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
    ```
    Note: Corridors are rotated 90° to run along Z-axis
 
