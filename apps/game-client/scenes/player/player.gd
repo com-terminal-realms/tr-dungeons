@@ -11,6 +11,7 @@ var _move_target: Vector3 = Vector3.ZERO
 var _is_moving_to_target: bool = false
 var _camera: Camera3D
 var _animation_player: AnimationPlayer
+var _is_attacking: bool = false
 
 func _ready() -> void:
 	print("Player: Initializing at ", global_position)
@@ -120,12 +121,25 @@ func _handle_attack() -> void:
 		print("Player: No combat component!")
 		return
 	
+	if _is_attacking:
+		return  # Already attacking
+	
 	# Find nearest enemy in range
 	var nearest_enemy := _find_nearest_enemy()
 	if nearest_enemy:
 		print("Player: Attacking enemy at ", nearest_enemy.global_position)
+		_is_attacking = true
+		
+		# Play attack animation
+		if _animation_player:
+			_animation_player.play("Sword_Attack")
+			# Wait for animation to finish
+			await _animation_player.animation_finished
+		
+		# Do damage
 		var success := _combat.attack(nearest_enemy)
 		print("Player: Attack success = ", success)
+		_is_attacking = false
 	else:
 		print("Player: No enemy in range to attack")
 
@@ -185,6 +199,10 @@ func _handle_move_to_click() -> void:
 ## Update character animation based on movement
 func _update_animation(direction: Vector3) -> void:
 	if not _animation_player:
+		return
+	
+	# Don't interrupt attack animation
+	if _is_attacking:
 		return
 	
 	var is_moving := direction.length() > 0.1
