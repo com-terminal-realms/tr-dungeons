@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/health_bar.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://bmt6fvxkh3r2o" path="res://assets/characters/outfits/Male_Ranger.gltf" id="6"]
 [ext_resource type="Script" path="res://scripts/components/runtime_animation_loader.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/components/weapon_attachment.gd" id="8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 
@@ -21,6 +22,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 [node name="RuntimeAnimationLoader" type="Node" parent="CharacterModel"]
 script = ExtResource("7")
 animation_player_path = NodePath("../AnimationPlayer")
+
+[node name="WeaponAttachment" type="Node3D" parent="CharacterModel"]
+script = ExtResource("8")
+hand_bone_name = "hand_r"
+weapon_offset = Vector3(0, 0.1, 0)
+weapon_rotation = Vector3(-90, 0, 90)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
