@@ -33,12 +33,14 @@ func _ready() -> void:
 	skeleton.add_child(bone_attachment)
 	
 	# Load and instance weapon
-	var weapon_scene = load(weapon_model_path)
-	if not weapon_scene:
+	var weapon_mesh = load(weapon_model_path)
+	if not weapon_mesh:
 		push_error("WeaponAttachment: Failed to load weapon from ", weapon_model_path)
 		return
 	
-	weapon_instance = weapon_scene.instantiate()
+	# Create MeshInstance3D and assign the mesh
+	weapon_instance = MeshInstance3D.new()
+	weapon_instance.mesh = weapon_mesh
 	bone_attachment.add_child(weapon_instance)
 	
 	# Apply offset and rotation
