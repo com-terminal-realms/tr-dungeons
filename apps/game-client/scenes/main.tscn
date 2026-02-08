@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://enemy_base_scene_001" path="res://scenes/enemies/enemy_base.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/camera/isometric_camera.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/utils/performance_monitor.gd" id="4"]
-[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor-big.glb" id="5"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor.glb" id="5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
