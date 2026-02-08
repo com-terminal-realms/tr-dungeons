@@ -1,0 +1,101 @@
+[gd_scene load_steps=11 format=3 uid="uid://showcase123"]
+
+[ext_resource type="PackedScene" uid="uid://bxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-floor.glb" id="1_floor"]
+[ext_resource type="PackedScene" uid="uid://cxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-floor-big.glb" id="2_floor_big"]
+[ext_resource type="PackedScene" uid="uid://dxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-floor-layer.glb" id="3_floor_layer"]
+[ext_resource type="PackedScene" uid="uid://exqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-floor-detail.glb" id="4_floor_detail"]
+[ext_resource type="PackedScene" uid="uid://fxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/room-small.glb" id="5_room_small"]
+[ext_resource type="PackedScene" uid="uid://gxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/room-wide.glb" id="6_room_wide"]
+[ext_resource type="PackedScene" uid="uid://hxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-wall.glb" id="7_wall"]
+[ext_resource type="PackedScene" uid="uid://ixqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-corner.glb" id="8_corner"]
+[ext_resource type="PackedScene" uid="uid://jxqxqxqxqxqxq" path="res://assets/models/kenney-dungeon/template-detail.glb" id="9_detail"]
+
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 1
+background_color = Color(0.2, 0.2, 0.25, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.5, 0.5, 0.5, 1)
+
+[node name="DungeonShowcase" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 10, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 15, 15)
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, 0)
+text = "template-floor.glb"
+font_size = 32
+
+[node name="TemplateFloor" parent="." instance=ExtResource("1_floor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="Label3D2" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+text = "template-floor-big.glb"
+font_size = 32
+
+[node name="TemplateFloorBig" parent="." instance=ExtResource("2_floor_big")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Label3D3" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, 0)
+text = "template-floor-layer.glb"
+font_size = 32
+
+[node name="TemplateFloorLayer" parent="." instance=ExtResource("3_floor_layer")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+
+[node name="Label3D4" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, 0)
+text = "template-floor-detail.glb"
+font_size = 32
+
+[node name="TemplateFloorDetail" parent="." instance=ExtResource("4_floor_detail")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+
+[node name="Label3D5" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, 5)
+text = "room-small.glb"
+font_size = 32
+
+[node name="RoomSmall" parent="." instance=ExtResource("5_room_small")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5)
+
+[node name="Label3D6" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 5)
+text = "room-wide.glb"
+font_size = 32
+
+[node name="RoomWide" parent="." instance=ExtResource("6_room_wide")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="Label3D7" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2, 5)
+text = "template-wall.glb"
+font_size = 32
+
+[node name="TemplateWall" parent="." instance=ExtResource("7_wall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5)
+
+[node name="Label3D8" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2, 5)
+text = "template-corner.glb"
+font_size = 32
+
+[node name="TemplateCorner" parent="." instance=ExtResource("8_corner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 5)
+
+[node name="Label3D9" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2, 10)
+text = "template-detail.glb"
+font_size = 32
+
+[node name="TemplateDetail" parent="." instance=ExtResource("9_detail")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 10)

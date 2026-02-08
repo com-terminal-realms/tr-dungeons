@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://enemy_base_scene_001" path="res://scenes/enemies/enemy_base.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/camera/isometric_camera.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/utils/performance_monitor.gd" id="4"]
-[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor.glb" id="5"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor-detail.glb" id="5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -33,13 +33,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/Room1"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Room1/Floor"]
+visible = false
 mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room1/Floor"]
 shape = SubResource("BoxShape_floor")
 
 [node name="DungeonFloor" parent="NavigationRegion3D/Room1" instance=ExtResource("5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="Room2" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
@@ -47,13 +48,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
 [node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/Room2"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Room2/Floor"]
+visible = false
 mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room2/Floor"]
 shape = SubResource("BoxShape_floor")
 
 [node name="DungeonFloor" parent="NavigationRegion3D/Room2" instance=ExtResource("5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="Room3" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
@@ -61,13 +63,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
 [node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/Room3"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Room3/Floor"]
+visible = false
 mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room3/Floor"]
 shape = SubResource("BoxShape_floor")
 
 [node name="DungeonFloor" parent="NavigationRegion3D/Room3" instance=ExtResource("5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room3" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -78,13 +81,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 60)
 [node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/Room4"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Room4/Floor"]
+visible = false
 mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room4/Floor"]
 shape = SubResource("BoxShape_floor")
 
 [node name="DungeonFloor" parent="NavigationRegion3D/Room4" instance=ExtResource("5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room4" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
@@ -98,13 +102,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 80)
 [node name="Floor" type="StaticBody3D" parent="NavigationRegion3D/Room5"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Room5/Floor"]
+visible = false
 mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room5/Floor"]
 shape = SubResource("BoxShape_floor")
 
 [node name="DungeonFloor" parent="NavigationRegion3D/Room5" instance=ExtResource("5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="Boss" parent="NavigationRegion3D/Room5" instance=ExtResource("2")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0)
