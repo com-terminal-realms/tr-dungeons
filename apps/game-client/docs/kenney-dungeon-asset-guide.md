@@ -19,11 +19,17 @@ All measurements are approximate based on testing in Godot. Assets are positione
 
 | Asset | Width (X) | Height (Y) | Depth (Z) | Notes |
 |-------|-----------|------------|-----------|-------|
-| `corridor.glb` | ~2 units | ~4 units | ~2 units | Standard corridor segment |
+| `corridor.glb` | ~2 units | ~4 units | ~2 units | Standard corridor segment - **CONFIRMED: Works at 2-unit spacing** |
 | `corridor-wide.glb` | ~4 units | ~4 units | ~2 units | Wide corridor segment |
 | `corridor-corner.glb` | ~2 units | ~4 units | ~2 units | 90-degree turn |
 | `corridor-intersection.glb` | ~2 units | ~4 units | ~2 units | 4-way intersection |
 | `corridor-junction.glb` | ~2 units | ~4 units | ~2 units | T-junction |
+
+**Verified Corridor Configuration:**
+- For 20-unit room spacing: Use 3 corridor pieces
+- Positions: -2, 0, +2 relative to midpoint
+- Rotation: 90° around Y-axis for north-south alignment
+- Transform: `Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, x, y, z)`
 
 ### Floor Templates
 
@@ -49,6 +55,24 @@ All measurements are approximate based on testing in Godot. Assets are positione
 - **Z-axis**: Forward (-) to Back (+)
 - **Default orientation**: Assets face along the +Z axis
 
+## Verified Working Configuration
+
+The following configuration has been tested and confirmed working in the POC dungeon:
+
+### Corridor Dimensions (VERIFIED)
+- **Asset**: `corridor.glb`
+- **Actual depth**: ~2 units (Z-axis when rotated)
+- **Spacing**: 2 units between pieces
+- **Count**: 3 pieces per 20-unit gap
+- **Positions**: -2, 0, +2 from midpoint
+- **Rotation**: 90° around Y-axis for north-south
+- **Transform**: `Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, x, y, z)`
+
+### Room Spacing (VERIFIED)
+- **Distance**: 20 units center-to-center
+- **Corridor midpoint**: Exactly halfway between rooms
+- **No overlap**: Corridors fit perfectly without extending into rooms
+
 ## Current Map Layout
 
 Our POC dungeon uses a linear north-south layout along the Z-axis:
@@ -67,9 +91,10 @@ Room 5 (large)    - Position: (0, 0, 80) - Boss room
 
 ### Spacing Rules
 
-- **Room spacing**: 20 units apart (center to center)
-- **Corridor placement**: Centered between rooms (at z = room1_z + 10)
-- **Corridor pieces**: 3 pieces per corridor, spaced 2 units apart
+- **Room spacing**: 20 units apart (center to center) - **VERIFIED**
+- **Corridor placement**: Centered between rooms (at z = room1_z + 10) - **VERIFIED**
+- **Corridor pieces**: 3 pieces per corridor, spaced 2 units apart - **VERIFIED WORKING**
+- **Corridor positions**: -2, 0, +2 relative to midpoint - **VERIFIED WORKING**
 - **Collision boxes**: 20x0.2x20 units, positioned at room center
 
 ## Quick Assembly Guide
