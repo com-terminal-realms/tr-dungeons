@@ -30,6 +30,14 @@ func _ready() -> void:
 	update_camera_position()
 	print("IsometricCamera: Camera positioned at ", global_position)
 
+func _input(event: InputEvent) -> void:
+	# Handle mouse wheel zoom
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+			distance = max(zoom_min, distance - zoom_speed)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+			distance = min(zoom_max, distance + zoom_speed)
+
 func _process(delta: float) -> void:
 	# Handle zoom input
 	if Input.is_action_pressed("zoom_in"):
