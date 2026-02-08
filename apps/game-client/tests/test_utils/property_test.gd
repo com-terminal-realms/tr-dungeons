@@ -8,7 +8,7 @@ const ITERATIONS: int = 100  # Minimum iterations per property
 ## Run a property test with multiple random inputs
 ## property_name: Name of the property being tested
 ## test_func: Callable that takes iteration number and returns result dict
-func assert_property(property_name: String, test_func: Callable) -> void:
+func assert_property_holds(property_name: String, test_func: Callable) -> void:
 	var failures: Array = []
 	
 	for i in range(ITERATIONS):

@@ -22,6 +22,9 @@ func test_negative_damage_errors() -> void:
 	
 	health.take_damage(-10)
 	
+	# Assert that the expected error was pushed
+	assert_push_error("Damage amount must be non-negative")
+	
 	# Health should remain unchanged
 	assert_eq(health.get_current_health(), initial_health, "Health should not change on negative damage")
 
@@ -32,6 +35,9 @@ func test_negative_heal_errors() -> void:
 	var damaged_health := health.get_current_health()
 	
 	health.heal(-10)
+	
+	# Assert that the expected error was pushed
+	assert_push_error("Heal amount must be non-negative")
 	
 	# Health should remain unchanged
 	assert_eq(health.get_current_health(), damaged_health, "Health should not change on negative heal")
@@ -52,20 +58,15 @@ func test_heal_above_max_health() -> void:
 
 ## Test: Died signal emits exactly once
 func test_died_signal_emits_once() -> void:
-	var died_count := 0
-	var died_callback := func() -> void:
-		died_count += 1
-	
-	health.died.connect(died_callback)
+	watch_signals(health)
 	
 	# Kill the entity multiple times
 	health.take_damage(100)
 	health.take_damage(50)
 	health.take_damage(25)
 	
-	health.died.disconnect(died_callback)
-	
-	assert_eq(died_count, 1, "Died signal should emit exactly once")
+	assert_signal_emitted(health, "died", "Died signal should emit")
+	assert_signal_emit_count(health, "died", 1, "Died signal should emit exactly once")
 
 ## Test: Cannot heal when dead
 func test_cannot_heal_when_dead() -> void:
@@ -79,18 +80,13 @@ func test_cannot_heal_when_dead() -> void:
 
 ## Test: Cannot take damage when dead (no additional died signals)
 func test_cannot_damage_when_dead() -> void:
-	var died_count := 0
-	var died_callback := func() -> void:
-		died_count += 1
-	
-	health.died.connect(died_callback)
+	watch_signals(health)
 	
 	health.take_damage(100)  # Kill entity
 	health.take_damage(50)   # Try to damage again
 	
-	health.died.disconnect(died_callback)
-	
-	assert_eq(died_count, 1, "Died signal should only emit once")
+	assert_signal_emitted(health, "died", "Died signal should emit")
+	assert_signal_emit_count(health, "died", 1, "Died signal should only emit once")
 	assert_eq(health.get_current_health(), 0, "Health should remain at 0")
 
 ## Test: Health initialized correctly
@@ -101,40 +97,29 @@ func test_health_initialized() -> void:
 
 ## Test: health_changed signal emits on damage
 func test_health_changed_on_damage() -> void:
-	var signal_emitted := false
-	var emitted_current := 0
-	var emitted_max := 0
-	
-	var callback := func(current: int, maximum: int) -> void:
-		signal_emitted = true
-		emitted_current = current
-		emitted_max = maximum
-	
-	health.health_changed.connect(callback)
+	watch_signals(health)
 	health.take_damage(25)
-	health.health_changed.disconnect(callback)
 	
-	assert_true(signal_emitted, "health_changed should emit on damage")
-	assert_eq(emitted_current, 75, "Signal should report correct current health")
-	assert_eq(emitted_max, 100, "Signal should report correct max health")
+	assert_signal_emitted(health, "health_changed", "health_changed should emit on damage")
+	assert_signal_emit_count(health, "health_changed", 1, "health_changed should emit exactly once")
+	
+	# Check signal parameters
+	var signal_params: Array = get_signal_parameters(health, "health_changed", 0)
+	assert_eq(signal_params[0], 75, "Signal should report correct current health")
+	assert_eq(signal_params[1], 100, "Signal should report correct max health")
 
 ## Test: health_changed signal emits on heal
 func test_health_changed_on_heal() -> void:
 	health.take_damage(40)  # Reduce to 60
 	
-	var signal_emitted := false
-	var emitted_current := 0
-	
-	var callback := func(current: int, _maximum: int) -> void:
-		signal_emitted = true
-		emitted_current = current
-	
-	health.health_changed.connect(callback)
+	watch_signals(health)
 	health.heal(20)
-	health.health_changed.disconnect(callback)
 	
-	assert_true(signal_emitted, "health_changed should emit on heal")
-	assert_eq(emitted_current, 80, "Signal should report correct current health")
+	assert_signal_emitted(health, "health_changed", "health_changed should emit on heal")
+	
+	# Check signal parameters
+	var signal_params: Array = get_signal_parameters(health, "health_changed", 0)
+	assert_eq(signal_params[0], 80, "Signal should report correct current health")
 
 ## Test: Data model serialization
 func test_data_serialization() -> void:

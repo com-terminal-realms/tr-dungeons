@@ -40,8 +40,7 @@ func test_player_respawn_on_death() -> void:
 	
 	# Manually trigger respawn (in actual game, this is connected to died signal)
 	player.global_position = spawn_point
-	health._data.current_health = health._data.max_health
-	health._is_alive = true
+	health.reset_health(health.get_max_health())
 	
 	# Verify respawn
 	assert_eq(player.global_position, spawn_point, "Player should respawn at spawn point")
@@ -66,11 +65,10 @@ func test_player_can_take_damage() -> void:
 
 ## Test: Player dies when health reaches zero
 func test_player_dies_at_zero_health() -> void:
-	var died_signal_emitted := false
-	health.died.connect(func(): died_signal_emitted = true)
+	watch_signals(health)
 	
 	health.take_damage(100)
 	
-	assert_true(died_signal_emitted, "Died signal should emit")
+	assert_signal_emitted(health, "died", "Died signal should emit")
 	assert_eq(health.get_current_health(), 0, "Health should be zero")
 	assert_false(health.is_alive(), "Player should be dead")

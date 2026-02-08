@@ -28,7 +28,7 @@ func after_each() -> void:
 ## Validates: Requirements 3.4
 ## Ensures velocity magnitude equals move_speed when moving (±0.01 tolerance)
 func test_movement_velocity_magnitude() -> void:
-	assert_property("Velocity magnitude equals move_speed", func(seed: int) -> Dictionary:
+	assert_property_holds("Velocity magnitude equals move_speed", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -42,7 +42,7 @@ func test_movement_velocity_magnitude() -> void:
 		var expected_speed := movement.move_speed
 		var tolerance := 0.01
 		
-		var within_tolerance := abs(velocity_mag - expected_speed) <= tolerance
+		var within_tolerance: bool = abs(velocity_mag - expected_speed) <= tolerance
 		
 		return {
 			"success": within_tolerance,
@@ -57,12 +57,16 @@ func test_movement_velocity_magnitude() -> void:
 ## Validates: Requirements 3.4
 ## Ensures character faces movement direction (±5° tolerance)
 func test_movement_direction_alignment() -> void:
-	assert_property("Character faces movement direction", func(seed: int) -> Dictionary:
+	assert_property_holds("Character faces movement direction", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
-		# Generate random direction
-		var direction := random_direction(rng)
+		# Generate random direction (horizontal only - Y=0)
+		var direction := Vector3(
+			random_float(rng, -1.0, 1.0),
+			0.0,  # No vertical component
+			random_float(rng, -1.0, 1.0)
+		).normalized()
 		
 		# Apply movement multiple times to allow rotation to settle
 		for i in range(10):

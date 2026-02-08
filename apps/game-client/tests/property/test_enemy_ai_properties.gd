@@ -55,7 +55,7 @@ func after_each() -> void:
 ## Validates: Requirements 3.6
 ## Ensures enemy chases if distance <= detection_range
 func test_detection_range_behavior() -> void:
-	assert_property("Enemy detects player within range", func(seed: int) -> Dictionary:
+	assert_property_holds("Enemy detects player within range", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -93,7 +93,7 @@ func test_detection_range_behavior() -> void:
 ## Validates: Requirements 3.6
 ## Ensures each path step moves closer to target (simplified test)
 func test_navigation_path_validity() -> void:
-	assert_property("Navigation moves toward target", func(seed: int) -> Dictionary:
+	assert_property_holds("Navigation moves toward target", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		

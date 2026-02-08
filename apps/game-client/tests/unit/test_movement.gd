@@ -140,6 +140,10 @@ func test_movement_without_character_body() -> void:
 	# Should not crash, but should log error
 	standalone_movement.move(Vector3.FORWARD, 0.016)
 	
+	# Assert that the expected errors were pushed
+	assert_push_error("Movement component requires CharacterBody3D")
+	assert_push_error("Cannot move: CharacterBody3D not found")
+	
 	assert_eq(standalone_movement.get_velocity_magnitude(), 0.0, "Movement without CharacterBody3D should have zero velocity")
 	
 	standalone_movement.queue_free()

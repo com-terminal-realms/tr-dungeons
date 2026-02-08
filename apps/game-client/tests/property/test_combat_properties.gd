@@ -42,7 +42,7 @@ func after_each() -> void:
 ## Validates: Requirements 3.5, 3.6
 ## Ensures new_health = max(0, old_health - damage)
 func test_damage_application() -> void:
-	assert_property("Damage application formula correct", func(seed: int) -> Dictionary:
+	assert_property_holds("Damage application formula correct", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -51,10 +51,8 @@ func test_damage_application() -> void:
 		var initial_health := random_int(rng, 0, 100)
 		
 		# Set up combat and health
-		attacker_combat.attack_damage = damage
-		attacker_combat._data.attack_damage = damage
-		target_health._data.current_health = initial_health
-		target_health._is_alive = initial_health > 0
+		attacker_combat.set_attack_damage(damage)
+		target_health.reset_health(initial_health)
 		
 		# Position target in range
 		target.global_position = attacker.global_position + Vector3(1, 0, 0)
@@ -70,10 +68,10 @@ func test_damage_application() -> void:
 				"reason": ""
 			}
 		
-		var new_health := target_health.get_current_health()
-		var expected_health := max(0, initial_health - damage)
+		var new_health: int = target_health.get_current_health()
+		var expected_health: int = max(0, initial_health - damage)
 		
-		var correct := new_health == expected_health
+		var correct: bool = new_health == expected_health
 		
 		return {
 			"success": correct,
@@ -86,7 +84,7 @@ func test_damage_application() -> void:
 ## Validates: Requirements 3.5
 ## Ensures time between successful attacks >= cooldown
 func test_attack_cooldown_enforcement() -> void:
-	assert_property("Attack cooldown enforced", func(seed: int) -> Dictionary:
+	assert_property_holds("Attack cooldown enforced", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -147,7 +145,7 @@ func test_attack_cooldown_enforcement() -> void:
 ## Validates: Requirements 3.5, 3.6
 ## Ensures attacks only succeed when distance <= attack_range
 func test_attack_range_validation() -> void:
-	assert_property("Attack range validated", func(seed: int) -> Dictionary:
+	assert_property_holds("Attack range validated", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		

@@ -60,12 +60,11 @@ func test_enemy_can_take_damage() -> void:
 
 ## Test: Enemy dies when health reaches zero
 func test_enemy_dies_at_zero_health() -> void:
-	var died_signal_emitted := false
-	health.died.connect(func(): died_signal_emitted = true)
+	watch_signals(health)
 	
 	health.take_damage(50)
 	
-	assert_true(died_signal_emitted, "Died signal should emit")
+	assert_signal_emitted(health, "died", "Died signal should emit")
 	assert_eq(health.get_current_health(), 0, "Health should be zero")
 	assert_false(health.is_alive(), "Enemy should be dead")
 

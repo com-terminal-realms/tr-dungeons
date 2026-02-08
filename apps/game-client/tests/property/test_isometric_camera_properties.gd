@@ -32,7 +32,7 @@ func after_each() -> void:
 ## Validates: Requirements 3.3
 ## Ensures camera maintains 45° angle from horizontal (±1° tolerance)
 func test_camera_angle_invariant() -> void:
-	assert_property("Camera maintains 45° angle", func(seed: int) -> Dictionary:
+	assert_property_holds("Camera maintains 45° angle", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -48,7 +48,7 @@ func test_camera_angle_invariant() -> void:
 		var expected_angle := 45.0
 		var tolerance := 1.0
 		
-		var within_tolerance := abs(angle - expected_angle) <= tolerance
+		var within_tolerance: bool = abs(angle - expected_angle) <= tolerance
 		
 		return {
 			"success": within_tolerance,
@@ -63,7 +63,7 @@ func test_camera_angle_invariant() -> void:
 ## Validates: Requirements 3.3
 ## Ensures camera distance stays in [zoom_min, zoom_max]
 func test_camera_distance_bounds() -> void:
-	assert_property("Camera distance within bounds", func(seed: int) -> Dictionary:
+	assert_property_holds("Camera distance within bounds", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -93,7 +93,7 @@ func test_camera_distance_bounds() -> void:
 ## Validates: Requirements 3.3
 ## Ensures camera Y rotation remains constant at 45°
 func test_camera_rotation_invariant() -> void:
-	assert_property("Camera Y rotation constant at 45°", func(seed: int) -> Dictionary:
+	assert_property_holds("Camera Y rotation constant at 45°", func(seed: int) -> Dictionary:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -110,13 +110,7 @@ func test_camera_rotation_invariant() -> void:
 		var expected_rotation := 45.0
 		var tolerance := 5.0  # Slightly larger tolerance due to atan2 precision
 		
-		# Normalize angle to [-180, 180]
-		while rotation_y > 180.0:
-			rotation_y -= 360.0
-		while rotation_y < -180.0:
-			rotation_y += 360.0
-		
-		var within_tolerance := abs(rotation_y - expected_rotation) <= tolerance
+		var within_tolerance: bool = abs(rotation_y - expected_rotation) <= tolerance
 		
 		return {
 			"success": within_tolerance,

@@ -119,6 +119,12 @@ func set_data(data: CombatData) -> void:
 	attack_range = _data.attack_range
 	attack_cooldown = _data.attack_cooldown
 
+## Set attack damage (updates both exported var and internal data)
+func set_attack_damage(value: int) -> void:
+	attack_damage = value
+	if _data:
+		_data.attack_damage = value
+
 ## Find Node3D in parent hierarchy
 func _find_node3d(node: Node) -> Node3D:
 	if node is Node3D:

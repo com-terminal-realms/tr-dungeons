@@ -43,7 +43,7 @@ func test_full_playthrough_validation() -> void:
 	assert_not_null(player_combat, "Player must have Combat component")
 	
 	# Verify initial health
-	assert_gt(player_health.current_health, 0, "Player should start with health > 0")
+	assert_gt(player_health.get_current_health(), 0, "Player should start with health > 0")
 	
 	# Find enemies
 	var enemies := get_tree().get_nodes_in_group("enemies")
@@ -125,7 +125,7 @@ func test_camera_zoom() -> void:
 	assert_not_null(camera, "Main scene must have IsometricCamera")
 	
 	# Test zoom in
-	var initial_distance := camera.distance
+	var initial_distance: float = camera.distance
 	camera.zoom_in()
 	await get_tree().process_frame
 	
@@ -195,7 +195,7 @@ func test_health_and_respawn() -> void:
 	assert_not_null(player_health, "Player must have Health")
 	
 	var initial_pos := player.global_position
-	var initial_health := player_health.current_health
+	var initial_health: int = player_health.get_current_health()
 	
 	# Damage player to death
 	player_health.take_damage(initial_health)
@@ -204,7 +204,7 @@ func test_health_and_respawn() -> void:
 	await get_tree().create_timer(0.5).timeout
 	
 	# Verify player respawned
-	assert_eq(player_health.current_health, player_health.max_health, "Player should respawn with full health")
+	assert_eq(player_health.get_current_health(), player_health.get_max_health(), "Player should respawn with full health")
 	
 	pass_test("Health and respawn test passed")
 

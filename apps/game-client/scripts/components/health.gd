@@ -76,3 +76,14 @@ func set_data(data: HealthData) -> void:
 	_data = data
 	_is_alive = _data.current_health > 0
 	health_changed.emit(_data.current_health, _data.max_health)
+
+## Reset health to a specific value (useful for respawning or testing)
+func reset_health(value: int) -> void:
+	if not _data:
+		push_error("Cannot reset health: Health component not initialized (call after _ready)")
+		return
+	var clamped_value: int = clamp(value, 0, _data.max_health)
+	_data.current_health = clamped_value
+	_is_alive = clamped_value > 0
+	health_changed.emit(_data.current_health, _data.max_health)
+

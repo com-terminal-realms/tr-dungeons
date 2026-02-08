@@ -4,7 +4,9 @@ class_name IsometricCamera
 extends Camera3D
 
 @export var target: Node3D = null
-@export var distance: float = 15.0
+@export var distance: float = 15.0:
+	set(value):
+		distance = clamp(value, zoom_min, zoom_max)
 @export var zoom_min: float = 8.0
 @export var zoom_max: float = 25.0
 @export var zoom_speed: float = 2.0
@@ -89,8 +91,17 @@ func get_camera_rotation_y() -> float:
 	if not target:
 		return 0.0
 	
-	var to_target := target.global_position - global_position
-	return rad_to_deg(atan2(to_target.x, to_target.z))
+	# Calculate vector FROM target TO camera (not camera to target)
+	var from_target := global_position - target.global_position
+	var angle := rad_to_deg(atan2(from_target.x, from_target.z))
+	
+	# Normalize to [0, 360] range for consistency
+	while angle < 0.0:
+		angle += 360.0
+	while angle >= 360.0:
+		angle -= 360.0
+	
+	return angle
 
 ## Get current distance to target
 func get_distance_to_target() -> float:
