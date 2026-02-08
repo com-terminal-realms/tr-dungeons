@@ -191,8 +191,8 @@ func _update_animation(direction: Vector3) -> void:
 	
 	if is_moving:
 		# Play walk animation if not already playing
-		if _animation_player.current_animation != "Walk_F":
-			_animation_player.play("Walk_F")
+		if _animation_player.current_animation != "Walk":
+			_animation_player.play("Walk")
 	else:
 		# Play idle animation if not already playing
 		if _animation_player.current_animation != "Idle":

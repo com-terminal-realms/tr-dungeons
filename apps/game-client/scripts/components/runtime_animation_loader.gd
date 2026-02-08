@@ -40,13 +40,19 @@ func _ready() -> void:
 	var anim_list = ual_anim_player.get_animation_list()
 	print("RuntimeAnimationLoader: Found ", anim_list.size(), " animations")
 	
+	# Create an animation library
+	var anim_library = AnimationLibrary.new()
+	
 	for anim_name in anim_list:
 		var animation = ual_anim_player.get_animation(anim_name)
 		if animation:
 			# Duplicate the animation so we own it
 			var anim_copy = animation.duplicate()
-			animation_player.add_animation_library("", anim_copy)
+			anim_library.add_animation(anim_name, anim_copy)
 			print("RuntimeAnimationLoader: Loaded animation: ", anim_name)
+	
+	# Add the library to the player's AnimationPlayer
+	animation_player.add_animation_library("", anim_library)
 	
 	# Clean up
 	ual_instance.queue_free()
