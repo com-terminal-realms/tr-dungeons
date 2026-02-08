@@ -93,34 +93,15 @@ Additional outfits available in modular parts:
 
 ### Animations (Future Implementation)
 
-The Universal Animation Library (`UAL1_Standard.glb`) contains 120+ animations:
+The Universal Animation Library (`UAL1_Standard.glb`) contains 120+ animations that can be used with these characters. Animation setup requires manual work in the Godot editor and is not currently implemented.
 
-**Locomotion**:
-- Idle, Walk, Run, Sprint
-- Walk/Run in 8 directions
-- Jump, Fall, Land
+Available animation categories:
+- **Locomotion**: Idle, Walk, Run, Sprint, Jump, Fall, Land
+- **Combat**: Melee attacks, Block, Dodge, Roll, Death
+- **Interactions**: Pick up, Use item, Open door, Sit, Crouch
+- **Emotes**: Wave, Point, Cheer, Dance
 
-**Combat**:
-- Melee attacks (punch, kick, sword swings)
-- Block, Dodge, Roll
-- Death animations
-
-**Interactions**:
-- Pick up, Use item
-- Open door, Pull lever
-- Sit, Crouch
-
-**Emotes**:
-- Wave, Point, Cheer
-- Dance, Laugh, Cry
-
-### Animation Setup (TODO)
-
-To use animations:
-1. Import `UAL1_Standard.glb` into Godot
-2. Use AnimationTree with humanoid rig
-3. Retarget animations to character models
-4. Set up state machine for gameplay
+Animation setup will be done when needed for gameplay.
 
 ## Customization Options
 
@@ -157,7 +138,6 @@ You can mix and match parts from `Modular Parts/` folder:
 
 ## Future Enhancements
 
-- [ ] Implement animation system with AnimationTree
 - [ ] Add character customization (swap outfits)
 - [ ] Create distinct boss character (scaled/modified)
 - [ ] Add weapon models (swords, shields, etc.)
