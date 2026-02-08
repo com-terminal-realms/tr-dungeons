@@ -115,30 +115,31 @@ Room 5 (large)    - Position: (0, 0, 80) - Boss room
 3. **Add 5 corridor pieces** (for 20-unit gap):
    ```gdscript
    [node name="CorridorPiece1" instance=ExtResource("corridor")]
-   transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
    
    [node name="CorridorPiece2" instance=ExtResource("corridor")]
-   transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
    
    [node name="CorridorPiece3" instance=ExtResource("corridor")]
-   transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
    
    [node name="CorridorPiece4" instance=ExtResource("corridor")]
-   transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
    
    [node name="CorridorPiece5" instance=ExtResource("corridor")]
-   transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+   transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
    ```
+   Note: Corridors are rotated 90° to run along Z-axis
 
 ### Rotation Reference
 
 For corridors running in different directions:
 
-- **North-South (Z-axis)**: No rotation needed
-  - `Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, x, y, z)`
-
-- **East-West (X-axis)**: Rotate 90° around Y-axis
+- **North-South (Z-axis)**: Rotate 90° around Y-axis
   - `Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, x, y, z)`
+
+- **East-West (X-axis)**: No rotation needed
+  - `Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, x, y, z)`
 
 - **Diagonal (45°)**: Rotate 45° around Y-axis
   - `Transform3D(0.707, 0, 0.707, 0, 1, 0, -0.707, 0, 0.707, x, y, z)`

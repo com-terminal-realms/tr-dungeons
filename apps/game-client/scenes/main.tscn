@@ -50,19 +50,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
 
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
 
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
 [node name="CorridorPiece4" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
 
 [node name="CorridorPiece5" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
 
 [node name="Room2" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
@@ -83,19 +83,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
 
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
 
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
 
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
 [node name="CorridorPiece4" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
 
 [node name="CorridorPiece5" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
 
 [node name="Room3" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
@@ -116,19 +116,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 50)
 
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
 
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
 
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
 [node name="CorridorPiece4" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
 
 [node name="CorridorPiece5" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room3" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -152,19 +152,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 70)
 
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -4)
 
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -2)
 
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
 [node name="CorridorPiece4" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 2)
 
 [node name="CorridorPiece5" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("9")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 4)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room4" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
