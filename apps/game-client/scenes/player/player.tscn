@@ -27,7 +27,7 @@ animation_player_path = NodePath("../AnimationPlayer")
 script = ExtResource("8")
 hand_bone_name = "hand_r"
 weapon_offset = Vector3(0, 0.1, 0)
-weapon_rotation = Vector3(-90, 0, 90)
+weapon_rotation = Vector3(-90, 0, 180)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
