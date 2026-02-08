@@ -1,102 +1,81 @@
-# Animation Setup Instructions - UPDATED METHOD
+# Animation Setup - WORKING SOLUTION
 
-## The Problem
+## How It Works
 
-The UAL1_Standard.glb file contains animations, but they're in a separate scene file. We need to extract those animations and add them to the player's AnimationPlayer.
+Animations are loaded automatically at runtime using the `RuntimeAnimationLoader` component. No manual editor work required!
 
-## Solution: Use Animation Library
+## Implementation
 
-### Method 1: Direct Animation Library Import (Easiest)
+### RuntimeAnimationLoader Component
 
-1. **Open Godot Editor**
-   ```bash
-   cd apps/game-client
-   godot --editor .
-   ```
+Located: `scripts/components/runtime_animation_loader.gd`
 
-2. **Open Player Scene**
-   - Navigate to `scenes/player/player.tscn`
+This script:
+1. Loads the UAL1_Standard.glb scene at runtime
+2. Finds the AnimationPlayer inside it
+3. Extracts all 45 animations
+4. Creates an AnimationLibrary
+5. Adds it to the character's AnimationPlayer
 
-3. **Select AnimationPlayer**
-   - In Scene tree: `Player → CharacterModel → AnimationPlayer`
+### Player Scene Setup
 
-4. **Add Animation Library**
-   - In the Inspector panel (right side), find "Libraries"
-   - Click the dropdown next to "Libraries"
-   - Click "Add Library"
-   - Name it: `ual` (or any name you want)
+The player scene has:
+- `CharacterModel` (Male_Ranger.gltf instance)
+  - `AnimationPlayer` (empty at start)
+  - `RuntimeAnimationLoader` (loads animations on ready)
 
-5. **Load UAL Animations**
-   - Click the folder icon next to the new library
-   - Navigate to: `assets/characters/animations/UAL1_Standard.glb`
-   - Select it and click "Open"
-   - Godot will extract all animations from the file
+### Animation Playback
 
-6. **Save the Scene**
-   - Press Ctrl+S to save
-   - The animations should now persist!
+The player script (`scenes/player/player.gd`) automatically switches between:
+- **Idle** - When standing still
+- **Walk** - When moving
 
-7. **Test**
-   - Press F5 to run
-   - Character should animate when moving!
+## Available Animations
 
-### Method 2: If Method 1 Doesn't Work - Copy Animation Files
+45 animations loaded from UAL1_Standard.glb:
+- Locomotion: Idle, Walk, Sprint, Jog_Fwd, Crouch_Fwd
+- Combat: Sword_Attack, Punch_Jab, Punch_Cross, Roll
+- Actions: Jump, Jump_Start, Jump_Land, PickUp_Table
+- Emotes: Dance, Sitting_Idle, Spell_Simple_Shoot
+- And 30+ more...
 
-If the above doesn't work, we need to manually reference the animation library:
+## Adding New Animations
 
-1. **Open the UAL scene**
-   - In FileSystem, navigate to `assets/characters/animations/`
-   - Double-click `UAL1_Standard.glb` to open it as a scene
+To use different animations, edit `player.gd`:
 
-2. **Find the AnimationPlayer**
-   - Look for an AnimationPlayer node in the UAL scene tree
-   - Select it
-
-3. **Check Available Animations**
-   - In the Animation panel at bottom, you should see all animations
-   - Note down some animation names (Idle, Walk_F, Run_F, etc.)
-
-4. **Copy the Animation Library**
-   - With AnimationPlayer selected, look at Inspector
-   - Find "Libraries" section
-   - Right-click on the library → "Copy"
-
-5. **Paste into Player's AnimationPlayer**
-   - Open `scenes/player/player.tscn`
-   - Select `Player → CharacterModel → AnimationPlayer`
-   - In Inspector, find "Libraries"
-   - Right-click → "Paste"
-
-6. **Save and Test**
-
-### Method 3: Script-Based Animation (If all else fails)
-
-If the editor methods don't work, we can load animations at runtime via script. Let me know if you need this approach.
-
-## Checking If It Worked
-
-Run the game and check the console output. You should see:
-```
-Player: AnimationPlayer found with animations: [Idle, Walk_F, Walk_B, Run_F, ...]
+```gdscript
+func _update_animation(direction: Vector3) -> void:
+    if not _animation_player:
+        return
+    
+    var is_moving := direction.length() > 0.1
+    
+    if is_moving:
+        _animation_player.play("Sprint")  # Change to Sprint
+    else:
+        _animation_player.play("Idle")
 ```
 
-If you still see `[]`, the animations didn't load.
+## Why This Approach Works
 
-## Common Issues
+- **No manual editor work** - Everything loads at runtime
+- **No animation retargeting needed** - UAL animations are compatible with Quaternius characters
+- **Automatic** - Just add RuntimeAnimationLoader to any character
+- **Flexible** - Easy to change which animations play
 
-### "Animation not found: Idle" errors
-- Animations aren't loaded into AnimationPlayer
-- Make sure you saved the scene after adding the library
+## Troubleshooting
 
-### Animations load but character doesn't move
-- The skeleton paths might not match
-- The UAL skeleton is different from Male_Ranger skeleton
-- May need animation retargeting (advanced)
+### Character in T-pose
+- Check console for "RuntimeAnimationLoader: Successfully loaded X animations"
+- If 0 animations, check the animation_library_path
 
-### Can't find AnimationPlayer in CharacterModel
-- Close and reopen the scene
-- Or restart Godot editor
-- The node should be there after the recent changes
+### Wrong animation playing
+- Check animation names with: `print(_animation_player.get_animation_list())`
+- Animation names are case-sensitive
+
+### Character floating
+- This is a known issue - character model origin is slightly above ground
+- Quick fix: Adjust CharacterModel position.y in player.tscn
 
 
 ## Available Animations
