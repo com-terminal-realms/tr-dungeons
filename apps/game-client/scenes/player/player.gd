@@ -10,6 +10,7 @@ var _combat: Combat
 var _move_target: Vector3 = Vector3.ZERO
 var _is_moving_to_target: bool = false
 var _camera: Camera3D
+var _animation_player: AnimationPlayer
 
 func _ready() -> void:
 	print("Player: Initializing at ", global_position)
@@ -18,6 +19,7 @@ func _ready() -> void:
 	_health = $Health
 	_movement = $Movement
 	_combat = $Combat
+	_animation_player = $CharacterModel/AnimationPlayer if has_node("CharacterModel/AnimationPlayer") else $AnimationPlayer
 	
 	if not _health:
 		push_error("Player: Health component not found!")
@@ -25,6 +27,10 @@ func _ready() -> void:
 		push_error("Player: Movement component not found!")
 	if not _combat:
 		push_error("Player: Combat component not found!")
+	if not _animation_player:
+		push_warning("Player: AnimationPlayer not found!")
+	else:
+		print("Player: AnimationPlayer found with animations: ", _animation_player.get_animation_list())
 	
 	# Connect to death signal for respawn
 	if _health:
@@ -70,6 +76,9 @@ func _physics_process(delta: float) -> void:
 	# Apply movement
 	if _movement:
 		_movement.move(world_dir, delta)
+	
+	# Update animations based on movement
+	_update_animation(world_dir)
 
 func _process(_delta: float) -> void:
 	# Handle left mouse click for attack
@@ -172,3 +181,19 @@ func _handle_move_to_click() -> void:
 		_move_target.y = global_position.y  # Keep same height
 		_is_moving_to_target = true
 		print("Player: Moving to ", _move_target)
+
+## Update character animation based on movement
+func _update_animation(direction: Vector3) -> void:
+	if not _animation_player:
+		return
+	
+	var is_moving := direction.length() > 0.1
+	
+	if is_moving:
+		# Play walk animation if not already playing
+		if _animation_player.current_animation != "Walk_F":
+			_animation_player.play("Walk_F")
+	else:
+		# Play idle animation if not already playing
+		if _animation_player.current_animation != "Idle":
+			_animation_player.play("Idle")

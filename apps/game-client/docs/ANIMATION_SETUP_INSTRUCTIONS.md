@@ -1,12 +1,12 @@
-# Animation Setup Instructions
+# Animation Setup Instructions - CRITICAL ISSUE FOUND
 
-The character models are currently in T-pose and don't animate when moving. To add walking animations, you need to set up the AnimationPlayer in the Godot editor.
+## The Problem
 
-## Why This Requires the Editor
+The AnimationPlayer is at the wrong level in the scene tree. The UAL animations target a Skeleton3D node that's inside the Male_Ranger model, but the AnimationPlayer can't reach it from the Player root.
 
-Animation retargeting (mapping animations from one skeleton to another) cannot be done via text files. It requires the Godot editor's visual tools.
+## Solution: Move AnimationPlayer Inside CharacterModel
 
-## Steps to Add Animations
+You need to do this in the Godot editor:
 
 ### 1. Open Godot Editor
 
@@ -17,62 +17,85 @@ godot --editor .
 
 ### 2. Open Player Scene
 
-In the FileSystem panel, navigate to:
-- `scenes/player/player.tscn`
+Navigate to: `scenes/player/player.tscn`
 
-Double-click to open it.
+### 3. Restructure the Scene Tree
 
-### 3. Locate the AnimationPlayer Node
-
-In the Scene tree, you should see:
-- Player (CharacterBody3D)
-  - CharacterModel (Male_Ranger instance)
-  - AnimationPlayer ← Select this
-
-### 4. Import Animations from UAL1_Standard.glb
-
-With AnimationPlayer selected:
-
-1. Click the **Animation** button at the bottom panel
-2. Click the **Animation** dropdown menu → **Manage Animations**
-3. Click **Load** button
-4. Navigate to: `assets/characters/animations/UAL1_Standard.glb`
-5. Select it and click **Open**
-6. Godot will import all 120+ animations
-
-### 5. Test an Animation
-
-In the Animation panel:
-1. Select "Idle" from the animation dropdown
-2. Click the Play button (▶) to preview
-3. The character should now animate!
-
-### 6. Set Up Basic Animation Script
-
-The AnimationPlayer now has animations, but we need to switch between them based on movement.
-
-Open `scenes/player/player.gd` and add this to the `_physics_process` function:
-
-```gdscript
-func _physics_process(delta: float) -> void:
-    # ... existing movement code ...
-    
-    # Animation switching
-    var anim_player = $AnimationPlayer
-    if anim_player:
-        if velocity.length() > 0.1:
-            if not anim_player.is_playing() or anim_player.current_animation != "Walk_F":
-                anim_player.play("Walk_F")
-        else:
-            if not anim_player.is_playing() or anim_player.current_animation != "Idle":
-                anim_player.play("Idle")
+Current structure (WRONG):
+```
+Player (CharacterBody3D)
+├── CharacterModel (Male_Ranger instance)
+│   └── Skeleton3D (inside here somewhere)
+├── AnimationPlayer ← Can't reach Skeleton3D!
+└── ...
 ```
 
-### 7. Save and Test
+You need to make it:
+```
+Player (CharacterBody3D)
+├── CharacterModel (Male_Ranger instance)
+│   ├── Skeleton3D
+│   └── AnimationPlayer ← Move it here!
+└── ...
+```
+
+### 4. Steps to Move AnimationPlayer
+
+1. In the Scene tree, **right-click** on `AnimationPlayer`
+2. Select **"Reparent"** or **"Change Parent"**
+3. Select `CharacterModel` as the new parent
+4. Click OK
+
+OR:
+
+1. **Drag** the `AnimationPlayer` node
+2. **Drop** it onto the `CharacterModel` node
+
+### 5. Import Animations
+
+Now with AnimationPlayer inside CharacterModel:
+
+1. Select the `AnimationPlayer` node
+2. Click **Animation** panel at bottom
+3. Click **Animation** dropdown → **Manage Animations**
+4. Click **Load**
+5. Navigate to: `assets/characters/animations/UAL1_Standard.glb`
+6. Select and **Open**
+7. All animations should now import successfully!
+
+### 6. Update the Player Script
+
+The player script needs to find the AnimationPlayer at the new location.
+
+Change this line in `scenes/player/player.gd`:
+
+```gdscript
+# OLD (wrong path):
+_animation_player = $AnimationPlayer
+
+# NEW (correct path):
+_animation_player = $CharacterModel/AnimationPlayer
+```
+
+### 7. Test
 
 1. Save the scene (Ctrl+S)
-2. Press F5 to run the game
-3. Character should now walk when moving!
+2. Press F5 to run
+3. Character should now animate when moving!
+
+## Why This Happens
+
+Skeletal animations need to target a Skeleton3D node. The UAL animations have bone tracks like:
+- `Skeleton3D:Hips`
+- `Skeleton3D:Spine`
+- etc.
+
+If the AnimationPlayer isn't in the same subtree as the Skeleton3D, it can't find these bones and the animations won't work.
+
+## Alternative: Animation Root Path
+
+Instead of moving the AnimationPlayer, you could set its `root_node` property to point to CharacterModel, but moving it is simpler and more reliable.
+
 
 ## Available Animations
 
