@@ -245,6 +245,43 @@ Room - Corridor - Room
 - Check for duplicate collision shapes
 - Ensure walls are positioned outside playable area
 
+## Weapon Configuration
+
+### Quaternius Medieval Weapons
+
+Weapons from the Quaternius Medieval Weapons Pack (CC0 license) are attached to character hands using the `WeaponAttachment` component.
+
+#### Sword Configuration (VERIFIED)
+
+- **Asset**: `Sword.obj` from `assets/models/quaternius-weapons/`
+- **Scale**: 0.25 (uniform X/Y/Z) - Proper sword size
+- **Rotation**: (-90, 0, 225) degrees - Correct orientation in hand
+- **Offset**: (0, 0.1, 0) - Slight upward adjustment for better grip
+- **Bone**: `hand_r` (right hand bone in character skeleton)
+
+#### Attachment Method
+
+The `WeaponAttachment` component:
+1. Finds the character's Skeleton3D node
+2. Locates the specified hand bone (default: `hand_r`)
+3. Creates a BoneAttachment3D node
+4. Loads the weapon mesh (OBJ format)
+5. Wraps mesh in MeshInstance3D
+6. Applies scale, rotation, and offset
+7. Attaches to the bone for animation-driven movement
+
+#### Usage in Scene
+
+```gdscript
+[node name="WeaponAttachment" type="Node3D" parent="CharacterModel"]
+script = ExtResource("weapon_attachment_script")
+hand_bone_name = "hand_r"
+weapon_offset = Vector3(0, 0.1, 0)
+weapon_rotation = Vector3(-90, 0, 225)
+```
+
+The weapon automatically follows hand animations (idle, walk, attack, etc.).
+
 ## Future Enhancements
 
 - [ ] Measure exact asset dimensions in Blender
@@ -252,3 +289,4 @@ Room - Corridor - Room
 - [ ] Add procedural dungeon generation script
 - [ ] Document all asset variants (variations, details, etc.)
 - [ ] Create visual diagram of asset connections
+- [ ] Add more weapon configurations (axe, bow, staff, etc.)

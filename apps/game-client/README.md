@@ -18,9 +18,18 @@ godot --headless --script addons/gut/gut_cmdln.gd
 ## Controls
 
 - **WASD** - Move character
-- **Mouse** - Aim/target
-- **Left Click** - Attack
-- **Mouse Wheel** - Zoom camera
+- **Right Click** - Move to location
+- **Left Click** - Attack nearest enemy
+- **H** - Heal (20 HP)
+- **Mouse Wheel** - Zoom camera in/out
+
+## Features
+
+- **Character Models**: Quaternius character models with animations (Ranger for player, Peasant for enemies)
+- **Weapon System**: Sword attachment with proper scaling and rotation
+- **Auto-Facing**: Character automatically rotates to face enemies when attacking
+- **Animation System**: Runtime animation loading with Idle, Walk, and Sword_Attack animations
+- **Dungeon Environment**: Kenney dungeon assets with rooms and corridors
 
 ## Structure
 
@@ -57,6 +66,24 @@ Currently using Kenney's free dungeon asset pack (CC0 license):
 - Location: `assets/models/kenney-dungeon/`
 - Format: GLB files
 - License: CC0 (public domain)
+- Documentation: See `docs/kenney-dungeon-asset-guide.md` for detailed dimensions and usage
+
+### Quaternius Character Assets
+
+Using Quaternius character packs (CC0 license):
+- **Base Characters**: Universal Base Characters pack
+- **Outfits**: Modular Character Outfits - Fantasy pack
+- **Animations**: Universal Animation Library (120+ animations)
+- Location: `assets/characters/`
+- Documentation: See `docs/quaternius-character-guide.md` for details
+
+### Quaternius Weapon Assets
+
+Using Quaternius Medieval Weapons pack (CC0 license):
+- Location: `assets/models/quaternius-weapons/`
+- Current weapon: Sword.obj
+- Scale: 0.25, Rotation: (-90, 0, 225), Offset: (0, 0.1, 0)
+- Documentation: See `docs/kenney-dungeon-asset-guide.md` weapon section
 
 #### Working with Kenney Assets
 

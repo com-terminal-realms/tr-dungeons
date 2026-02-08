@@ -85,6 +85,10 @@ func _process(_delta: float) -> void:
 	# Handle left mouse click for attack
 	if Input.is_action_just_pressed("attack"):
 		_handle_attack()
+	
+	# Handle H key for heal
+	if Input.is_action_just_pressed("heal"):
+		_handle_heal()
 
 func _input(event: InputEvent) -> void:
 	# Handle right mouse click for movement
@@ -129,6 +133,13 @@ func _handle_attack() -> void:
 	if nearest_enemy:
 		print("Player: Attacking enemy at ", nearest_enemy.global_position)
 		_is_attacking = true
+		
+		# Rotate to face the enemy
+		var direction_to_enemy := global_position.direction_to(nearest_enemy.global_position)
+		direction_to_enemy.y = 0  # Keep rotation horizontal
+		if direction_to_enemy.length() > 0:
+			# Look away from enemy (character model faces backwards)
+			look_at(global_position - direction_to_enemy, Vector3.UP)
 		
 		# Play attack animation
 		if _animation_player:
@@ -215,3 +226,13 @@ func _update_animation(direction: Vector3) -> void:
 		# Play idle animation if not already playing
 		if _animation_player.current_animation != "Idle":
 			_animation_player.play("Idle")
+
+## Handle heal action (H key)
+func _handle_heal() -> void:
+	if not _health:
+		return
+	
+	# Heal for 20 HP
+	var heal_amount := 20
+	_health.heal(heal_amount)
+	print("Player: Healed for ", heal_amount, " HP. Current health: ", _health._data.current_health)

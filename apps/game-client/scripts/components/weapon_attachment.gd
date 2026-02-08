@@ -41,7 +41,7 @@ func _ready() -> void:
 	# Create MeshInstance3D and assign the mesh
 	weapon_instance = MeshInstance3D.new()
 	weapon_instance.mesh = weapon_mesh
-	weapon_instance.scale = Vector3(0.1, 0.1, 0.1)  # Scale down 10x
+	weapon_instance.scale = Vector3(0.25, 0.25, 0.25)  # Scale to proper sword size
 	bone_attachment.add_child(weapon_instance)
 	
 	# Apply offset and rotation

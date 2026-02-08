@@ -123,3 +123,25 @@ movement_component_path = NodePath("../Movement")
 ```
 
 This won't move arms/legs, but gives visual feedback that the character is moving.
+
+
+## Recent Updates
+
+### Character Rotation on Attack
+Characters now automatically rotate to face enemies when attacking. The rotation is inverted because character models face backwards by default:
+
+```gdscript
+# In attack handler
+var direction_to_enemy := global_position.direction_to(nearest_enemy.global_position)
+direction_to_enemy.y = 0
+if direction_to_enemy.length() > 0:
+	look_at(global_position - direction_to_enemy, Vector3.UP)  # Note: subtract, not add
+```
+
+### Weapon Attachment
+Weapons attach to the `hand_r` bone with the following verified configuration:
+- **Scale**: 0.25 (proper sword size)
+- **Rotation**: (-90, 0, 225) degrees
+- **Offset**: (0, 0.1, 0)
+
+See `docs/kenney-dungeon-asset-guide.md` for full weapon configuration details.
