@@ -70,7 +70,36 @@ This should be run as a background process so logs can be monitored.
 
 ## Asset Standards
 
-- Use Synty Studios POLYGON Dungeon Realms asset pack
+### Kenney Dungeon Assets
+
+- Using Kenney's free dungeon asset pack (CC0 license)
+- Assets are in GLB format, located in `assets/models/kenney-dungeon/`
+- Assets are modular pieces designed to be combined
+
+#### Asset Positioning Notes
+
+- Kenney assets have their geometry positioned relative to origin in specific ways
+- Floor tiles: The floor surface is typically at y=0 or slightly below
+- When using floor tiles, position at y=0 and scale up (e.g., 10x in X/Z) to cover room areas
+- Hide placeholder collision meshes with `visible = false` while keeping collision shapes
+- Some assets like `template-floor-big.glb` include multiple elements (floor + pillar)
+
+#### Recommended Floor Assets
+
+- `template-floor-detail.glb` - Detailed floor tile with good visual quality
+- `template-floor.glb` - Plain floor tile
+- `template-floor-layer.glb` - Layered floor variation
+- Complete rooms: `room-small.glb`, `room-wide.glb`, `room-large.glb` (include walls)
+
+#### Wall Assets
+
+- `template-wall.glb` - Standard wall segment
+- `template-wall-corner.glb` - Corner wall piece
+- `template-wall-half.glb` - Half-height wall
+
+### Legacy Asset Standards
+
+- Synty Studios POLYGON Dungeon Realms asset pack (if used)
 - All assets must be FBX format
 - Import settings: 1 unit = 1 meter
 - Materials must support PBR workflow

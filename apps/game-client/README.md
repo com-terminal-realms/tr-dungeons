@@ -51,6 +51,36 @@ godot --headless --script addons/gut/gut_cmdln.gd -gdir=tests/property
 
 ## Assets
 
-Place Synty Studios assets in `assets/models/` after import.
+### Kenney Dungeon Assets
 
-See [asset import guide](../../docs/asset-import.md) for details.
+Currently using Kenney's free dungeon asset pack (CC0 license):
+- Location: `assets/models/kenney-dungeon/`
+- Format: GLB files
+- License: CC0 (public domain)
+
+#### Working with Kenney Assets
+
+**Floor Tiles:**
+- Use `template-floor-detail.glb` for detailed floors
+- Scale 10x in X/Z to cover 20x20 room areas
+- Position at y=0 for proper visibility
+- Hide placeholder meshes: set `visible = false` on MeshInstance3D (keep CollisionShape3D)
+
+**Wall Pieces:**
+- `template-wall.glb` - Standard wall segment
+- `template-wall-corner.glb` - Corner pieces
+- Scale and position to match room dimensions
+
+**Complete Rooms:**
+- `room-small.glb`, `room-wide.glb`, `room-large.glb` include walls + floors
+- Use for quick room prototyping
+
+#### Asset Preview
+
+Open `scenes/rooms/dungeon_showcase.tscn` to preview different Kenney assets side-by-side.
+
+### Legacy: Synty Studios Assets
+
+If using Synty Studios POLYGON Dungeon Realms:
+- Place in `assets/models/` after import
+- See [asset import guide](../../docs/asset-import.md) for details

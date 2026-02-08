@@ -11,7 +11,7 @@ radius = 0.5
 height = 2.0
 
 [sub_resource type="StandardMaterial3D" id="Material_player"]
-albedo_color = Color(1, 0, 0, 1)
+albedo_color = Color(0.9, 0.7, 0.5, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.5

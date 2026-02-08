@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://scripts/camera/isometric_camera.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/utils/performance_monitor.gd" id="4"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor-detail.glb" id="5"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/room-small.glb" id="6"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/room-wide.glb" id="7"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/room-large.glb" id="8"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -14,7 +17,7 @@ size = Vector3(20, 0.2, 20)
 size = Vector3(20, 0.2, 20)
 
 [sub_resource type="StandardMaterial3D" id="Material_boss"]
-albedo_color = Color(1, 0, 0, 1)
+albedo_color = Color(0.2, 0.4, 0.1, 1)
 
 [sub_resource type="Environment" id="Environment_default"]
 background_mode = 1
@@ -39,8 +42,8 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room1/Floor"]
 shape = SubResource("BoxShape_floor")
 
-[node name="DungeonFloor" parent="NavigationRegion3D/Room1" instance=ExtResource("5")]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="DungeonRoom" parent="NavigationRegion3D/Room1" instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Room2" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
@@ -54,8 +57,8 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room2/Floor"]
 shape = SubResource("BoxShape_floor")
 
-[node name="DungeonFloor" parent="NavigationRegion3D/Room2" instance=ExtResource("5")]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="DungeonRoom" parent="NavigationRegion3D/Room2" instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Room3" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
@@ -69,8 +72,8 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room3/Floor"]
 shape = SubResource("BoxShape_floor")
 
-[node name="DungeonFloor" parent="NavigationRegion3D/Room3" instance=ExtResource("5")]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="DungeonRoom" parent="NavigationRegion3D/Room3" instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room3" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -87,8 +90,8 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room4/Floor"]
 shape = SubResource("BoxShape_floor")
 
-[node name="DungeonFloor" parent="NavigationRegion3D/Room4" instance=ExtResource("5")]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="DungeonRoom" parent="NavigationRegion3D/Room4" instance=ExtResource("7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room4" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
@@ -108,8 +111,8 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room5/Floor"]
 shape = SubResource("BoxShape_floor")
 
-[node name="DungeonFloor" parent="NavigationRegion3D/Room5" instance=ExtResource("5")]
-transform = Transform3D(10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0)
+[node name="DungeonRoom" parent="NavigationRegion3D/Room5" instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Boss" parent="NavigationRegion3D/Room5" instance=ExtResource("2")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0)
