@@ -1,100 +1,102 @@
-# Animation Setup Instructions - CRITICAL ISSUE FOUND
+# Animation Setup Instructions - UPDATED METHOD
 
 ## The Problem
 
-The AnimationPlayer is at the wrong level in the scene tree. The UAL animations target a Skeleton3D node that's inside the Male_Ranger model, but the AnimationPlayer can't reach it from the Player root.
+The UAL1_Standard.glb file contains animations, but they're in a separate scene file. We need to extract those animations and add them to the player's AnimationPlayer.
 
-## Solution: Move AnimationPlayer Inside CharacterModel
+## Solution: Use Animation Library
 
-You need to do this in the Godot editor:
+### Method 1: Direct Animation Library Import (Easiest)
 
-### 1. Open Godot Editor
+1. **Open Godot Editor**
+   ```bash
+   cd apps/game-client
+   godot --editor .
+   ```
 
-```bash
-cd apps/game-client
-godot --editor .
+2. **Open Player Scene**
+   - Navigate to `scenes/player/player.tscn`
+
+3. **Select AnimationPlayer**
+   - In Scene tree: `Player → CharacterModel → AnimationPlayer`
+
+4. **Add Animation Library**
+   - In the Inspector panel (right side), find "Libraries"
+   - Click the dropdown next to "Libraries"
+   - Click "Add Library"
+   - Name it: `ual` (or any name you want)
+
+5. **Load UAL Animations**
+   - Click the folder icon next to the new library
+   - Navigate to: `assets/characters/animations/UAL1_Standard.glb`
+   - Select it and click "Open"
+   - Godot will extract all animations from the file
+
+6. **Save the Scene**
+   - Press Ctrl+S to save
+   - The animations should now persist!
+
+7. **Test**
+   - Press F5 to run
+   - Character should animate when moving!
+
+### Method 2: If Method 1 Doesn't Work - Copy Animation Files
+
+If the above doesn't work, we need to manually reference the animation library:
+
+1. **Open the UAL scene**
+   - In FileSystem, navigate to `assets/characters/animations/`
+   - Double-click `UAL1_Standard.glb` to open it as a scene
+
+2. **Find the AnimationPlayer**
+   - Look for an AnimationPlayer node in the UAL scene tree
+   - Select it
+
+3. **Check Available Animations**
+   - In the Animation panel at bottom, you should see all animations
+   - Note down some animation names (Idle, Walk_F, Run_F, etc.)
+
+4. **Copy the Animation Library**
+   - With AnimationPlayer selected, look at Inspector
+   - Find "Libraries" section
+   - Right-click on the library → "Copy"
+
+5. **Paste into Player's AnimationPlayer**
+   - Open `scenes/player/player.tscn`
+   - Select `Player → CharacterModel → AnimationPlayer`
+   - In Inspector, find "Libraries"
+   - Right-click → "Paste"
+
+6. **Save and Test**
+
+### Method 3: Script-Based Animation (If all else fails)
+
+If the editor methods don't work, we can load animations at runtime via script. Let me know if you need this approach.
+
+## Checking If It Worked
+
+Run the game and check the console output. You should see:
+```
+Player: AnimationPlayer found with animations: [Idle, Walk_F, Walk_B, Run_F, ...]
 ```
 
-### 2. Open Player Scene
+If you still see `[]`, the animations didn't load.
 
-Navigate to: `scenes/player/player.tscn`
+## Common Issues
 
-### 3. Restructure the Scene Tree
+### "Animation not found: Idle" errors
+- Animations aren't loaded into AnimationPlayer
+- Make sure you saved the scene after adding the library
 
-Current structure (WRONG):
-```
-Player (CharacterBody3D)
-├── CharacterModel (Male_Ranger instance)
-│   └── Skeleton3D (inside here somewhere)
-├── AnimationPlayer ← Can't reach Skeleton3D!
-└── ...
-```
+### Animations load but character doesn't move
+- The skeleton paths might not match
+- The UAL skeleton is different from Male_Ranger skeleton
+- May need animation retargeting (advanced)
 
-You need to make it:
-```
-Player (CharacterBody3D)
-├── CharacterModel (Male_Ranger instance)
-│   ├── Skeleton3D
-│   └── AnimationPlayer ← Move it here!
-└── ...
-```
-
-### 4. Steps to Move AnimationPlayer
-
-1. In the Scene tree, **right-click** on `AnimationPlayer`
-2. Select **"Reparent"** or **"Change Parent"**
-3. Select `CharacterModel` as the new parent
-4. Click OK
-
-OR:
-
-1. **Drag** the `AnimationPlayer` node
-2. **Drop** it onto the `CharacterModel` node
-
-### 5. Import Animations
-
-Now with AnimationPlayer inside CharacterModel:
-
-1. Select the `AnimationPlayer` node
-2. Click **Animation** panel at bottom
-3. Click **Animation** dropdown → **Manage Animations**
-4. Click **Load**
-5. Navigate to: `assets/characters/animations/UAL1_Standard.glb`
-6. Select and **Open**
-7. All animations should now import successfully!
-
-### 6. Update the Player Script
-
-The player script needs to find the AnimationPlayer at the new location.
-
-Change this line in `scenes/player/player.gd`:
-
-```gdscript
-# OLD (wrong path):
-_animation_player = $AnimationPlayer
-
-# NEW (correct path):
-_animation_player = $CharacterModel/AnimationPlayer
-```
-
-### 7. Test
-
-1. Save the scene (Ctrl+S)
-2. Press F5 to run
-3. Character should now animate when moving!
-
-## Why This Happens
-
-Skeletal animations need to target a Skeleton3D node. The UAL animations have bone tracks like:
-- `Skeleton3D:Hips`
-- `Skeleton3D:Spine`
-- etc.
-
-If the AnimationPlayer isn't in the same subtree as the Skeleton3D, it can't find these bones and the animations won't work.
-
-## Alternative: Animation Root Path
-
-Instead of moving the AnimationPlayer, you could set its `root_node` property to point to CharacterModel, but moving it is simpler and more reliable.
+### Can't find AnimationPlayer in CharacterModel
+- Close and reopen the scene
+- Or restart Godot editor
+- The node should be there after the recent changes
 
 
 ## Available Animations
