@@ -5,13 +5,7 @@
 [ext_resource type="Script" path="res://scripts/components/movement.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/components/combat.gd" id="4"]
 [ext_resource type="PackedScene" uid="uid://health_bar_scene_001" path="res://scenes/ui/health_bar.tscn" id="5"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_player"]
-radius = 0.5
-height = 2.0
-
-[sub_resource type="StandardMaterial3D" id="Material_player"]
-albedo_color = Color(0.9, 0.7, 0.5, 1)
+[ext_resource type="PackedScene" path="res://assets/characters/outfits/Male_Ranger.gltf" id="6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_player"]
 radius = 0.5
@@ -20,10 +14,8 @@ height = 2.0
 [node name="Player" type="CharacterBody3D" groups=["player"]]
 script = ExtResource("1")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_player")
-surface_material_override/0 = SubResource("Material_player")
+[node name="CharacterModel" parent="." instance=ExtResource("6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

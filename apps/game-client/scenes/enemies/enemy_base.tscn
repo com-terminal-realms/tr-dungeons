@@ -7,13 +7,7 @@
 [ext_resource type="Script" path="res://scripts/components/enemy_ai.gd" id="5"]
 [ext_resource type="PackedScene" uid="uid://health_bar_scene_001" path="res://scenes/ui/health_bar.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://detection_indicator_001" path="res://scenes/ui/detection_indicator.tscn" id="7"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
-radius = 0.4
-height = 1.8
-
-[sub_resource type="StandardMaterial3D" id="Material_enemy"]
-albedo_color = Color(0.4, 0.6, 0.2, 1)
+[ext_resource type="PackedScene" path="res://assets/characters/outfits/Male_Peasant.gltf" id="8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape_enemy"]
 radius = 0.4
@@ -22,10 +16,8 @@ height = 1.8
 [node name="EnemyBase" type="CharacterBody3D" groups=["enemies"]]
 script = ExtResource("1")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
-mesh = SubResource("CapsuleMesh_enemy")
-surface_material_override/0 = SubResource("Material_enemy")
+[node name="CharacterModel" parent="." instance=ExtResource("8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
