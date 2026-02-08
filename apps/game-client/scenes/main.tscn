@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://b7qxvxvxvxvxv"]
+[gd_scene load_steps=9 format=3 uid="uid://b7qxvxvxvxvxv"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="0"]
 [ext_resource type="PackedScene" uid="uid://player_scene_001" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://enemy_base_scene_001" path="res://scenes/enemies/enemy_base.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/camera/isometric_camera.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/utils/performance_monitor.gd" id="4"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/template-floor-big.glb" id="5"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -37,6 +38,9 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room1/Floor"]
 shape = SubResource("BoxShape_floor")
 
+[node name="DungeonFloor" parent="NavigationRegion3D/Room1" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+
 [node name="Room2" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
 
@@ -48,6 +52,9 @@ mesh = SubResource("BoxMesh_floor")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room2/Floor"]
 shape = SubResource("BoxShape_floor")
 
+[node name="DungeonFloor" parent="NavigationRegion3D/Room2" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+
 [node name="Room3" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 40)
 
@@ -58,6 +65,9 @@ mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room3/Floor"]
 shape = SubResource("BoxShape_floor")
+
+[node name="DungeonFloor" parent="NavigationRegion3D/Room3" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room3" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -72,6 +82,9 @@ mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room4/Floor"]
 shape = SubResource("BoxShape_floor")
+
+[node name="DungeonFloor" parent="NavigationRegion3D/Room4" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room4" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
@@ -89,6 +102,9 @@ mesh = SubResource("BoxMesh_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room5/Floor"]
 shape = SubResource("BoxShape_floor")
+
+[node name="DungeonFloor" parent="NavigationRegion3D/Room5" instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 
 [node name="Boss" parent="NavigationRegion3D/Room5" instance=ExtResource("2")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0)
