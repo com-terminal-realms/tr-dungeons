@@ -65,7 +65,7 @@ The implementation follows an incremental approach: core data structures → mea
     - Write doorway dimension measurement
     - _Requirements: 1.4, 1.5, 1.6_
 
-- [ ] 4. Checkpoint - Ensure measurement tests pass
+- [x] 4. Checkpoint - Ensure measurement tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Implement rotation and transformation
