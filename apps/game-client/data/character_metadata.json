@@ -1,0 +1,51 @@
+{
+	"characters": {
+		"enemy": {
+			"bounding_box": {
+				"position": {
+					"x": -0.929432511329651,
+					"y": -0.00950966961681843,
+					"z": -0.311113357543945
+				},
+				"size": {
+					"x": 1.8588650226593,
+					"y": 2.80950951576233,
+					"z": 1.16587209701538
+				}
+			},
+			"character_height": 2.8095096219331,
+			"character_name": "enemy",
+			"character_type": "enemy",
+			"collision_height": 2.8095096219331,
+			"collision_radius": 0.929432511329651,
+			"floor_offset": 0.00950966961681843,
+			"measurement_accuracy": 0.01,
+			"measurement_timestamp": 1770750596,
+			"scene_path": "res://scenes/enemies/enemy_base.tscn"
+		},
+		"player": {
+			"bounding_box": {
+				"position": {
+					"x": -0.899414658546448,
+					"y": -1.00396728515625,
+					"z": -0.31111353635788
+				},
+				"size": {
+					"x": 1.7988293170929,
+					"y": 2.37962579727173,
+					"z": 1.16587197780609
+				}
+			},
+			"character_height": 2.37962567806244,
+			"character_name": "player",
+			"character_type": "player",
+			"collision_height": 2.37962567806244,
+			"collision_radius": 0.899414658546448,
+			"floor_offset": 1.00396728515625,
+			"measurement_accuracy": 0.01,
+			"measurement_timestamp": 1770750596,
+			"scene_path": "res://scenes/player/player.tscn"
+		}
+	},
+	"version": "1.0"
+}

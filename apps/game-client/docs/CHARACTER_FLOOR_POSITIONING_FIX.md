@@ -2,87 +2,120 @@
 
 ## Problem
 
-All characters (player, enemies, boss) were floating 1 unit above the floor. As enemies moved toward the player, they would descend slightly but remained floating.
+All characters (player, enemies, boss) were floating above or sinking into the floor because their origin points are at different heights relative to their feet.
 
 ## Root Cause
 
-Characters were positioned at `y=1` in the scene, but the floor height is `y=0` (approximately, with tiny floating-point precision errors).
+Different character models have their origin (pivot point) at different locations:
+- **Player**: Origin is 1.004 units ABOVE the feet (feet are below origin)
+- **Enemies**: Origin is 0.0095 units ABOVE the feet (almost at feet level)
 
-### Asset Floor Heights
+When we positioned characters at y=0 (floor level), we were placing their ORIGIN at floor level, not their FEET.
 
-From `data/asset_metadata.json`:
-- **room-large**: floor_height ≈ 0.0 (actually -0.0000000000000170777173462812)
-- **corridor**: floor_height ≈ 0.0 (actually -0.00000000000000288764564323129)
+## Solution: Automated Character Measurement System
 
-These tiny negative values are floating-point precision errors and should be treated as `0.0`.
+We created an automated system to measure character models and store their floor offsets, similar to how we measure dungeon assets.
 
-## Solution
+### New Components
 
-Changed all character Y positions from `1.0` to `0.0`:
+1. **CharacterMetadata** (`scripts/utils/character_metadata.gd`)
+   - Stores floor_offset, character_height, bounding_box, collision data
+   - Similar to AssetMetadata but for characters
 
-### Before (Floating)
-```gdscript
-Player: transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)  # y=1
-Enemy1 (Room3): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)  # y=1
-Enemy1 (Room4): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)  # y=1
-Enemy2 (Room4): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1, 0)  # y=1
-Boss (Room5): transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0)  # y=1
+2. **CharacterMetadataDatabase** (`scripts/utils/character_metadata_database.gd`)
+   - Manages collection of character measurements
+   - Saves/loads from `data/character_metadata.json`
+
+3. **Automated Measurement Script** (`scripts/utils/measure_all_characters.gd`)
+   - Measures all character scenes automatically
+   - Calculates floor offset by finding lowest mesh point
+   - Generates `character_metadata.json`
+
+### Measurement Results
+
+From `data/character_metadata.json`:
+```json
+{
+  "player": {
+    "floor_offset": 1.0040,
+    "character_height": 2.3796,
+    "scene_path": "res://scenes/player/player.tscn"
+  },
+  "enemy": {
+    "floor_offset": 0.0095,
+    "character_height": 2.8095,
+    "scene_path": "res://scenes/enemies/enemy_base.tscn"
+  }
+}
 ```
 
-### After (On Floor)
+### Character Positions in main.tscn
+
+Characters are now positioned at floor_height + floor_offset:
+
 ```gdscript
-Player: transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)  # y=0
-Enemy1 (Room3): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)  # y=0
-Enemy1 (Room4): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)  # y=0
-Enemy2 (Room4): transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)  # y=0
-Boss (Room5): transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)  # y=0
+# Floor is at y=0, so:
+Player: y = 0 + 1.004 = 1.004
+Enemies: y = 0 + 0.01 = 0.01  (rounded from 0.0095)
 ```
 
-## Why Characters Were at Y=1
+## Workflow Integration
 
-The original positioning likely assumed:
-1. Character origin is at their feet
-2. Characters need to be 1 unit above floor for visibility
-3. Or it was a placeholder value during development
+### When Adding New Characters
 
-However, the character models appear to have their origin at ground level, so `y=0` is correct.
+1. Add character scene path to `measure_all_characters.gd`
+2. Run measurement script:
+   ```bash
+   cd apps/game-client
+   godot --headless --script scripts/utils/measure_all_characters.gd
+   ```
+3. Commit updated `character_metadata.json`
+4. Use floor_offset when positioning characters in scenes
 
-## Descending Behavior Explained
+### Validation
 
-The "descending while moving" behavior was likely due to:
-1. Navigation system calculating paths on the navigation mesh (at floor level)
-2. Characters interpolating from their start position (y=1) to target position (y=0)
-3. This created the visual effect of descending while moving
+Run validation to check all characters are at correct floor height:
+```bash
+cd apps/game-client
+godot --headless --script scripts/utils/validate_character_positions.gd
+```
 
-## Testing
+The validation script now automatically loads character metadata and uses the correct floor offsets.
 
-After the fix:
-- ✅ All characters should be standing on the floor
-- ✅ No floating or hovering
-- ✅ Movement should be smooth without vertical changes
-- ✅ Characters should maintain floor contact while moving
+## Benefits
 
-## Related to Task 8
+1. **Automatic**: No manual measurement needed
+2. **Consistent**: All characters use same measurement system
+3. **Validated**: Validation script ensures correct positioning
+4. **Version Controlled**: Measurements stored in JSON, tracked in git
+5. **Scalable**: Easy to add new character types
 
-This fix addresses **Task 8: Validate Character Floor Positioning** from the dungeon-asset-mapping-bugfixes spec:
+## Comparison to Manual Approach
 
-- Task 8.1: PlacedCharacter data structure ✅
-- Task 8.2: _find_containing_asset() helper ✅
-- Task 8.3: validate_character_positioning() function ✅
-- Task 8.4: POC validation script update ✅
-- Task 8.5: Property test for character positioning ✅
-- Task 8.6: Unit tests for edge cases ✅
+### Before (Manual)
+- Hardcoded floor offsets in validation script
+- Had to visually inspect and guess offsets
+- Easy to make mistakes when adding new characters
+- No documentation of measurements
 
-The validation system was implemented, and this fix applies the correct positions based on that validation.
+### After (Automated)
+- Measurements stored in database
+- Automatic calculation from mesh geometry
+- Validation uses database automatically
+- Clear documentation and workflow
+
+## Related Files
+
+- `apps/game-client/scripts/utils/character_metadata.gd` - Character metadata class
+- `apps/game-client/scripts/utils/character_metadata_database.gd` - Database class
+- `apps/game-client/scripts/utils/measure_all_characters.gd` - Measurement script
+- `apps/game-client/scripts/utils/validate_character_positions.gd` - Validation script (updated)
+- `apps/game-client/data/character_metadata.json` - Measurement database
+- `apps/game-client/scenes/main.tscn` - Character positions (updated)
 
 ## Future Improvements
 
-1. **Automated validation**: Run character positioning validation on scene load
-2. **Visual debugging**: Add option to show character bounding boxes
-3. **Character height offset**: If characters need to be above floor (e.g., for shadows), use a consistent offset
-4. **Asset-specific offsets**: Different character types might need different floor offsets
-
-## Files Changed
-
-- `apps/game-client/scenes/main.tscn` - Updated all character Y positions to 0
-- `apps/game-client/docs/CHARACTER_FLOOR_POSITIONING_FIX.md` - This document
+1. **Automatic scene updates**: Script to update all character Y positions in scenes
+2. **Editor integration**: Godot plugin to show floor offset in inspector
+3. **Animation offsets**: Measure floor offset for different animations
+4. **Collision shapes**: Auto-generate collision shapes from measurements
