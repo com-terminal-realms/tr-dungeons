@@ -27,7 +27,7 @@ Each task builds on previous work, with property-based tests placed close to the
   - **Property 14: Collision Shape Dimensions**
   - **Validates: Requirements 4.4**
 
-- [-] 2. Implement door state management and collision control
+- [x] 2. Implement door state management and collision control
   - [x] 2.1 Implement door state properties and getters
     - Add `is_open` boolean property with setter
     - Implement `is_animating()` method returning animation state
@@ -41,15 +41,15 @@ Each task builds on previous work, with property-based tests placed close to the
     - Call collision update immediately when state changes
     - _Requirements: 4.1, 4.2, 4.3_
   
-  - [-] 2.3 Write property test for collision state matching door state
+  - [x] 2.3 Write property test for collision state matching door state
     - **Property 12: Collision State Matches Door State**
     - **Validates: Requirements 4.1, 4.2**
   
-  - [ ] 2.4 Write property test for immediate collision update
+  - [x] 2.4 Write property test for immediate collision update
     - **Property 13: Immediate Collision Update**
     - **Validates: Requirements 4.3**
   
-  - [ ] 2.5 Write property test for player obstruction prevention
+  - [x] 2.5 Write property test for player obstruction prevention
     - **Property 15: Player Obstruction Prevention**
     - **Validates: Requirements 4.5**
 
@@ -72,30 +72,30 @@ Each task builds on previous work, with property-based tests placed close to the
     - Update collision state immediately when animation starts
     - _Requirements: 3.1, 3.2, 3.4, 3.5, 4.3_
   
-  - [ ] 3.3 Write property test for animation rotation correctness
+  - [x] 3.3 Write property test for animation rotation correctness
     - **Property 9: Animation Rotation Correctness**
     - **Validates: Requirements 3.1, 3.2**
   
-  - [ ] 3.4 Write property test for animation blocking
+  - [x] 3.4 Write property test for animation blocking
     - **Property 10: Animation Blocking**
     - **Validates: Requirements 3.3**
   
-  - [ ] 3.5 Write property test for animation completion signal
+  - [x] 3.5 Write property test for animation completion signal
     - **Property 11: Animation Completion Signal**
     - **Validates: Requirements 3.5**
 
-- [ ] 4. Checkpoint - Test door scene in isolation
+- [x] 4. Checkpoint - Test door scene in isolation
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement player interaction detection
-  - [ ] 5.1 Implement interaction zone detection
+- [x] 5. Implement player interaction detection
+  - [x] 5.1 Implement interaction zone detection
     - Connect Area3D `body_entered` signal to `_on_interaction_area_entered`
     - Connect Area3D `body_exited` signal to `_on_interaction_area_exited`
     - Check if entered body is player (has "Player" group or class)
     - Track player presence with boolean flag
     - _Requirements: 2.1, 2.4_
   
-  - [ ] 5.2 Implement highlight shader control
+  - [x] 5.2 Implement highlight shader control
     - Implement `set_highlight(enabled: bool)` method
     - Create ShaderMaterial with emissive glow shader
     - Set emissive color to #FFD700 (gold) when enabled
@@ -104,16 +104,16 @@ Each task builds on previous work, with property-based tests placed close to the
     - Call `set_highlight(false)` when player exits zone
     - _Requirements: 5.1, 5.2, 5.3_
   
-  - [ ] 5.3 Write property test for interaction zone highlight toggle
+  - [x] 5.3 Write property test for interaction zone highlight toggle
     - **Property 5: Interaction Zone Highlight Toggle**
     - **Validates: Requirements 2.1, 2.4, 5.1, 5.2**
   
-  - [ ] 5.4 Write property test for highlight shader configuration
+  - [x] 5.4 Write property test for highlight shader configuration
     - **Property 16: Highlight Shader Configuration**
     - **Validates: Requirements 5.3**
 
-- [ ] 6. Implement input handling for door interaction
-  - [ ] 6.1 Implement keyboard input handling
+- [x] 6. Implement input handling for door interaction
+  - [x] 6.1 Implement keyboard input handling
     - Override `_input(event: InputEvent)` method
     - Check if player is in interaction zone
     - Check if E key is pressed (InputEventKey with keycode KEY_E)
@@ -121,7 +121,7 @@ Each task builds on previous work, with property-based tests placed close to the
     - Emit `interaction_requested` signal
     - _Requirements: 2.2_
   
-  - [ ] 6.2 Implement mouse click input handling
+  - [x] 6.2 Implement mouse click input handling
     - Add `input_event` signal connection to StaticBody3D
     - Implement `_on_input_event` callback
     - Check if event is mouse button press (MOUSE_BUTTON_LEFT)
@@ -130,45 +130,45 @@ Each task builds on previous work, with property-based tests placed close to the
     - Emit `interaction_requested` signal
     - _Requirements: 2.3_
   
-  - [ ] 6.3 Write property test for keyboard interaction toggle
+  - [x] 6.3 Write property test for keyboard interaction toggle
     - **Property 6: Keyboard Interaction Toggle**
     - **Validates: Requirements 2.2**
   
-  - [ ] 6.4 Write property test for mouse interaction toggle
+  - [x] 6.4 Write property test for mouse interaction toggle
     - **Property 7: Mouse Interaction Toggle**
     - **Validates: Requirements 2.3**
 
-- [ ] 7. Implement audio feedback
-  - [ ] 7.1 Add audio resources and configuration
+- [x] 7. Implement audio feedback
+  - [x] 7.1 Add audio resources and configuration
     - Create placeholder audio files (door_open.ogg, door_close.ogg)
     - Configure AudioStreamPlayer3D with max_distance = 20.0
     - Set attenuation model to ATTENUATION_INVERSE_DISTANCE
     - _Requirements: 7.3, 7.4_
   
-  - [ ] 7.2 Implement sound effect playback
+  - [x] 7.2 Implement sound effect playback
     - Implement `_play_sound_effect(sound_type: String)` method
     - Load appropriate audio stream based on sound_type
     - Call from `open()` method with "open" parameter
     - Call from `close()` method with "close" parameter
     - _Requirements: 7.1, 7.2_
   
-  - [ ] 7.3 Write property test for opening sound playback
+  - [x] 7.3 Write property test for opening sound playback
     - **Property 22: Opening Sound Playback**
     - **Validates: Requirements 7.1**
   
-  - [ ] 7.4 Write property test for closing sound playback
+  - [x] 7.4 Write property test for closing sound playback
     - **Property 23: Closing Sound Playback**
     - **Validates: Requirements 7.2**
   
-  - [ ] 7.5 Write property test for 3D audio configuration
+  - [x] 7.5 Write property test for 3D audio configuration
     - **Property 24: 3D Audio Configuration**
     - **Validates: Requirements 7.3**
   
-  - [ ] 7.6 Write property test for audio range configuration
+  - [x] 7.6 Write property test for audio range configuration
     - **Property 25: Audio Range Configuration**
     - **Validates: Requirements 7.4**
 
-- [ ] 8. Checkpoint - Test complete door functionality
+- [x] 8. Checkpoint - Test complete door functionality
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 9. Create DoorManager singleton
@@ -203,7 +203,7 @@ Each task builds on previous work, with property-based tests placed close to the
     - Return array of ConnectionPoint objects
     - _Requirements: 1.1_
   
-  - [ ] 10.3 Write property test for connection point detection completeness
+  - [x] 10.3 Write property test for connection point detection completeness
     - **Property 1: Connection Point Detection Completeness**
     - **Validates: Requirements 1.1**
 
@@ -241,52 +241,52 @@ Each task builds on previous work, with property-based tests placed close to the
     - Register door with DoorManager
     - _Requirements: 1.1, 1.2, 1.3_
   
-  - [ ] 11.5 Write property test for door instantiation and alignment
+  - [x] 11.5 Write property test for door instantiation and alignment
     - **Property 2: Door Instantiation and Alignment**
     - **Validates: Requirements 1.2, 1.3**
   
-  - [ ] 11.6 Write property test for correct asset usage
+  - [x] 11.6 Write property test for correct asset usage
     - **Property 3: Correct Asset Usage**
     - **Validates: Requirements 1.4**
   
-  - [ ] 11.7 Write property test for no door overlap
+  - [x] 11.7 Write property test for no door overlap
     - **Property 4: No Door Overlap**
     - **Validates: Requirements 1.5**
   
-  - [ ] 11.8 Write property test for asset metadata integration
+  - [x] 11.8 Write property test for asset metadata integration
     - **Property 26: Asset Metadata Integration**
     - **Validates: Requirements 8.1**
   
-  - [ ] 11.9 Write property test for connection point calculation integration
+  - [x] 11.9 Write property test for connection point calculation integration
     - **Property 27: Connection Point Calculation Integration**
     - **Validates: Requirements 8.2**
 
-- [ ] 12. Implement layout validation integration
-  - [ ] 12.1 Integrate with validation tool
+- [x] 12. Implement layout validation integration
+  - [x] 12.1 Integrate with validation tool
     - Implement validation check after door placement
     - Call existing validation script (validate_poc_layout.gd pattern)
     - Check for gaps or overlaps exceeding 0.1 unit tolerance
     - _Requirements: 8.3_
   
-  - [ ] 12.2 Implement validation warning logging
+  - [x] 12.2 Implement validation warning logging
     - Log warnings for any gaps or overlaps detected
     - Include door position and suggested corrections in warning
     - Format warnings for easy debugging
     - _Requirements: 8.4_
   
-  - [ ] 12.3 Write property test for validation tool integration
+  - [x] 12.3 Write property test for validation tool integration
     - **Property 28: Validation Tool Integration**
     - **Validates: Requirements 8.3**
   
-  - [ ] 12.4 Write property test for validation warning logging
+  - [x] 12.4 Write property test for validation warning logging
     - **Property 29: Validation Warning Logging**
     - **Validates: Requirements 8.4**
 
-- [ ] 13. Checkpoint - Test door placement system
+- [x] 13. Checkpoint - Test door placement system
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Implement UI prompt system
-  - [ ] 14.1 Create interaction prompt UI
+  - [x] 14.1 Create interaction prompt UI
     - Create `scenes/ui/interaction_prompt.tscn`
     - Add Label node with text "Press E to Open/Close"
     - Style label with readable font and background
@@ -294,7 +294,7 @@ Each task builds on previous work, with property-based tests placed close to the
     - Initially hide the label
     - _Requirements: 5.5_
   
-  - [ ] 14.2 Implement prompt display logic in DoorManager
+  - [x] 14.2 Implement prompt display logic in DoorManager
     - Add reference to interaction_prompt UI node
     - Implement `_show_interaction_prompt()` method
     - Implement `_hide_interaction_prompt()` method
@@ -304,25 +304,25 @@ Each task builds on previous work, with property-based tests placed close to the
     - Hide prompt when player exits all door interaction zones
     - _Requirements: 5.5_
   
-  - [ ] 14.3 Write property test for interaction prompt display
+  - [x] 14.3 Write property test for interaction prompt display
     - **Property 17: Interaction Prompt Display**
     - **Validates: Requirements 5.5**
 
 - [ ] 15. Implement state persistence
-  - [ ] 15.1 Implement state storage methods
+  - [x] 15.1 Implement state storage methods
     - Implement `get_door_state(door_id: String)` method
     - Implement `set_door_state(door_id: String, is_open: bool)` method
     - Update door_states dictionary when doors change state
     - Emit door_state_changed signal on state changes
     - _Requirements: 6.1_
   
-  - [ ] 15.2 Implement save serialization
+  - [x] 15.2 Implement save serialization
     - Implement `save_door_states()` method
     - Serialize door_states dictionary to JSON-compatible format
     - Return dictionary with "doors" key containing all states
     - _Requirements: 6.4_
   
-  - [ ] 15.3 Implement load deserialization
+  - [x] 15.3 Implement load deserialization
     - Implement `load_door_states(state_data: Dictionary)` method
     - Parse state_data and extract door states
     - Update door_states dictionary
@@ -330,42 +330,42 @@ Each task builds on previous work, with property-based tests placed close to the
     - Handle missing or invalid door IDs gracefully
     - _Requirements: 6.5_
   
-  - [ ] 15.4 Implement initial state setup
+  - [x] 15.4 Implement initial state setup
     - Initialize all doors to closed state in `place_doors_at_connections()`
     - Set is_open = false for all new door instances
     - _Requirements: 6.3_
   
-  - [ ] 15.5 Write property test for state storage on change
+  - [x] 15.5 Write property test for state storage on change
     - **Property 18: State Storage on Change**
     - **Validates: Requirements 6.1**
   
-  - [ ] 15.6 Write property test for state stability during navigation
+  - [x] 15.6 Write property test for state stability during navigation
     - **Property 19: State Stability During Navigation**
     - **Validates: Requirements 6.2**
   
-  - [ ] 15.7 Write property test for initial state consistency
+  - [x] 15.7 Write property test for initial state consistency
     - **Property 20: Initial State Consistency**
     - **Validates: Requirements 6.3**
   
-  - [ ] 15.8 Write property test for save/load round trip
+  - [x] 15.8 Write property test for save/load round trip
     - **Property 21: Save/Load Round Trip**
     - **Validates: Requirements 6.4, 6.5**
 
 - [ ] 16. Implement multi-asset support
-  - [ ] 16.1 Add asset variant configuration
+  - [x] 16.1 Add asset variant configuration
     - Add `door_asset_path` exported property to Door class
     - Default to "gate-door.glb"
     - Support "gate.glb" and "gate-door-window.glb" variants
     - Load mesh based on door_asset_path property
     - _Requirements: 8.5_
   
-  - [ ] 16.2 Update DoorManager to support asset variants
+  - [x] 16.2 Update DoorManager to support asset variants
     - Add optional asset_variant parameter to `_instantiate_door_at()`
     - Set door_asset_path when instantiating doors
     - Load metadata for all asset variants from asset_metadata.json
     - _Requirements: 8.5_
   
-  - [ ] 16.3 Write property test for multi-asset support
+  - [x] 16.3 Write property test for multi-asset support
     - **Property 30: Multi-Asset Support**
     - **Validates: Requirements 8.5**
 
@@ -376,13 +376,13 @@ Each task builds on previous work, with property-based tests placed close to the
     - Pass dungeon root node as parameter
     - _Requirements: 1.1, 1.2_
   
-  - [ ] 17.2 Test door placement in POC dungeon
+  - [x] 17.2 Test door placement in POC dungeon
     - Run game and verify doors appear at connection points
     - Verify doors are aligned with walls
     - Verify no overlaps or gaps
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
-- [ ] 18. Final checkpoint - Complete integration testing
+- [x] 18. Final checkpoint - Complete integration testing
   - Ensure all tests pass, ask the user if questions arise.
   - Test complete door system in actual game environment
   - Verify all interactions work correctly

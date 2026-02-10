@@ -9,6 +9,8 @@ signal interaction_requested()
 signal state_changed(is_open: bool)
 signal animation_started()
 signal animation_completed()
+signal player_entered_zone()
+signal player_exited_zone()
 
 # Exported properties
 @export var door_id: String = ""
@@ -35,6 +37,15 @@ func _ready() -> void:
 	if interaction_area:
 		interaction_area.body_entered.connect(_on_interaction_area_entered)
 		interaction_area.body_exited.connect(_on_interaction_area_exited)
+	
+	# Connect mouse input on collision body
+	if collision_body:
+		collision_body.input_event.connect(_on_input_event)
+	
+	# Configure audio player
+	if audio_player:
+		audio_player.max_distance = 20.0
+		audio_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_INVERSE_DISTANCE
 	
 	# Initialize collision state
 	_update_collision_state()
@@ -163,6 +174,7 @@ func _on_interaction_area_entered(body: Node3D) -> void:
 	if body.is_in_group("Player") or body.name == "Player":
 		_player_in_zone = true
 		set_highlight(true)
+		player_entered_zone.emit()
 		interaction_requested.emit()
 
 
@@ -172,6 +184,20 @@ func _on_interaction_area_exited(body: Node3D) -> void:
 	if body.is_in_group("Player") or body.name == "Player":
 		_player_in_zone = false
 		set_highlight(false)
+		player_exited_zone.emit()
+
+
+## Private: Handle mouse click input on door
+func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	# Check if event is a mouse button press
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			# Check if player is within interaction range
+			# For now, we'll just check if player is in the interaction zone
+			if _player_in_zone:
+				toggle()
+				interaction_requested.emit()
 
 
 ## Private: Animate door using AnimationPlayer
@@ -239,10 +265,28 @@ func _play_sound_effect(sound_type: String) -> void:
 	if not audio_player:
 		return
 	
-	# TODO: Load actual audio files
-	# For now, just prepare the audio player
-	# audio_player.stream = load("res://assets/audio/door_" + sound_type + ".ogg")
-	# audio_player.play()
+	# Load audio file based on sound type
+	var audio_path: String = ""
+	if sound_type == "open":
+		audio_path = "res://assets/audio/door_open.ogg"
+	elif sound_type == "close":
+		audio_path = "res://assets/audio/door_close.ogg"
+	else:
+		push_warning("Door: Unknown sound type '%s'" % sound_type)
+		return
+	
+	# Check if file exists
+	if not FileAccess.file_exists(audio_path):
+		push_warning("Door: Audio file not found: %s" % audio_path)
+		return
+	
+	# Load and play audio
+	var audio_stream := load(audio_path) as AudioStream
+	if audio_stream:
+		audio_player.stream = audio_stream
+		audio_player.play()
+	else:
+		push_warning("Door: Failed to load audio stream from %s" % audio_path)
 
 
 func _exit_tree() -> void:

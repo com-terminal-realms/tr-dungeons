@@ -21,6 +21,7 @@ var _combat: Combat
 var _path_update_timer: float = 0.0
 var _detection_indicator: Node3D = null
 var _animation_player: AnimationPlayer = null
+var _previous_state: State = State.IDLE  # Track state changes for audio triggers
 
 func _ready() -> void:
 	# Find owner node
@@ -86,6 +87,10 @@ func _update_ai_state() -> void:
 		if _detection_indicator and _detection_indicator.has_method("show_indicator"):
 			_detection_indicator.show_indicator()
 		
+		# Play alert sound when first detecting player (IDLE -> CHASE transition)
+		if _previous_state == State.IDLE and _state != State.ATTACK:
+			_play_alert_sound()
+		
 		# Check if in attack range
 		if _combat.is_in_range(player):
 			_state = State.ATTACK
@@ -98,6 +103,9 @@ func _update_ai_state() -> void:
 		# Hide detection indicator
 		if _detection_indicator and _detection_indicator.has_method("hide_indicator"):
 			_detection_indicator.hide_indicator()
+	
+	# Update previous state for next frame
+	_previous_state = _state
 
 ## Update navigation path to target
 func _update_navigation() -> void:
@@ -210,3 +218,11 @@ func _play_animation(anim_name: String) -> void:
 	
 	if _animation_player.has_animation(anim_name):
 		_animation_player.play(anim_name)
+
+
+## Play alert sound when detecting player
+func _play_alert_sound() -> void:
+	# Get main scene to play alert sound
+	var main_scene := get_tree().root.get_node_or_null("Main")
+	if main_scene and main_scene.has_method("play_monster_alert"):
+		main_scene.play_monster_alert()

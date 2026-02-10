@@ -16,6 +16,12 @@ var door_metadata: Dictionary = {}
 # Door scene
 var door_scene: PackedScene
 
+# UI reference
+var interaction_prompt: Control = null
+
+# Track doors with player in interaction zone
+var doors_with_player: Array[String] = []
+
 
 func _ready() -> void:
 	door_scene = load("res://scenes/door.tscn")
@@ -89,6 +95,13 @@ func register_door(door: Door) -> void:
 	# Connect to door's state_changed signal
 	if not door.state_changed.is_connected(_on_door_state_changed):
 		door.state_changed.connect(_on_door_state_changed.bind(door.door_id))
+	
+	# Connect to door's player zone signals
+	if not door.player_entered_zone.is_connected(_on_player_entered_door_zone):
+		door.player_entered_zone.connect(_on_player_entered_door_zone.bind(door.door_id))
+	
+	if not door.player_exited_zone.is_connected(_on_player_exited_door_zone):
+		door.player_exited_zone.connect(_on_player_exited_door_zone.bind(door.door_id))
 	
 	print("DoorManager: Registered door '%s' at %s" % [door.door_id, door.global_position])
 
@@ -180,6 +193,9 @@ func place_doors_at_connections(dungeon_root: Node3D) -> void:
 			dungeon_root.add_child(door)
 			register_door(door)
 			print("DoorManager: %s door placed at %s" % [config["name"], config["position"]])
+	
+	# Validate door placements after all doors are placed
+	_validate_door_placements(dungeon_root)
 
 
 ## Detect connection points between rooms and corridors
@@ -392,3 +408,154 @@ func _on_door_state_changed(is_open: bool, door_id: String) -> void:
 	if door_states.has(door_id):
 		door_states[door_id]["is_open"] = is_open
 		door_state_changed.emit(door_id, is_open)
+
+
+## Validate door placements for gaps and overlaps
+func _validate_door_placements(dungeon_root: Node3D) -> void:
+	const TOLERANCE := 0.1  # ±0.1 units for connection alignment
+	
+	print("DoorManager: Validating door placements...")
+	
+	var issues: Array[String] = []
+	var warnings: Array[String] = []
+	
+	# Get all placed doors
+	var doors: Array[Door] = []
+	for door_id in registered_doors.keys():
+		doors.append(registered_doors[door_id])
+	
+	if doors.is_empty():
+		print("DoorManager: No doors to validate")
+		return
+	
+	# Check each door for proper alignment with walls
+	for door in doors:
+		_validate_door_alignment(door, dungeon_root, issues, warnings, TOLERANCE)
+	
+	# Check for door overlaps
+	for i in range(doors.size()):
+		for j in range(i + 1, doors.size()):
+			_validate_door_overlap(doors[i], doors[j], issues, TOLERANCE)
+	
+	# Print validation results
+	if issues.is_empty() and warnings.is_empty():
+		print("DoorManager: ✓ All door placements are valid!")
+	else:
+		if not issues.is_empty():
+			print("DoorManager: ❌ ISSUES FOUND (%d):" % issues.size())
+			for issue in issues:
+				print("  - %s" % issue)
+		
+		if not warnings.is_empty():
+			print("DoorManager: ⚠ WARNINGS (%d):" % warnings.size())
+			for warning in warnings:
+				print("  - %s" % warning)
+
+
+## Validate a single door's alignment with walls
+func _validate_door_alignment(door: Door, dungeon_root: Node3D, issues: Array[String], warnings: Array[String], tolerance: float) -> void:
+	# Get door position
+	var door_pos := door.global_position
+	
+	# Find nearest room or corridor
+	var rooms: Array[Node3D] = []
+	var corridors: Array[Node3D] = []
+	_find_rooms_and_corridors(dungeon_root, rooms, corridors)
+	
+	var nearest_room: Node3D = null
+	var min_distance := INF
+	
+	for room in rooms:
+		var distance := door_pos.distance_to(room.global_position)
+		if distance < min_distance:
+			min_distance = distance
+			nearest_room = room
+	
+	if not nearest_room:
+		warnings.append("Door '%s' has no nearby room" % door.door_id)
+		return
+	
+	# Check if door is at room edge (within tolerance)
+	var room_pos := nearest_room.global_position
+	var delta := door_pos - room_pos
+	
+	# Room-large is 20x20, so walls are at ±10 from center
+	var room_half_size := 10.0
+	
+	# Check if door is at a wall position
+	var at_wall := false
+	var gap := 0.0
+	
+	# Check north/south walls (Z axis)
+	if abs(delta.x) < tolerance:
+		var expected_z := room_half_size if delta.z > 0 else -room_half_size
+		gap = abs(abs(delta.z) - room_half_size)
+		if gap <= tolerance:
+			at_wall = true
+	
+	# Check east/west walls (X axis)
+	if abs(delta.z) < tolerance:
+		var expected_x := room_half_size if delta.x > 0 else -room_half_size
+		gap = abs(abs(delta.x) - room_half_size)
+		if gap <= tolerance:
+			at_wall = true
+	
+	if not at_wall:
+		if gap > tolerance:
+			issues.append("Door '%s' has gap of %.2f units from wall (should be ≤%.2f)" % [
+				door.door_id, gap, tolerance
+			])
+		else:
+			warnings.append("Door '%s' may not be aligned with wall" % door.door_id)
+
+
+## Validate two doors don't overlap
+func _validate_door_overlap(door_a: Door, door_b: Door, issues: Array[String], tolerance: float) -> void:
+	# Check position distance
+	var distance := door_a.global_position.distance_to(door_b.global_position)
+	
+	# Doors should be at least tolerance apart
+	if distance < tolerance:
+		issues.append("Doors '%s' and '%s' overlap (distance: %.2f units, should be >%.2f)" % [
+			door_a.door_id, door_b.door_id, distance, tolerance
+		])
+
+
+## Set the interaction prompt UI reference
+func set_interaction_prompt(prompt: Control) -> void:
+	interaction_prompt = prompt
+	if interaction_prompt:
+		interaction_prompt.hide()
+		print("DoorManager: Interaction prompt UI set")
+
+
+## Show the interaction prompt
+func _show_interaction_prompt() -> void:
+	if interaction_prompt:
+		interaction_prompt.show()
+
+
+## Hide the interaction prompt
+func _hide_interaction_prompt() -> void:
+	if interaction_prompt:
+		interaction_prompt.hide()
+
+
+## Handle player entering a door's interaction zone
+func _on_player_entered_door_zone(door_id: String) -> void:
+	if not doors_with_player.has(door_id):
+		doors_with_player.append(door_id)
+	
+	# Show prompt if any door has player in zone
+	if doors_with_player.size() > 0:
+		_show_interaction_prompt()
+
+
+## Handle player exiting a door's interaction zone
+func _on_player_exited_door_zone(door_id: String) -> void:
+	if doors_with_player.has(door_id):
+		doors_with_player.erase(door_id)
+	
+	# Hide prompt if no doors have player in zone
+	if doors_with_player.size() == 0:
+		_hide_interaction_prompt()

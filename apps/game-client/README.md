@@ -56,6 +56,10 @@ godot --headless --script addons/gut/gut_cmdln.gd -gdir=tests/unit
 
 # Property tests only
 godot --headless --script addons/gut/gut_cmdln.gd -gdir=tests/property
+
+# Single property test (recommended to avoid log noise)
+# Usage: ./run_single_test.sh <test_file> <test_method_without_test_prefix>
+./run_single_test.sh test_door_placement_properties.gd property_27_connection_point_calculation_integration
 ```
 
 ## Assets
