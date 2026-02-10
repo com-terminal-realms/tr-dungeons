@@ -11,9 +11,13 @@ extends Camera3D
 @export var zoom_max: float = 25.0
 @export var zoom_speed: float = 2.0
 @export var follow_speed: float = 5.0
+@export var rotation_speed: float = 90.0  # Degrees per second
 
 const ISOMETRIC_ANGLE_DEG: float = 45.0
 const ISOMETRIC_ROTATION_DEG: float = 45.0
+
+# Current rotation around Y axis (can be changed by player)
+var current_rotation_y: float = ISOMETRIC_ROTATION_DEG
 
 func _ready() -> void:
 	print("IsometricCamera: _ready() called")
@@ -39,11 +43,26 @@ func _input(event: InputEvent) -> void:
 			distance = min(zoom_max, distance + zoom_speed)
 
 func _process(delta: float) -> void:
-	# Handle zoom input
-	if Input.is_action_pressed("zoom_in"):
+	# Handle zoom input (mouse wheel only for now)
+	# Arrow keys will be handled separately
+	
+	# Handle camera rotation (left/right arrow keys)
+	if Input.is_key_pressed(KEY_LEFT):
+		current_rotation_y += rotation_speed * delta
+	if Input.is_key_pressed(KEY_RIGHT):
+		current_rotation_y -= rotation_speed * delta
+	
+	# Handle zoom (up/down arrow keys)
+	if Input.is_key_pressed(KEY_UP):
 		distance = max(zoom_min, distance - zoom_speed * delta * 10.0)
-	if Input.is_action_pressed("zoom_out"):
+	if Input.is_key_pressed(KEY_DOWN):
 		distance = min(zoom_max, distance + zoom_speed * delta * 10.0)
+	
+	# Normalize rotation to 0-360 range
+	while current_rotation_y < 0:
+		current_rotation_y += 360
+	while current_rotation_y >= 360:
+		current_rotation_y -= 360
 	
 	# Update camera position
 	if target:
@@ -57,11 +76,11 @@ func _process(delta: float) -> void:
 ## target_pos: The position to center the camera on
 ## Returns: The calculated camera position
 func calculate_camera_position(target_pos: Vector3) -> Vector3:
-	# Isometric angle: 45° from horizontal
+	# Isometric angle: 45° from horizontal (ALWAYS maintained)
 	var angle_rad := deg_to_rad(ISOMETRIC_ANGLE_DEG)
 	
-	# Rotation around Y axis: 45° for isometric view
-	var rotation_rad := deg_to_rad(ISOMETRIC_ROTATION_DEG)
+	# Rotation around Y axis: use current rotation (player can change this)
+	var rotation_rad := deg_to_rad(current_rotation_y)
 	
 	# Calculate offset from target
 	# Using 45° angle creates the isometric look
