@@ -20,6 +20,7 @@ var _movement: Movement
 var _combat: Combat
 var _path_update_timer: float = 0.0
 var _detection_indicator: Node3D = null
+var _animation_player: AnimationPlayer = null
 
 func _ready() -> void:
 	# Find owner node
@@ -47,6 +48,9 @@ func _ready() -> void:
 	_detection_indicator = _find_detection_indicator(_owner_node)
 	if _detection_indicator and _detection_indicator.has_method("hide_indicator"):
 		_detection_indicator.hide_indicator()
+	
+	# Find AnimationPlayer
+	_animation_player = _find_animation_player(_owner_node)
 
 func _physics_process(delta: float) -> void:
 	if not _owner_node or not _movement or not _combat:
@@ -115,6 +119,7 @@ func _execute_state(delta: float) -> void:
 ## Idle state: no movement
 func _execute_idle(_delta: float) -> void:
 	_movement.move(Vector3.ZERO)
+	_play_animation("Idle")
 
 ## Chase state: follow navigation path
 func _execute_chase(delta: float) -> void:
@@ -122,12 +127,16 @@ func _execute_chase(delta: float) -> void:
 		var next_position := _navigation_agent.get_next_path_position()
 		var direction := (_owner_node.global_position.direction_to(next_position))
 		_movement.move(direction, delta)
+		_play_animation("Walk")
 	else:
 		_movement.move(Vector3.ZERO)
+		_play_animation("Idle")
 
 ## Attack state: attack target
 func _execute_attack(_delta: float) -> void:
 	if _target and _combat:
+		# Play attack animation
+		_play_animation("Sword_Attack")
 		_combat.attack(_target)
 	
 	# Stop moving while attacking
@@ -180,3 +189,24 @@ func _find_detection_indicator(parent: Node) -> Node3D:
 		if child.name == "DetectionIndicator":
 			return child
 	return null
+
+## Find AnimationPlayer in CharacterModel
+func _find_animation_player(parent: Node) -> AnimationPlayer:
+	var character_model = parent.get_node_or_null("CharacterModel")
+	if character_model:
+		var anim_player = character_model.get_node_or_null("AnimationPlayer")
+		if anim_player:
+			return anim_player
+	return null
+
+## Play animation if AnimationPlayer exists
+func _play_animation(anim_name: String) -> void:
+	if not _animation_player:
+		return
+	
+	# Don't interrupt if already playing this animation
+	if _animation_player.current_animation == anim_name:
+		return
+	
+	if _animation_player.has_animation(anim_name):
+		_animation_player.play(anim_name)

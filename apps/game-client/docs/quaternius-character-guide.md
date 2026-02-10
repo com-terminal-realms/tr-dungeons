@@ -40,13 +40,14 @@ This document provides information about the Quaternius character assets used in
   - `T_Ranger_ORM.png` (Occlusion/Roughness/Metallic)
 
 ### Enemies (Kobolds)
-- **Model**: `Male_Peasant.gltf`
-- **Location**: `assets/characters/outfits/Male_Peasant.gltf`
-- **Description**: Simple peasant outfit
-- **Textures**:
-  - `T_Peasant_BaseColor.png`
-  - `T_Peasant_Normal.png`
-  - `T_Peasant_ORM.png`
+- **Model**: `Superhero_Male_FullBody.gltf`
+- **Location**: `assets/characters/outfits/Superhero_Male_FullBody.gltf`
+- **Description**: Athletic base body in tight suit (very different from armored player)
+- **Textures**: 
+  - `T_Superhero_Male_Dark.png`
+  - `T_Superhero_Male_Normal.png`
+  - `T_Superhero_Male_Roughness.png`
+- **Note**: Using Superhero base model for maximum visual distinction from player's armored ranger
 
 ### Boss (Orc) - Future
 - **Planned**: Use larger/modified character model
@@ -56,10 +57,15 @@ This document provides information about the Quaternius character assets used in
 
 The Fantasy pack includes these complete outfits (in `Outfits/` folder):
 
-1. **Male_Ranger** - Armored ranger/scout (CURRENTLY USED - Player)
-2. **Female_Ranger** - Female version of ranger
-3. **Male_Peasant** - Simple clothing (CURRENTLY USED - Enemies)
-4. **Female_Peasant** - Female version of peasant
+1. **Male_Ranger** - Armored ranger/scout (COMPLETE - includes all body parts) ✅
+   - CURRENTLY USED: Player
+2. **Female_Ranger** - Female version of ranger (COMPLETE - includes all body parts) ✅
+3. **Superhero_Male_FullBody** - Athletic base body in tight suit (COMPLETE) ✅
+   - CURRENTLY USED: Enemies
+3. **Male_Peasant** - Simple clothing (MODULAR - missing head, legs, feet) ⚠️
+4. **Female_Peasant** - Female version of peasant (MODULAR - missing head, legs, feet) ⚠️
+
+**Note**: Male_Peasant and Female_Peasant are modular outfits that only include the body/torso. They require additional modular parts (head, legs, feet) to be complete. For simplicity, we use Male_Ranger for both player and enemies since it's a complete model.
 
 Additional outfits available in modular parts:
 - Knight (heavy armor)
