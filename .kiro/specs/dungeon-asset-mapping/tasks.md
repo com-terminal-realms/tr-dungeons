@@ -51,15 +51,15 @@ The implementation follows an incremental approach: core data structures → mea
     - Support corridors (2 points) and rooms (multiple points)
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
   
-  - [ ] 3.2 Write property test for connection point discovery
+  - [x] 3.2 Write property test for connection point discovery
     - **Property 4: Connection Point Discovery**
     - **Validates: Requirements 2.1, 2.2**
   
-  - [ ] 3.3 Write property test for coordinate system
+  - [x] 3.3 Write property test for coordinate system
     - **Property 5: Connection Point Coordinate System**
     - **Validates: Requirements 2.4**
   
-  - [ ] 3.4 Implement floor and wall measurements
+  - [x] 3.4 Implement floor and wall measurements
     - Write `_measure_floor_height()` to find lowest walkable surface
     - Write wall thickness calculation for wall assets
     - Write doorway dimension measurement

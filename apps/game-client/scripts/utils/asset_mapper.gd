@@ -33,9 +33,16 @@ func measure_asset(asset_path: String) -> AssetMetadata:
 	# Perform measurements
 	metadata.bounding_box = _calculate_bounding_box(scene)
 	metadata.origin_offset = _find_origin_offset(scene)
+	metadata.collision_shapes = _extract_collision_geometry(scene)
 	metadata.floor_height = _measure_floor_height(scene)
 	metadata.connection_points = _find_connection_points(scene)
-	metadata.collision_shapes = _extract_collision_geometry(scene)
+	
+	# Determine asset type from name or geometry
+	var asset_type = _determine_asset_type(metadata.asset_name, metadata.bounding_box.size)
+	
+	# Measure type-specific properties
+	metadata.wall_thickness = _measure_wall_thickness(scene, asset_type)
+	metadata.doorway_dimensions = _measure_doorway_dimensions(scene, metadata.connection_points)
 	metadata.default_rotation = _determine_default_rotation(scene)
 	
 	# Calculate walkable area (for room assets)
@@ -55,6 +62,32 @@ func _detect_format(asset_path: String) -> String:
 		return "FBX"
 	else:
 		return extension
+
+## Determine asset type from name and geometry
+func _determine_asset_type(asset_name: String, size: Vector3) -> String:
+	var name_lower = asset_name.to_lower()
+	
+	# Check name for type hints
+	if "wall" in name_lower:
+		return "wall"
+	elif "corridor" in name_lower:
+		return "corridor"
+	elif "room" in name_lower:
+		return "room"
+	elif "door" in name_lower or "gate" in name_lower:
+		return "door"
+	elif "floor" in name_lower:
+		return "floor"
+	elif "stairs" in name_lower or "stair" in name_lower:
+		return "stairs"
+	
+	# Fallback to geometry analysis
+	if _is_corridor_shaped(size):
+		return "corridor"
+	elif _is_room_shaped(size):
+		return "room"
+	
+	return "unknown"
 
 ## Calculate AABB for the asset with ±0.1 unit accuracy
 ## Recursively finds all MeshInstance3D nodes and combines their AABBs
@@ -107,13 +140,65 @@ func _find_origin_offset(node: Node3D) -> Vector3:
 	return center
 
 ## Measure floor height (Y coordinate where characters walk)
+## Analyzes collision shapes to find the actual walkable surface
 func _measure_floor_height(node: Node3D) -> float:
+	# First, try to find floor collision shapes
+	var collision_data = _extract_collision_geometry(node)
+	
+	if not collision_data.is_empty():
+		# Find the lowest collision shape that could be a floor
+		var lowest_floor = INF
+		for shape in collision_data:
+			# Floor shapes are typically box shapes near the bottom
+			if shape.shape_type == "box":
+				# Calculate the bottom surface of this collision box
+				var bottom_surface = shape.position.y - (shape.size.y / 2.0)
+				if bottom_surface < lowest_floor:
+					lowest_floor = bottom_surface
+		
+		if lowest_floor != INF:
+			return lowest_floor
+	
+	# Fallback: use bounding box
 	var bbox = _calculate_bounding_box(node)
 	if bbox.size == Vector3.ZERO:
 		return 0.0
 	
 	# Floor height is the lowest point of the bounding box
 	return bbox.position.y
+
+## Calculate wall thickness for wall assets
+## Analyzes collision geometry to determine wall depth
+func _measure_wall_thickness(node: Node3D, asset_type: String) -> float:
+	# Only measure wall thickness for wall-type assets
+	if asset_type != "wall":
+		return 0.0
+	
+	var collision_data = _extract_collision_geometry(node)
+	if collision_data.is_empty():
+		return 0.0
+	
+	# Find the thinnest dimension of collision boxes (likely the wall thickness)
+	var min_thickness = INF
+	for shape in collision_data:
+		if shape.shape_type == "box":
+			# Wall thickness is typically the smallest horizontal dimension
+			var thickness = min(shape.size.x, shape.size.z)
+			if thickness < min_thickness:
+				min_thickness = thickness
+	
+	return min_thickness if min_thickness != INF else 0.0
+
+## Measure doorway dimensions for room assets
+## Returns Vector2(width, height) of the doorway opening
+func _measure_doorway_dimensions(node: Node3D, connection_points: Array[ConnectionPoint]) -> Vector2:
+	if connection_points.is_empty():
+		return Vector2.ZERO
+	
+	# Use the first connection point's dimensions as representative doorway size
+	# (All doors in a room typically have the same dimensions)
+	var first_point = connection_points[0]
+	return first_point.dimensions
 
 ## Identify connection points (doors, corridor ends)
 ## Uses heuristic approach: analyze bounding box edges for openings

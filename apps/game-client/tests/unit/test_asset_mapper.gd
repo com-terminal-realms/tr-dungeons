@@ -224,3 +224,78 @@ func test_room_connection_points():
 	assert_true(has_south, "Should have south-facing door")
 	assert_true(has_east, "Should have east-facing door")
 	assert_true(has_west, "Should have west-facing door")
+
+func test_determine_asset_type_from_name():
+	# Test wall detection
+	assert_eq(mapper._determine_asset_type("template-wall", Vector3(1, 3, 5)), "wall", "Should detect wall from name")
+	assert_eq(mapper._determine_asset_type("corridor-wall", Vector3(1, 3, 5)), "wall", "Should detect wall from name")
+	
+	# Test corridor detection
+	assert_eq(mapper._determine_asset_type("corridor", Vector3(2, 3, 10)), "corridor", "Should detect corridor from name")
+	
+	# Test room detection
+	assert_eq(mapper._determine_asset_type("room-small", Vector3(8, 3, 10)), "room", "Should detect room from name")
+	
+	# Test door detection
+	assert_eq(mapper._determine_asset_type("gate-door", Vector3(2, 3, 1)), "door", "Should detect door from name")
+	
+	# Test floor detection
+	assert_eq(mapper._determine_asset_type("template-floor", Vector3(5, 0.5, 5)), "floor", "Should detect floor from name")
+	
+	# Test stairs detection
+	assert_eq(mapper._determine_asset_type("stairs-wide", Vector3(3, 2, 5)), "stairs", "Should detect stairs from name")
+
+func test_determine_asset_type_from_geometry():
+	# Test corridor detection by shape
+	assert_eq(mapper._determine_asset_type("unknown-asset", Vector3(2, 3, 10)), "corridor", "Should detect corridor from geometry")
+	
+	# Test room detection by shape
+	assert_eq(mapper._determine_asset_type("unknown-asset", Vector3(8, 3, 10)), "room", "Should detect room from geometry")
+	
+	# Test unknown fallback
+	assert_eq(mapper._determine_asset_type("unknown-asset", Vector3(1, 1, 1)), "unknown", "Should return unknown for ambiguous geometry")
+
+func test_wall_thickness_measurement():
+	# Create a wall-like asset with collision
+	var size = Vector3(1.0, 3.0, 5.0)  # Thin in X (wall thickness)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var thickness = mapper._measure_wall_thickness(test_scene, "wall")
+	
+	# Should measure the thinnest dimension (X = 1.0)
+	assert_almost_eq(thickness, 1.0, 0.1, "Wall thickness should be the thinnest dimension")
+
+func test_wall_thickness_non_wall_asset():
+	# Non-wall assets should return 0 thickness
+	var size = Vector3(5.0, 3.0, 5.0)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var thickness = mapper._measure_wall_thickness(test_scene, "room")
+	
+	assert_eq(thickness, 0.0, "Non-wall assets should have 0 thickness")
+
+func test_doorway_dimensions_measurement():
+	# Create room with connection points
+	var size = Vector3(8.0, 3.0, 10.0)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var points = mapper._find_connection_points(test_scene)
+	var doorway_dims = mapper._measure_doorway_dimensions(test_scene, points)
+	
+	# Should return the dimensions from the first connection point
+	assert_gt(doorway_dims.x, 0.0, "Doorway width should be positive")
+	assert_gt(doorway_dims.y, 0.0, "Doorway height should be positive")
+
+func test_doorway_dimensions_no_connections():
+	# Asset with no connection points should return zero dimensions
+	var size = Vector3(2.0, 2.0, 2.0)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var empty_points: Array[ConnectionPoint] = []
+	var doorway_dims = mapper._measure_doorway_dimensions(test_scene, empty_points)
+	
+	assert_eq(doorway_dims, Vector2.ZERO, "No connection points should return zero dimensions")
