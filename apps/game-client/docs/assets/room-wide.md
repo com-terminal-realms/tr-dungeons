@@ -4,7 +4,7 @@
 
 - **Asset Path**: `res://assets/models/kenney-dungeon/room-wide.glb`
 - **Asset Format**: GLB
-- **Measurement Timestamp**: 2026-02-10T13:29:11
+- **Measurement Timestamp**: 2026-02-10T13:54:08
 - **Measurement Accuracy**: ±0.10 units
 
 ## Dimensions

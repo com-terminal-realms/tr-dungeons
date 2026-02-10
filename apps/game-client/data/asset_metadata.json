@@ -99,7 +99,7 @@
 			},
 			"floor_height": -0.00000000000000288764564323129,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770730151,
+			"measurement_timestamp": 1770731648,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.5,
@@ -120,6 +120,276 @@
 					"x": 3.20000004768372,
 					"y": 0.100000001490116,
 					"z": 3.20000076293945
+				}
+			},
+			"wall_thickness": 0.0
+		},
+		"gate": {
+			"asset_format": "GLB",
+			"asset_name": "gate",
+			"asset_path": "res://assets/models/kenney-dungeon/gate.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -2.20000004768372,
+					"y": 0.0,
+					"z": -0.700000107288361
+				},
+				"size": {
+					"x": 4.40000009536743,
+					"y": 4.39999961853027,
+					"z": 1.40000021457672
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -2.20000004768372,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				},
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 2.20000004768372,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 90.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 1.40000021457672,
+				"y": 3.51999974250793
+			},
+			"floor_height": 0.0,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770731648,
+			"origin_offset": {
+				"x": 0.0,
+				"y": 2.19999980926514,
+				"z": 0.0
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -1.75999999046326,
+					"y": 0.0,
+					"z": -0.560000061988831
+				},
+				"size": {
+					"x": 3.51999998092651,
+					"y": 0.100000001490116,
+					"z": 1.12000012397766
+				}
+			},
+			"wall_thickness": 0.0
+		},
+		"gate-door": {
+			"asset_format": "GLB",
+			"asset_name": "gate-door",
+			"asset_path": "res://assets/models/kenney-dungeon/gate-door.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -3.0,
+					"y": -0.0000000000000000270838784884563,
+					"z": -0.700000107288361
+				},
+				"size": {
+					"x": 5.19999980926514,
+					"y": 4.39999961853027,
+					"z": 1.40000021457672
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -3.0,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				},
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 2.19999980926514,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 90.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 1.40000021457672,
+				"y": 3.51999974250793
+			},
+			"floor_height": -0.0000000000000000270838784884563,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770731648,
+			"origin_offset": {
+				"x": -0.400000095367432,
+				"y": 2.19999980926514,
+				"z": 0.0
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -2.48000001907349,
+					"y": -0.0000000000000000270838784884563,
+					"z": -0.560000061988831
+				},
+				"size": {
+					"x": 4.15999984741211,
+					"y": 0.100000001490116,
+					"z": 1.12000012397766
+				}
+			},
+			"wall_thickness": 0.0
+		},
+		"gate-door-window": {
+			"asset_format": "GLB",
+			"asset_name": "gate-door-window",
+			"asset_path": "res://assets/models/kenney-dungeon/gate-door-window.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -3.0,
+					"y": -0.0000000000000000270838784884563,
+					"z": -0.700000107288361
+				},
+				"size": {
+					"x": 5.19999980926514,
+					"y": 4.39999961853027,
+					"z": 1.40000021457672
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -3.0,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				},
+				{
+					"dimensions": {
+						"x": 1.40000021457672,
+						"y": 3.51999974250793
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 2.19999980926514,
+						"y": 2.19999980926514,
+						"z": 0.0
+					},
+					"type": "corridor_end"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 90.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 1.40000021457672,
+				"y": 3.51999974250793
+			},
+			"floor_height": -0.0000000000000000270838784884563,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770731648,
+			"origin_offset": {
+				"x": -0.400000095367432,
+				"y": 2.19999980926514,
+				"z": 0.0
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -2.48000001907349,
+					"y": -0.0000000000000000270838784884563,
+					"z": -0.560000061988831
+				},
+				"size": {
+					"x": 4.15999984741211,
+					"y": 0.100000001490116,
+					"z": 1.12000012397766
 				}
 			},
 			"wall_thickness": 0.0
@@ -223,7 +493,7 @@
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770730151,
+			"measurement_timestamp": 1770731648,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.66345000267029,
@@ -347,7 +617,7 @@
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770730151,
+			"measurement_timestamp": 1770731648,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.56664288043976,
@@ -471,7 +741,7 @@
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770730151,
+			"measurement_timestamp": 1770731648,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.66345000267029,

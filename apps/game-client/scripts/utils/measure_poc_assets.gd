@@ -1,14 +1,17 @@
 extends SceneTree
 
 ## Script to measure Phase 1 POC assets and generate documentation
-## Measures: corridor.glb, room-small.glb, room-large.glb
+## Measures: corridor.glb, room-small.glb, room-large.glb, gate assets
 ## Run with: godot --headless --script scripts/utils/measure_poc_assets.gd
 
 const POC_ASSETS = [
 	"res://assets/models/kenney-dungeon/corridor.glb",
 	"res://assets/models/kenney-dungeon/room-small.glb",
 	"res://assets/models/kenney-dungeon/room-wide.glb",
-	"res://assets/models/kenney-dungeon/room-large.glb"
+	"res://assets/models/kenney-dungeon/room-large.glb",
+	"res://assets/models/kenney-dungeon/gate.glb",
+	"res://assets/models/kenney-dungeon/gate-door.glb",
+	"res://assets/models/kenney-dungeon/gate-door-window.glb"
 ]
 
 const OUTPUT_JSON_PATH = "res://data/asset_metadata.json"
