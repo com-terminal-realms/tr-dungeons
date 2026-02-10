@@ -35,3 +35,9 @@ func _ready() -> void:
 		print("Main: Navigation mesh baked!")
 	else:
 		push_error("Main: NavigationRegion3D not found!")
+	
+	# Place doors at all connection points
+	if nav_region:
+		print("Main: Placing doors...")
+		DoorManager.place_doors_at_connections(nav_region)
+		print("Main: Door placement complete!")

@@ -18,88 +18,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.79999995231628
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": 1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.5,
-						"z": 2.00000047683716
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.79999995231628
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": -1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.5,
-						"z": -2.00000047683716
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.79999995231628
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 2.0,
-						"y": 1.5,
-						"z": 0.0
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.79999995231628
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -2.0,
-						"y": 1.5,
-						"z": 0.0
-					},
-					"type": "door"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 0.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 2.0,
-				"y": 1.79999995231628
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.00000000000000288764564323129,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.5,
@@ -142,54 +73,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -2.20000004768372,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				},
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 2.20000004768372,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 90.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 1.40000021457672,
-				"y": 3.51999974250793
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": 0.0,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 2.19999980926514,
@@ -232,54 +128,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -3.0,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				},
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 2.19999980926514,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 90.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 1.40000021457672,
-				"y": 3.51999974250793
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.0000000000000000270838784884563,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": -0.400000095367432,
 				"y": 2.19999980926514,
@@ -322,54 +183,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -3.0,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				},
-				{
-					"dimensions": {
-						"x": 1.40000021457672,
-						"y": 3.51999974250793
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 2.19999980926514,
-						"y": 2.19999980926514,
-						"z": 0.0
-					},
-					"type": "corridor_end"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 90.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 1.40000021457672,
-				"y": 3.51999974250793
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.0000000000000000270838784884563,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": -0.400000095367432,
 				"y": 2.19999980926514,
@@ -412,88 +238,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": 1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.66345000267029,
-						"z": 10.0
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": -1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.66345000267029,
-						"z": -10.0
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 10.0,
-						"y": 1.66345000267029,
-						"z": 0.0
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -10.0,
-						"y": 1.66345000267029,
-						"z": 0.0
-					},
-					"type": "door"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 0.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 2.0,
-				"y": 1.99614000320435
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.66345000267029,
@@ -536,88 +293,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.87997150421143
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": 1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.56664288043976,
-						"z": 6.00000047683716
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.87997150421143
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": -1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.56664288043976,
-						"z": -5.99999952316284
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.87997150421143
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 6.0,
-						"y": 1.56664288043976,
-						"z": 0.000000476837158203125
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.87997150421143
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -6.0,
-						"y": 1.56664288043976,
-						"z": 0.000000476837158203125
-					},
-					"type": "door"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 0.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 2.0,
-				"y": 1.87997150421143
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.56664288043976,
@@ -660,88 +348,19 @@
 				}
 			},
 			"collision_shapes": [],
-			"connection_points": [
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": 1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.66345000267029,
-						"z": 6.00000095367432
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 0.0,
-						"y": 0.0,
-						"z": -1.0
-					},
-					"position": {
-						"x": 0.0,
-						"y": 1.66345000267029,
-						"z": -6.00000095367432
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": 1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": 10.0,
-						"y": 1.66345000267029,
-						"z": 0.0
-					},
-					"type": "door"
-				},
-				{
-					"dimensions": {
-						"x": 2.0,
-						"y": 1.99614000320435
-					},
-					"normal": {
-						"x": -1.0,
-						"y": 0.0,
-						"z": 0.0
-					},
-					"position": {
-						"x": -10.0,
-						"y": 1.66345000267029,
-						"z": 0.0
-					},
-					"type": "door"
-				}
-			],
+			"connection_points": [],
 			"default_rotation": {
 				"x": 0.0,
 				"y": 0.0,
 				"z": 0.0
 			},
 			"doorway_dimensions": {
-				"x": 2.0,
-				"y": 1.99614000320435
+				"x": 0.0,
+				"y": 0.0
 			},
 			"floor_height": -0.0000000000000170777173462812,
 			"measurement_accuracy": 0.1,
-			"measurement_timestamp": 1770731648,
+			"measurement_timestamp": 1770756073,
 			"origin_offset": {
 				"x": 0.0,
 				"y": 1.66345000267029,

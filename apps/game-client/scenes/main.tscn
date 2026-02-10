@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b7qxvxvxvxvxv"]
+[gd_scene load_steps=11 format=3 uid="uid://b7qxvxvxvxvxv"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="0"]
 [ext_resource type="PackedScene" uid="uid://player_scene_001" path="res://scenes/player/player.tscn" id="1"]
@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/room-wide.glb" id="8"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/room-large.glb" id="9"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/corridor.glb" id="10"]
+[ext_resource type="PackedScene" uid="uid://door_scene_001" path="res://scenes/door.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/gate-door.glb" id="12"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)

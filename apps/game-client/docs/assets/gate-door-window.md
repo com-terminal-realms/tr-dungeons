@@ -4,7 +4,7 @@
 
 - **Asset Path**: `res://assets/models/kenney-dungeon/gate-door-window.glb`
 - **Asset Format**: GLB
-- **Measurement Timestamp**: 2026-02-10T13:54:08
+- **Measurement Timestamp**: 2026-02-10T20:41:13
 - **Measurement Accuracy**: ±0.10 units
 
 ## Dimensions
@@ -25,25 +25,10 @@
 ### Floor and Walls
 
 - **Floor Height**: -0.00 units
-- **Doorway Dimensions**: 1.40 × 3.52 units (W × H)
 
 ## Connection Points
 
-Total: 2 connection point(s)
-
-### Connection Point 1
-
-- **Type**: corridor_end
-- **Position**: (-3.00, 2.20, 0.00)
-- **Normal**: (-1.00, 0.00, 0.00)
-- **Dimensions**: 1.40 × 3.52 units (W × H)
-
-### Connection Point 2
-
-- **Type**: corridor_end
-- **Position**: (2.20, 2.20, 0.00)
-- **Normal**: (1.00, 0.00, 0.00)
-- **Dimensions**: 1.40 × 3.52 units (W × H)
+No connection points defined.
 
 ## Collision Geometry
 
@@ -95,8 +80,5 @@ Dimensions:
   Height (Y): 4.40 units
   Length (Z): 1.40 units
 
-Connection Points:
-  [1] corridor_end facing West
-  [2] corridor_end facing East
 ```
 

@@ -4,7 +4,7 @@
 
 - **Asset Path**: `res://assets/models/kenney-dungeon/corridor.glb`
 - **Asset Format**: GLB
-- **Measurement Timestamp**: 2026-02-10T13:54:08
+- **Measurement Timestamp**: 2026-02-10T20:41:13
 - **Measurement Accuracy**: ±0.10 units
 
 ## Dimensions
@@ -25,39 +25,10 @@
 ### Floor and Walls
 
 - **Floor Height**: -0.00 units
-- **Doorway Dimensions**: 2.00 × 1.80 units (W × H)
 
 ## Connection Points
 
-Total: 4 connection point(s)
-
-### Connection Point 1
-
-- **Type**: door
-- **Position**: (0.00, 1.50, 2.00)
-- **Normal**: (0.00, 0.00, 1.00)
-- **Dimensions**: 2.00 × 1.80 units (W × H)
-
-### Connection Point 2
-
-- **Type**: door
-- **Position**: (0.00, 1.50, -2.00)
-- **Normal**: (0.00, 0.00, -1.00)
-- **Dimensions**: 2.00 × 1.80 units (W × H)
-
-### Connection Point 3
-
-- **Type**: door
-- **Position**: (2.00, 1.50, 0.00)
-- **Normal**: (1.00, 0.00, 0.00)
-- **Dimensions**: 2.00 × 1.80 units (W × H)
-
-### Connection Point 4
-
-- **Type**: door
-- **Position**: (-2.00, 1.50, 0.00)
-- **Normal**: (-1.00, 0.00, 0.00)
-- **Dimensions**: 2.00 × 1.80 units (W × H)
+No connection points defined.
 
 ## Collision Geometry
 
@@ -109,10 +80,5 @@ Dimensions:
   Height (Y): 3.00 units
   Length (Z): 4.00 units
 
-Connection Points:
-  [1] door facing North
-  [2] door facing South
-  [3] door facing East
-  [4] door facing West
 ```
 
