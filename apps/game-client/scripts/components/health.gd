@@ -52,8 +52,12 @@ func heal(amount: int) -> void:
 	if not _is_alive:
 		return  # Cannot heal the dead
 	
+	var old_health := _data.current_health
 	_data.current_health = min(_data.max_health, _data.current_health + amount)
-	health_changed.emit(_data.current_health, _data.max_health)
+	
+	# Only emit if health actually changed
+	if _data.current_health != old_health:
+		health_changed.emit(_data.current_health, _data.max_health)
 
 ## Check if entity is alive
 func is_alive() -> bool:

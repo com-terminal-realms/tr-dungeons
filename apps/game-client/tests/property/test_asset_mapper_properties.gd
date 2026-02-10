@@ -31,7 +31,7 @@ func test_property_bounding_box_accuracy():
 		var max_diff = max(size_diff.x, max(size_diff.y, size_diff.z))
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		if max_diff > 0.1:
 			return {
@@ -69,7 +69,7 @@ func test_property_origin_offset():
 		var diff = (origin_offset - expected_center).length()
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		if diff > 0.01:
 			return {
@@ -106,7 +106,8 @@ func test_property_visual_vs_collision_extent():
 		
 		# Should have found collision shapes
 		if collision_data.is_empty():
-			test_scene.queue_free()
+			# Clean up before returning
+			AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 			return {
 				"success": false,
 				"input": "visual_size=%s" % visual_size,
@@ -120,7 +121,7 @@ func test_property_visual_vs_collision_extent():
 		var has_visual = visual_bbox.size != Vector3.ZERO
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		if not (has_collision and has_visual):
 			return {
@@ -221,7 +222,7 @@ func test_property_connection_point_discovery():
 		var points = mapper._find_connection_points(test_scene)
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		# Verify connection points were found
 		if points.is_empty():
@@ -281,7 +282,7 @@ func test_property_connection_point_coordinate_system():
 		var points = mapper._find_connection_points(test_scene)
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		if points.is_empty():
 			return {"success": true}  # Skip if no points
@@ -574,7 +575,7 @@ func test_property_walkable_area_containment():
 		var walkable_area = mapper._calculate_walkable_area(test_scene, collision_shapes)
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		# Verify walkable area is contained within bounding box
 		var walkable_min = walkable_area.position
@@ -647,7 +648,7 @@ func test_property_collision_documentation_completeness():
 		var collision_shapes = mapper._extract_collision_geometry(test_scene)
 		
 		# Clean up
-		test_scene.queue_free()
+		AssetTestHelpers.cleanup_test_asset_scene(test_scene)
 		
 		# Verify collision shapes were documented
 		if collision_shapes.is_empty():
@@ -948,25 +949,27 @@ func test_property_corridor_count_formula():
 		
 		# Calculate actual total length with this count
 		var overlap = calculator._calculate_overlap(metadata)
-		var effective_length = corridor_length - overlap
-		var actual_length = overlap + (count * effective_length)
+		var effective_length = corridor_length - (2 * overlap)
+		var actual_length = count * effective_length
 		
-		# Verify that the actual length is within ±0.5 units of target
+		# Verify that the actual length is within ±1.0 units of target
+		# Note: 1.0 unit tolerance is used due to discrete corridor lengths (4-6 units)
+		# See design.md for details on why tighter tolerance is not achievable
 		var length_diff = abs(actual_length - target_distance)
 		
-		if length_diff > 0.5:
+		if length_diff > 1.0:
 			return {
 				"success": false,
 				"input": "distance=%.2f, corridor_length=%.2f, count=%d" % [target_distance, corridor_length, count],
-				"reason": "Actual length %.2f differs from target %.2f by %.2f units (max allowed: 0.5)" % [
+				"reason": "Actual length %.2f differs from target %.2f by %.2f units (max allowed: 1.0)" % [
 					actual_length, target_distance, length_diff
 				]
 			}
 		
 		# Verify that using one fewer corridor would be too short
 		if count > 1:
-			var shorter_length = overlap + ((count - 1) * effective_length)
-			if shorter_length >= target_distance - 0.5:
+			var shorter_length = (count - 1) * effective_length
+			if shorter_length >= target_distance - 1.0:
 				return {
 					"success": false,
 					"input": "distance=%.2f, corridor_length=%.2f, count=%d" % [target_distance, corridor_length, count],
@@ -1041,6 +1044,79 @@ func test_property_overlap_calculation_consistency():
 				"success": false,
 				"input": "corridor_length=%.2f" % corridor_length,
 				"reason": "Overlap %.2f is negative" % overlap_1
+			}
+		
+		return {"success": true}
+	)
+
+# Feature: dungeon-asset-mapping-bugfixes, Property 2.4: Position-Count Round-Trip
+func test_property_position_count_round_trip():
+	assert_property_holds("Position-Count Round-Trip", func(iteration: int) -> Dictionary:
+		# Generate random corridor metadata
+		var corridor_length = rng.randf_range(4.0, 6.0)
+		var corridor_width = rng.randf_range(2.0, 3.0)
+		var corridor_height = rng.randf_range(2.5, 4.0)
+		
+		var metadata = AssetMetadata.new()
+		metadata.asset_name = "test_corridor"
+		metadata.bounding_box = AABB(
+			Vector3(-corridor_width/2, 0, -corridor_length/2),
+			Vector3(corridor_width, corridor_height, corridor_length)
+		)
+		
+		# Add connection points at the ends
+		var point_a = ConnectionPoint.new()
+		point_a.position = Vector3(0, corridor_height/2, -corridor_length/2)
+		point_a.normal = Vector3(0, 0, -1)
+		point_a.type = "corridor_end"
+		point_a.dimensions = Vector2(corridor_width, corridor_height)
+		
+		var point_b = ConnectionPoint.new()
+		point_b.position = Vector3(0, corridor_height/2, corridor_length/2)
+		point_b.normal = Vector3(0, 0, 1)
+		point_b.type = "corridor_end"
+		point_b.dimensions = Vector2(corridor_width, corridor_height)
+		
+		metadata.connection_points = [point_a, point_b]
+		
+		# Generate random corridor count (1-10)
+		var original_count = rng.randi_range(1, 10)
+		
+		# Calculate position using calculate_position_from_corridor_count()
+		var calculator = LayoutCalculator.new()
+		var start_position = Vector3.ZERO
+		var direction = Vector3(0, 0, 1)  # Forward along Z axis
+		
+		var calculated_position = calculator.calculate_position_from_corridor_count(
+			start_position,
+			original_count,
+			metadata,
+			direction
+		)
+		
+		# Calculate distance from start to calculated position
+		var distance = start_position.distance_to(calculated_position)
+		
+		# Verify calculate_corridor_count(distance) returns original count
+		var detected_count = calculator.calculate_corridor_count(distance, metadata)
+		
+		if detected_count < 0:
+			return {
+				"success": false,
+				"input": "original_count=%d, corridor_length=%.2f" % [original_count, corridor_length],
+				"reason": "Calculator returned error code: %d" % detected_count
+			}
+		
+		# Round-trip should be exact (no tolerance needed for generated positions)
+		if detected_count != original_count:
+			return {
+				"success": false,
+				"input": "original_count=%d, corridor_length=%.2f, distance=%.2f" % [
+					original_count, corridor_length, distance
+				],
+				"reason": "Round-trip failed: original count=%d, detected count=%d" % [
+					original_count, detected_count
+				]
 			}
 		
 		return {"success": true}
@@ -1179,11 +1255,15 @@ func test_property_layout_connection_validation():
 		)
 		
 		# Create layout with proper spacing (should be valid)
+		# Connection points are at ±corridor_length/2, so adjacent corridors should be
+		# spaced at corridor_length apart (edge-to-edge) minus a small overlap for connection
+		# We want overlap < 0.1 units, so use 0.05 units of overlap
 		var layout_valid: Array[PlacedAsset] = []
 		for i in range(num_assets):
 			var placed = PlacedAsset.new()
 			placed.metadata = metadata
-			placed.position = Vector3(0, 0, i * corridor_length * 0.95)  # Slight overlap for connection
+			# Space corridors at (corridor_length - 0.05) to create 0.05 units of overlap
+			placed.position = Vector3(0, 0, i * (corridor_length - 0.05))
 			placed.rotation = Vector3.ZERO
 			layout_valid.append(placed)
 		

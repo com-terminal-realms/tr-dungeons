@@ -8,9 +8,54 @@ var metadata_db: AssetMetadataDatabase
 func _init(p_metadata_db: AssetMetadataDatabase = null):
 	metadata_db = p_metadata_db
 
+## PRIMARY FUNCTION: Calculate position from corridor count (for layout generation)
+## This is the recommended function for generating new layouts
+## Specify how many corridors you want, get exact position for next room
+func calculate_position_from_corridor_count(
+	start_position: Vector3,
+	corridor_count: int,
+	corridor_metadata: AssetMetadata,
+	direction: Vector3 = Vector3(0, 0, 1)
+) -> Vector3:
+	if corridor_count < 1:
+		push_error("LayoutCalculator: Corridor count must be at least 1")
+		return start_position
+	
+	if corridor_metadata == null:
+		push_error("LayoutCalculator: Corridor metadata is null")
+		return start_position
+	
+	# Get corridor dimensions
+	var corridor_length = corridor_metadata.bounding_box.size.z
+	
+	if corridor_length <= 0:
+		push_error("LayoutCalculator: Invalid corridor length %.2f" % corridor_length)
+		return start_position
+	
+	# Calculate overlap at connection points
+	var overlap = _calculate_overlap(corridor_metadata)
+	
+	# Effective length is the corridor length minus overlap at BOTH ends
+	var effective_length = corridor_length - (2 * overlap)
+	
+	if effective_length <= 0:
+		push_error("LayoutCalculator: Effective length %.2f is not positive (length=%.2f, overlap=%.2f)" % [
+			effective_length, corridor_length, overlap
+		])
+		return start_position
+	
+	# Calculate total distance
+	var distance = corridor_count * effective_length
+	
+	# Return new position
+	return start_position + (direction.normalized() * distance)
+
+## VALIDATION FUNCTION: Calculate corridor count from distance (for validation only)
+## This function is used to validate existing layouts, not generate new ones
+## For layout generation, use calculate_position_from_corridor_count() instead
 ## Calculate number of corridor pieces needed for a given distance
-## Formula: count = ceil((distance - overlap) / effective_length)
-## where effective_length = corridor_length - overlap
+## Formula: count = max(1, ceil(distance / effective_length))
+## where effective_length = corridor_length - (2 * overlap)
 func calculate_corridor_count(distance: float, corridor_metadata: AssetMetadata) -> int:
 	if distance <= 0:
 		push_warning("LayoutCalculator: Invalid distance %.2f (must be positive)" % distance)
@@ -28,10 +73,11 @@ func calculate_corridor_count(distance: float, corridor_metadata: AssetMetadata)
 		return -1
 	
 	# Calculate overlap at connection points
+	# Overlap is the distance from the corridor edge to its connection point
 	var overlap = _calculate_overlap(corridor_metadata)
 	
-	# Calculate effective length (length minus overlap)
-	var effective_length = corridor_length - overlap
+	# Effective length is the corridor length minus overlap at BOTH ends
+	var effective_length = corridor_length - (2 * overlap)
 	
 	if effective_length <= 0:
 		push_warning("LayoutCalculator: Effective length %.2f is not positive (length=%.2f, overlap=%.2f)" % [
@@ -39,11 +85,36 @@ func calculate_corridor_count(distance: float, corridor_metadata: AssetMetadata)
 		])
 		return -1
 	
-	# Formula: count = ceil((distance - overlap) / effective_length)
-	var count = ceili((distance - overlap) / effective_length)
+	# Calculate number of corridors needed
+	# For very short distances, we need at least 1 corridor
+	# Try both floor and ceil, pick whichever is closer to target
+	# Prefer floor (fewer corridors) if errors are equal
+	var exact_count = distance / effective_length
+	var count_floor = maxi(1, floori(exact_count))
+	var count_ceil = ceili(exact_count)
 	
-	# Ensure at least 1 corridor piece
-	return maxi(1, count)
+	# Calculate actual lengths for both options
+	var length_floor = count_floor * effective_length
+	var length_ceil = count_ceil * effective_length
+	
+	# Calculate errors
+	var diff_floor = abs(length_floor - distance)
+	var diff_ceil = abs(length_ceil - distance)
+	
+	# Pick the one with smaller error, preferring floor if equal
+	var count = count_floor if diff_floor < diff_ceil else count_ceil
+	
+	# Verify the calculation
+	var actual_length = count * effective_length
+	var length_diff = abs(actual_length - distance)
+	
+	# If we're more than 0.5 units off, log a warning
+	if length_diff > 0.5:
+		push_warning("Corridor count %d gives length %.2f, target was %.2f (diff: %.2f)" % [
+			count, actual_length, distance, length_diff
+		])
+	
+	return count
 
 ## Calculate overlap at connection points
 ## For corridors, overlap is the distance from connection point to the end of the asset
@@ -51,39 +122,43 @@ func _calculate_overlap(metadata: AssetMetadata) -> float:
 	if metadata == null or metadata.connection_points.is_empty():
 		return 0.0
 	
-	# For corridors, find the connection points at the ends
-	# Overlap is the distance from the connection point to the edge of the bounding box
+	# For a corridor, we expect 2 connection points (entry and exit)
+	# The overlap is the distance from the corridor edge to the connection point
+	
+	# Get the bounding box
 	var bbox = metadata.bounding_box
 	var corridor_length = bbox.size.z
 	
-	# Find connection points at the ends (Z axis)
-	var end_points: Array[ConnectionPoint] = []
+	# Find the connection points along the Z axis (corridor direction)
+	var connection_z_positions: Array[float] = []
 	for point in metadata.connection_points:
-		# Check if point is near the ends (Z axis)
-		var dist_to_min_z = abs(point.position.z - bbox.position.z)
-		var dist_to_max_z = abs(point.position.z - (bbox.position.z + bbox.size.z))
-		
-		if dist_to_min_z < 0.5 or dist_to_max_z < 0.5:
-			end_points.append(point)
+		# Check if this connection point is along the Z axis (corridor direction)
+		if abs(point.normal.z) > 0.9:  # Normal points along Z
+			connection_z_positions.append(point.position.z)
 	
-	if end_points.is_empty():
-		# No end connection points found, assume no overlap
+	if connection_z_positions.size() < 2:
+		# Fallback: assume connection points are at the edges (no overlap)
 		return 0.0
 	
-	# Calculate overlap as the distance from connection point to the edge
-	# For a typical corridor, this is half the wall thickness or connection depth
-	# We'll use a heuristic: overlap = distance from connection point to bbox edge
-	var total_overlap = 0.0
-	for point in end_points:
-		var dist_to_min_z = abs(point.position.z - bbox.position.z)
-		var dist_to_max_z = abs(point.position.z - (bbox.position.z + bbox.size.z))
-		var overlap_at_point = min(dist_to_min_z, dist_to_max_z)
-		total_overlap += overlap_at_point
+	# Sort the positions
+	connection_z_positions.sort()
 	
-	# Average overlap across connection points
-	var avg_overlap = total_overlap / end_points.size()
+	# Calculate the distance between the two connection points
+	# This is the "usable" length of the corridor
+	var connection_distance = connection_z_positions[-1] - connection_z_positions[0]
 	
-	return avg_overlap
+	# The overlap at each end is the difference between the full corridor length
+	# and the distance between connection points, divided by 2
+	var total_overlap = corridor_length - connection_distance
+	var overlap_per_end = total_overlap / 2.0
+	
+	# If connection points are at the edges (overlap_per_end ≈ 0),
+	# use a small default overlap for smooth connections (0.025 units per end)
+	if abs(overlap_per_end) < 0.01:
+		overlap_per_end = 0.025
+	
+	# Ensure overlap is non-negative
+	return max(0.0, overlap_per_end)
 
 ## Validate connection between two assets
 ## Checks for gaps, overlaps, and normal alignment
@@ -112,46 +187,63 @@ func validate_connection(
 		result.add_error("No connection points found")
 		return result
 	
-	# Transform connection points by rotation and position
-	var transformed_a = conn_a.transform_by_rotation(rot_a)
-	var transformed_b = conn_b.transform_by_rotation(rot_b)
+	# Transform connection points to world space
+	var world_pos_a = _transform_connection_to_world(conn_a, pos_a, rot_a)
+	var world_pos_b = _transform_connection_to_world(conn_b, pos_b, rot_b)
 	
-	var world_pos_a = pos_a + transformed_a.position
-	var world_pos_b = pos_b + transformed_b.position
+	# Transform normals to world space
+	var normal_a_world = _transform_normal_to_world(conn_a.normal, rot_a)
+	var normal_b_world = _transform_normal_to_world(conn_b.normal, rot_b)
 	
-	# Calculate gap/overlap distance
-	var gap = world_pos_a.distance_to(world_pos_b)
+	# Check if normals are opposite (should be for a valid connection)
+	var normal_dot = normal_a_world.dot(normal_b_world)
+	result.normals_aligned = (normal_dot < -0.9)  # Should be close to -1
 	
-	# Check for gaps (> 0.2 units)
-	result.has_gap = gap > 0.2
+	# Calculate the signed distance between connection points
+	# Positive = gap, Negative = overlap
+	# We project the vector from A to B onto the normal of A
+	var gap_vector = world_pos_b - world_pos_a
+	var gap_distance = gap_vector.dot(normal_a_world)
 	
-	# Check for overlaps (< -0.5 units would mean significant overlap)
-	# For now, we'll consider any distance < 0.1 as potential overlap
-	result.has_overlap = gap < 0.1
+	result.gap_distance = gap_distance
 	
-	result.gap_distance = gap
+	# Gap detection: gaps larger than 0.2 units are errors
+	if gap_distance > 0.2:
+		result.has_gap = true
+		result.is_valid = false
+		result.add_error("Gap of %.2f units detected (max allowed: 0.2)" % gap_distance)
 	
-	# Check normal alignment (should face opposite directions)
-	var normal_a = transformed_a.normal
-	var normal_b = transformed_b.normal
-	var normal_alignment = normal_a.dot(normal_b)
+	# Overlap/close proximity detection: 
+	# - Mark has_overlap=true for any overlap OR very close proximity (gap < 0.05)
+	# - Only mark as invalid if overlap is > 0.1 units
+	if gap_distance < 0.05:  # Overlap or very close
+		result.has_overlap = true
+		
+		# Only mark as error if overlap is significant (> 0.1 units)
+		if gap_distance < -0.1:
+			result.is_valid = false
+			result.add_error("Overlap of %.2f units detected (max allowed: 0.1)" % abs(gap_distance))
 	
-	# Normals should be opposite (dot product close to -1)
-	result.normals_aligned = abs(normal_alignment + 1.0) < 0.1
-	
-	# Determine if connection is valid
-	result.is_valid = not result.has_gap and result.normals_aligned
-	
-	if not result.is_valid:
-		var errors: Array[String] = []
-		if result.has_gap:
-			errors.append("Gap of %.2f units detected (max allowed: 0.2)" % gap)
-		if not result.normals_aligned:
-			errors.append("Normals not aligned (dot product: %.2f, expected: -1.0)" % normal_alignment)
-		for error in errors:
-			result.add_error(error)
+	# Check normal alignment
+	if not result.normals_aligned:
+		result.is_valid = false
+		result.add_error("Normals not aligned (dot product: %.2f, expected: -1.0)" % normal_dot)
 	
 	return result
+
+## Transform connection point to world space
+func _transform_connection_to_world(conn: ConnectionPoint, pos: Vector3, rot: Vector3) -> Vector3:
+	# Apply rotation then translation
+	var rot_rad = Vector3(deg_to_rad(rot.x), deg_to_rad(rot.y), deg_to_rad(rot.z))
+	var basis = Basis.from_euler(rot_rad)
+	return pos + basis * conn.position
+
+## Transform normal to world space
+func _transform_normal_to_world(normal: Vector3, rot: Vector3) -> Vector3:
+	# Apply rotation to normal
+	var rot_rad = Vector3(deg_to_rad(rot.x), deg_to_rad(rot.y), deg_to_rad(rot.z))
+	var basis = Basis.from_euler(rot_rad)
+	return basis * normal
 
 ## Find the closest connection point on an asset to a target position
 func _find_closest_connection(
@@ -215,19 +307,152 @@ func validate_layout(layout: Array[PlacedAsset]) -> LayoutValidationResult:
 			result.normals_aligned = false
 	
 	# Check navigation continuity (walkable areas should connect)
+	var nav_result = _validate_navigation_continuity(layout)
+	if not nav_result.is_valid:
+		for error in nav_result.error_messages:
+			result.add_error("Navigation: %s" % error)
+	
+	return result
+
+## Validate navigation path continuity
+func _validate_navigation_continuity(layout: Array[PlacedAsset]) -> ValidationResult:
+	var result = ValidationResult.new()
+	result.is_valid = true
+	
+	# Check that all assets have walkable areas defined
+	for i in range(layout.size()):
+		var asset = layout[i]
+		
+		if asset.metadata.walkable_area.size == Vector3.ZERO:
+			result.is_valid = false
+			result.error_messages.append("Asset %d (%s) has no walkable area defined" % [
+				i, asset.metadata.asset_name
+			])
+	
+	# Check that walkable areas are continuous between connected assets
 	for i in range(layout.size() - 1):
 		var asset_a = layout[i]
 		var asset_b = layout[i + 1]
 		
-		if asset_a.metadata == null or asset_b.metadata == null:
+		# Transform walkable areas to world space
+		var walkable_a_world = _transform_aabb_to_world(
+			asset_a.metadata.walkable_area,
+			asset_a.position,
+			asset_a.rotation
+		)
+		
+		var walkable_b_world = _transform_aabb_to_world(
+			asset_b.metadata.walkable_area,
+			asset_b.position,
+			asset_b.rotation
+		)
+		
+		# Check if walkable areas overlap or are very close (within 0.2 units)
+		var gap = _calculate_aabb_gap(walkable_a_world, walkable_b_world)
+		
+		if gap > 0.2:
+			result.is_valid = false
+			result.error_messages.append("Walkable area gap of %.2f units between assets %d and %d" % [
+				gap, i, i+1
+			])
+	
+	return result
+
+## Transform AABB to world space
+func _transform_aabb_to_world(aabb: AABB, pos: Vector3, rot: Vector3) -> AABB:
+	# Transform AABB to world space
+	var rot_rad = Vector3(deg_to_rad(rot.x), deg_to_rad(rot.y), deg_to_rad(rot.z))
+	var basis = Basis.from_euler(rot_rad)
+	
+	var world_pos = pos + basis * aabb.position
+	# Note: size doesn't change with rotation for axis-aligned boxes
+	
+	return AABB(world_pos, aabb.size)
+
+## Calculate gap between two AABBs
+func _calculate_aabb_gap(aabb_a: AABB, aabb_b: AABB) -> float:
+	# Calculate the gap between two AABBs
+	# Returns 0 if they overlap, positive if there's a gap
+	
+	var a_min = aabb_a.position
+	var a_max = aabb_a.position + aabb_a.size
+	var b_min = aabb_b.position
+	var b_max = aabb_b.position + aabb_b.size
+	
+	# Calculate gap in each axis
+	var gap_x = max(0, max(a_min.x - b_max.x, b_min.x - a_max.x))
+	var gap_y = max(0, max(a_min.y - b_max.y, b_min.y - a_max.y))
+	var gap_z = max(0, max(a_min.z - b_max.z, b_min.z - a_max.z))
+	
+	# Return the maximum gap (most restrictive axis)
+	return max(gap_x, max(gap_y, gap_z))
+
+## Data structure for character validation
+## Represents a character/creature placed in the world
+class PlacedCharacter:
+	var name: String
+	var position: Vector3
+	var height_offset: float  # Distance from origin to feet (usually 1.0 for humanoids)
+	
+	func _init(n: String = "", p: Vector3 = Vector3.ZERO, h: float = 1.0):
+		name = n
+		position = p
+		height_offset = h
+
+
+## Find which asset contains a given position
+func _find_containing_asset(pos: Vector3, layout: Array[PlacedAsset]) -> PlacedAsset:
+	for asset in layout:
+		# Transform asset bounding box to world space
+		var world_bbox = _transform_aabb_to_world(
+			asset.metadata.bounding_box,
+			asset.position,
+			asset.rotation
+		)
+		
+		# Check if position is inside this bounding box
+		if world_bbox.has_point(pos):
+			return asset
+	
+	return null
+
+
+## Validate character positioning
+## Checks that characters are at the correct floor height
+func validate_character_positioning(
+	layout: Array[PlacedAsset],
+	characters: Array[PlacedCharacter]
+) -> ValidationResult:
+	var result = ValidationResult.new()
+	result.is_valid = true
+	
+	for character in characters:
+		# Find which asset (room/corridor) the character is in
+		var containing_asset = _find_containing_asset(character.position, layout)
+		
+		if containing_asset == null:
+			result.is_valid = false
+			result.add_error("Character '%s' at (%.2f, %.2f, %.2f) is not inside any asset" % [
+				character.name, character.position.x, character.position.y, character.position.z
+			])
 			continue
 		
-		# Check if walkable areas are continuous
-		# For now, we'll just verify that both assets have walkable areas defined
-		if asset_a.metadata.walkable_area.size == Vector3.ZERO:
-			result.add_error("Asset %d has no walkable area defined" % i)
+		# Get the floor height of the containing asset
+		var floor_height = containing_asset.metadata.floor_height
 		
-		if asset_b.metadata.walkable_area.size == Vector3.ZERO:
-			result.add_error("Asset %d has no walkable area defined" % (i + 1))
+		# Calculate expected Y position
+		# Character should be at floor_height + character_height_offset
+		var expected_y = floor_height + character.height_offset
+		
+		# Check if character is at correct height (within 0.1 unit tolerance)
+		var y_diff = abs(character.position.y - expected_y)
+		
+		if y_diff > 0.1:
+			result.is_valid = false
+			result.add_error(
+				"Character '%s' at incorrect height: expected Y=%.2f, actual Y=%.2f (diff: %.2f)" % [
+					character.name, expected_y, character.position.y, y_diff
+				]
+			)
 	
 	return result

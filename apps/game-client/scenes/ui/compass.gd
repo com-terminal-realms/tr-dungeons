@@ -24,9 +24,10 @@ func _process(_delta: float) -> void:
 	# Get camera rotation (0° = North, 90° = East, 180° = South, 270° = West)
 	var camera_angle: float = camera.get_camera_rotation_y()
 	
-	# Rotate the compass rose to show orientation
-	# Negative because we want the compass to rotate opposite to camera
-	compass_rose.rotation = deg_to_rad(-camera_angle)
+	# Rotate only the needle to show orientation
+	# The compass rose (N, S, E, W labels) should stay fixed
+	# Negative because we want the needle to point opposite to camera direction
+	needle.rotation = deg_to_rad(-camera_angle)
 	
 	# Update label with cardinal direction and angle
 	var direction := get_cardinal_direction(camera_angle)

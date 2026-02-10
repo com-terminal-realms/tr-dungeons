@@ -137,6 +137,8 @@ static func generate_random_distance(rng: RandomNumberGenerator) -> float:
 	return rng.randf_range(5.0, 50.0)
 
 ## Create a simple test asset scene with mesh and collision
+## NOTE: This function adds the scene to the scene tree to enable transform access
+## The caller is responsible for cleanup (removing from tree and freeing)
 static func create_test_asset_scene(size: Vector3) -> Node3D:
 	var root = Node3D.new()
 	root.name = "TestAsset"
@@ -160,7 +162,20 @@ static func create_test_asset_scene(size: Vector3) -> Node3D:
 	static_body.add_child(collision_shape)
 	root.add_child(static_body)
 	
+	# FIX: Add to scene tree BEFORE accessing transforms
+	# This prevents "!is_inside_tree()" errors when calling get_global_transform()
+	var tree = Engine.get_main_loop() as SceneTree
+	if tree and tree.root:
+		tree.root.add_child(root)
+	
 	return root
+
+## Clean up a test asset scene (remove from tree and free immediately)
+static func cleanup_test_asset_scene(scene: Node3D) -> void:
+	if scene and scene.is_inside_tree():
+		scene.get_parent().remove_child(scene)
+	if scene:
+		scene.free()  # Use free() instead of queue_free() to avoid orphans
 
 ## Assert two Vector3 values are approximately equal
 static func assert_vector3_almost_eq(actual: Vector3, expected: Vector3, tolerance: float, message: String = "") -> bool:

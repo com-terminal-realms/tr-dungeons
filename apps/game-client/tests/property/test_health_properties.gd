@@ -83,18 +83,24 @@ func test_health_signal_emission() -> void:
 		for i in range(5):
 			if random_bool(rng):
 				var damage := random_int(rng, 10, 30)
+				var old_health := health.get_current_health()
 				health.take_damage(damage)
 				operations.append("damage(%d)" % damage)
-				if health.is_alive() or health.get_current_health() == 0:  # Emits even when dying
+				# Damage always emits if entity was alive (even when dying)
+				if old_health > 0:
 					expected_health_changed += 1
 				if health.get_current_health() == 0 and expected_died == 0:
 					expected_died = 1
 			else:
 				var heal_amount := random_int(rng, 5, 20)
+				var old_health := health.get_current_health()
 				health.heal(heal_amount)
 				operations.append("heal(%d)" % heal_amount)
-				if health.is_alive():  # Only emits if alive
-					expected_health_changed += 1
+				# Heal only emits if alive AND health actually changed
+				if health.is_alive():
+					var new_health := min(health.get_max_health(), old_health + heal_amount)
+					if new_health != old_health:
+						expected_health_changed += 1
 		
 		# Disconnect signals
 		health.health_changed.disconnect(health_changed_callback)
