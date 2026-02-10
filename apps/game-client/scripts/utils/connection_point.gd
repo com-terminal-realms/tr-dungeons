@@ -14,8 +14,15 @@ func transform_by_rotation(rotation: Vector3) -> ConnectionPoint:
 	new_point.type = type
 	new_point.dimensions = dimensions
 	
-	# Create rotation basis from Euler angles
-	var basis = Basis.from_euler(rotation)
+	# Convert rotation from degrees to radians
+	var rotation_radians = Vector3(
+		deg_to_rad(rotation.x),
+		deg_to_rad(rotation.y),
+		deg_to_rad(rotation.z)
+	)
+	
+	# Create rotation basis from Euler angles (in radians)
+	var basis = Basis.from_euler(rotation_radians)
 	
 	# Transform position and normal
 	new_point.position = basis * position

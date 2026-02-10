@@ -17,11 +17,11 @@ extends Resource
 @export var wall_thickness: float = 0.0
 
 # Connections
-var connection_points: Array[ConnectionPoint] = []
+var connection_points: Array = []  # Array of ConnectionPoint objects
 @export var doorway_dimensions: Vector2 = Vector2.ZERO
 
 # Collision
-var collision_shapes: Array[CollisionData] = []
+var collision_shapes: Array = []  # Array of CollisionData objects
 @export var walkable_area: AABB = AABB()
 
 # Rotation

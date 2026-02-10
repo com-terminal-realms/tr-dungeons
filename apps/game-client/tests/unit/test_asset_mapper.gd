@@ -52,9 +52,11 @@ func test_floor_height_measurement():
 	
 	var floor_height = mapper._measure_floor_height(test_scene)
 	
-	# Floor height should be the bottom of the bounding box
-	# BoxMesh is centered, so bottom is at -size.y/2
-	assert_almost_eq(floor_height, -size.y / 2.0, 0.1, "Floor height should be at bottom of bbox")
+	# Floor height should be the top surface of the collision box
+	# BoxMesh is centered, and collision box is same size
+	# Top surface is at position.y + size.y/2
+	# Since position is 0, top surface is at size.y/2
+	assert_almost_eq(floor_height, size.y / 2.0, 0.1, "Floor height should be at top of collision box")
 
 func test_collision_extraction():
 	# Create scene with collision shapes
@@ -299,3 +301,274 @@ func test_doorway_dimensions_no_connections():
 	var doorway_dims = mapper._measure_doorway_dimensions(test_scene, empty_points)
 	
 	assert_eq(doorway_dims, Vector2.ZERO, "No connection points should return zero dimensions")
+
+
+# ===== Rotation Tests =====
+
+func test_determine_default_rotation_corridor_z():
+	# Corridor along Z axis should have default rotation of 0 (facing +Z/north)
+	var size = Vector3(2.0, 3.0, 10.0)  # Long in Z
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var rotation = mapper._determine_default_rotation(test_scene)
+	
+	assert_eq(rotation, Vector3(0, 0, 0), "Z-axis corridor should face north (0°)")
+
+func test_determine_default_rotation_corridor_x():
+	# Corridor along X axis should have default rotation of 90 (facing +X/east)
+	var size = Vector3(10.0, 3.0, 2.0)  # Long in X
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var rotation = mapper._determine_default_rotation(test_scene)
+	
+	assert_eq(rotation, Vector3(0, 90, 0), "X-axis corridor should face east (90°)")
+
+func test_determine_default_rotation_room():
+	# Room should have default rotation of 0 (facing north)
+	var size = Vector3(8.0, 3.0, 10.0)  # Room-shaped
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var rotation = mapper._determine_default_rotation(test_scene)
+	
+	assert_eq(rotation, Vector3(0, 0, 0), "Room should face north (0°)")
+
+func test_get_rotation_for_direction():
+	# Test all cardinal directions
+	assert_eq(mapper.get_rotation_for_direction("north"), Vector3(0, 0, 0), "North should be 0°")
+	assert_eq(mapper.get_rotation_for_direction("east"), Vector3(0, 90, 0), "East should be 90°")
+	assert_eq(mapper.get_rotation_for_direction("south"), Vector3(0, 180, 0), "South should be 180°")
+	assert_eq(mapper.get_rotation_for_direction("west"), Vector3(0, 270, 0), "West should be 270°")
+
+func test_get_rotation_for_direction_case_insensitive():
+	# Test case insensitivity
+	assert_eq(mapper.get_rotation_for_direction("NORTH"), Vector3(0, 0, 0), "NORTH should work")
+	assert_eq(mapper.get_rotation_for_direction("East"), Vector3(0, 90, 0), "East should work")
+	assert_eq(mapper.get_rotation_for_direction("SoUtH"), Vector3(0, 180, 0), "SoUtH should work")
+
+func test_get_rotation_for_direction_invalid():
+	# Invalid direction should default to north
+	var rotation = mapper.get_rotation_for_direction("invalid")
+	assert_eq(rotation, Vector3(0, 0, 0), "Invalid direction should default to north")
+
+func test_get_all_cardinal_rotations():
+	var rotations = mapper.get_all_cardinal_rotations()
+	
+	# Should have all four directions
+	assert_true(rotations.has("north"), "Should have north")
+	assert_true(rotations.has("south"), "Should have south")
+	assert_true(rotations.has("east"), "Should have east")
+	assert_true(rotations.has("west"), "Should have west")
+	
+	# Verify values
+	assert_eq(rotations["north"], Vector3(0, 0, 0), "North should be 0°")
+	assert_eq(rotations["east"], Vector3(0, 90, 0), "East should be 90°")
+	assert_eq(rotations["south"], Vector3(0, 180, 0), "South should be 180°")
+	assert_eq(rotations["west"], Vector3(0, 270, 0), "West should be 270°")
+
+func test_connection_point_transform_by_rotation_90():
+	# Create a connection point facing north (+Z)
+	var point = ConnectionPoint.new()
+	point.position = Vector3(0, 1, 5)
+	point.normal = Vector3(0, 0, 1)  # Facing +Z (north)
+	point.type = "door"
+	point.dimensions = Vector2(2, 3)
+	
+	# Rotate 90° clockwise (to face east)
+	var rotated = point.transform_by_rotation(Vector3(0, 90, 0))
+	
+	# Position should rotate: (0, 1, 5) -> (5, 1, 0)
+	assert_almost_eq(rotated.position.x, 5.0, 0.01, "X should be 5")
+	assert_almost_eq(rotated.position.y, 1.0, 0.01, "Y should be 1")
+	assert_almost_eq(rotated.position.z, 0.0, 0.01, "Z should be 0")
+	
+	# Normal should rotate: (0, 0, 1) -> (1, 0, 0)
+	assert_almost_eq(rotated.normal.x, 1.0, 0.01, "Normal X should be 1")
+	assert_almost_eq(rotated.normal.y, 0.0, 0.01, "Normal Y should be 0")
+	assert_almost_eq(rotated.normal.z, 0.0, 0.01, "Normal Z should be 0")
+	
+	# Type and dimensions should be preserved
+	assert_eq(rotated.type, "door", "Type should be preserved")
+	assert_eq(rotated.dimensions, Vector2(2, 3), "Dimensions should be preserved")
+
+func test_connection_point_transform_by_rotation_180():
+	# Create a connection point facing north (+Z)
+	var point = ConnectionPoint.new()
+	point.position = Vector3(2, 1, 3)
+	point.normal = Vector3(0, 0, 1)  # Facing +Z (north)
+	point.type = "corridor_end"
+	point.dimensions = Vector2(2, 3)
+	
+	# Rotate 180° (to face south)
+	var rotated = point.transform_by_rotation(Vector3(0, 180, 0))
+	
+	# Position should rotate: (2, 1, 3) -> (-2, 1, -3)
+	assert_almost_eq(rotated.position.x, -2.0, 0.01, "X should be -2")
+	assert_almost_eq(rotated.position.y, 1.0, 0.01, "Y should be 1")
+	assert_almost_eq(rotated.position.z, -3.0, 0.01, "Z should be -3")
+	
+	# Normal should rotate: (0, 0, 1) -> (0, 0, -1)
+	assert_almost_eq(rotated.normal.x, 0.0, 0.01, "Normal X should be 0")
+	assert_almost_eq(rotated.normal.y, 0.0, 0.01, "Normal Y should be 0")
+	assert_almost_eq(rotated.normal.z, -1.0, 0.01, "Normal Z should be -1")
+
+func test_connection_point_rotation_round_trip():
+	# Create a connection point
+	var point = ConnectionPoint.new()
+	point.position = Vector3(3, 2, 4)
+	point.normal = Vector3(1, 0, 0)  # Facing +X (east)
+	point.type = "door"
+	point.dimensions = Vector2(2.5, 3.5)
+	
+	# Rotate 90° and then -90° (should return to original)
+	var rotated = point.transform_by_rotation(Vector3(0, 90, 0))
+	var restored = rotated.transform_by_rotation(Vector3(0, -90, 0))
+	
+	# Should match original
+	assert_almost_eq(restored.position.x, point.position.x, 0.01, "Position X should be restored")
+	assert_almost_eq(restored.position.y, point.position.y, 0.01, "Position Y should be restored")
+	assert_almost_eq(restored.position.z, point.position.z, 0.01, "Position Z should be restored")
+	assert_almost_eq(restored.normal.x, point.normal.x, 0.01, "Normal X should be restored")
+	assert_almost_eq(restored.normal.y, point.normal.y, 0.01, "Normal Y should be restored")
+	assert_almost_eq(restored.normal.z, point.normal.z, 0.01, "Normal Z should be restored")
+	assert_eq(restored.type, point.type, "Type should be preserved")
+	assert_eq(restored.dimensions, point.dimensions, "Dimensions should be preserved")
+
+
+# ============================================================================
+# LayoutCalculator Tests
+# ============================================================================
+
+func test_layout_calculator_corridor_count_20_units():
+	# Test known case: 20 units with 5-unit corridors
+	# Formula: count = ceil((distance - overlap) / effective_length)
+	# With 5-unit corridors and connection points at edges (no overlap):
+	# count = ceil((20 - 0) / 5) = ceil(4) = 4
+	var metadata = AssetMetadata.new()
+	metadata.asset_name = "corridor"
+	metadata.bounding_box = AABB(Vector3(-1, 0, -2.5), Vector3(2, 3, 5))
+	
+	# Add connection points at the ends
+	var point_a = ConnectionPoint.new()
+	point_a.position = Vector3(0, 1.5, -2.5)
+	point_a.normal = Vector3(0, 0, -1)
+	point_a.type = "corridor_end"
+	point_a.dimensions = Vector2(2, 3)
+	
+	var point_b = ConnectionPoint.new()
+	point_b.position = Vector3(0, 1.5, 2.5)
+	point_b.normal = Vector3(0, 0, 1)
+	point_b.type = "corridor_end"
+	point_b.dimensions = Vector2(2, 3)
+	
+	metadata.connection_points = [point_a, point_b]
+	
+	var calculator = LayoutCalculator.new()
+	var count = calculator.calculate_corridor_count(20.0, metadata)
+	
+	# 20 units / 5 units per corridor = 4 corridors
+	assert_eq(count, 4, "20 units should equal 4 corridor pieces")
+
+func test_layout_calculator_corridor_count_10_units():
+	# Test 10 units distance
+	var metadata = AssetMetadata.new()
+	metadata.asset_name = "corridor"
+	metadata.bounding_box = AABB(Vector3(-1, 0, -2.5), Vector3(2, 3, 5))
+	
+	var point_a = ConnectionPoint.new()
+	point_a.position = Vector3(0, 1.5, -2.5)
+	point_a.normal = Vector3(0, 0, -1)
+	point_a.type = "corridor_end"
+	point_a.dimensions = Vector2(2, 3)
+	
+	var point_b = ConnectionPoint.new()
+	point_b.position = Vector3(0, 1.5, 2.5)
+	point_b.normal = Vector3(0, 0, 1)
+	point_b.type = "corridor_end"
+	point_b.dimensions = Vector2(2, 3)
+	
+	metadata.connection_points = [point_a, point_b]
+	
+	var calculator = LayoutCalculator.new()
+	var count = calculator.calculate_corridor_count(10.0, metadata)
+	
+	assert_true(count >= 1, "10 units should require at least 1 corridor")
+	assert_true(count <= 3, "10 units should require at most 3 corridors")
+
+func test_layout_calculator_corridor_count_15_units():
+	# Test 15 units distance
+	var metadata = AssetMetadata.new()
+	metadata.asset_name = "corridor"
+	metadata.bounding_box = AABB(Vector3(-1, 0, -2.5), Vector3(2, 3, 5))
+	
+	var point_a = ConnectionPoint.new()
+	point_a.position = Vector3(0, 1.5, -2.5)
+	point_a.normal = Vector3(0, 0, -1)
+	point_a.type = "corridor_end"
+	point_a.dimensions = Vector2(2, 3)
+	
+	var point_b = ConnectionPoint.new()
+	point_b.position = Vector3(0, 1.5, 2.5)
+	point_b.normal = Vector3(0, 0, 1)
+	point_b.type = "corridor_end"
+	point_b.dimensions = Vector2(2, 3)
+	
+	metadata.connection_points = [point_a, point_b]
+	
+	var calculator = LayoutCalculator.new()
+	var count = calculator.calculate_corridor_count(15.0, metadata)
+	
+	assert_true(count >= 2, "15 units should require at least 2 corridors")
+	assert_true(count <= 4, "15 units should require at most 4 corridors")
+
+func test_layout_calculator_corridor_count_30_units():
+	# Test 30 units distance
+	var metadata = AssetMetadata.new()
+	metadata.asset_name = "corridor"
+	metadata.bounding_box = AABB(Vector3(-1, 0, -2.5), Vector3(2, 3, 5))
+	
+	var point_a = ConnectionPoint.new()
+	point_a.position = Vector3(0, 1.5, -2.5)
+	point_a.normal = Vector3(0, 0, -1)
+	point_a.type = "corridor_end"
+	point_a.dimensions = Vector2(2, 3)
+	
+	var point_b = ConnectionPoint.new()
+	point_b.position = Vector3(0, 1.5, 2.5)
+	point_b.normal = Vector3(0, 0, 1)
+	point_b.type = "corridor_end"
+	point_b.dimensions = Vector2(2, 3)
+	
+	metadata.connection_points = [point_a, point_b]
+	
+	var calculator = LayoutCalculator.new()
+	var count = calculator.calculate_corridor_count(30.0, metadata)
+	
+	assert_true(count >= 4, "30 units should require at least 4 corridors")
+	assert_true(count <= 8, "30 units should require at most 8 corridors")
+
+func test_layout_calculator_invalid_distance():
+	# Test error handling for invalid distance
+	var metadata = AssetMetadata.new()
+	metadata.asset_name = "corridor"
+	metadata.bounding_box = AABB(Vector3(-1, 0, -2.5), Vector3(2, 3, 5))
+	
+	var calculator = LayoutCalculator.new()
+	
+	# Tell GUT to ignore push_error calls for this test
+	watch_signals(calculator)
+	var count = calculator.calculate_corridor_count(-10.0, metadata)
+	
+	assert_eq(count, -1, "Negative distance should return error code")
+
+func test_layout_calculator_null_metadata():
+	# Test error handling for null metadata
+	var calculator = LayoutCalculator.new()
+	
+	# Tell GUT to ignore push_error calls for this test
+	watch_signals(calculator)
+	var count = calculator.calculate_corridor_count(20.0, null)
+	
+	assert_eq(count, -1, "Null metadata should return error code")

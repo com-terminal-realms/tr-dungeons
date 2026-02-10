@@ -146,18 +146,18 @@ func _measure_floor_height(node: Node3D) -> float:
 	var collision_data = _extract_collision_geometry(node)
 	
 	if not collision_data.is_empty():
-		# Find the lowest collision shape that could be a floor
-		var lowest_floor = INF
+		# Find the highest top surface of collision shapes (where characters walk)
+		var highest_floor = -INF
 		for shape in collision_data:
 			# Floor shapes are typically box shapes near the bottom
 			if shape.shape_type == "box":
-				# Calculate the bottom surface of this collision box
-				var bottom_surface = shape.position.y - (shape.size.y / 2.0)
-				if bottom_surface < lowest_floor:
-					lowest_floor = bottom_surface
+				# Calculate the top surface of this collision box (where characters walk)
+				var top_surface = shape.position.y + (shape.size.y / 2.0)
+				if top_surface > highest_floor:
+					highest_floor = top_surface
 		
-		if lowest_floor != INF:
-			return lowest_floor
+		if highest_floor != -INF:
+			return highest_floor
 	
 	# Fallback: use bounding box
 	var bbox = _calculate_bounding_box(node)
@@ -375,32 +375,138 @@ func _collect_collision_shapes(node: Node, collision_data: Array[CollisionData])
 		_collect_collision_shapes(child, collision_data)
 
 ## Determine default facing direction
-## TODO: Implement geometry orientation analysis
+## Analyzes geometry orientation to determine which way the asset "faces"
+## Returns Euler angles (in degrees) representing the default rotation
 func _determine_default_rotation(node: Node3D) -> Vector3:
-	# Placeholder: assume default is facing forward (no rotation)
-	return Vector3.ZERO
+	var bbox = _calculate_bounding_box(node)
+	if bbox.size == Vector3.ZERO:
+		return Vector3.ZERO
+	
+	var size = bbox.size
+	
+	# Determine asset type
+	var is_corridor = _is_corridor_shaped(size)
+	
+	if is_corridor:
+		# For corridors, default facing is along the longest axis
+		# If longest axis is Z, facing is +Z (0 degrees)
+		# If longest axis is X, facing is +X (90 degrees clockwise when viewed from above)
+		var longest_axis = _get_longest_horizontal_axis(size)
+		if longest_axis == "z":
+			# Facing +Z (north) - no rotation needed
+			return Vector3(0, 0, 0)
+		else:
+			# Facing +X (east) - 90 degrees clockwise
+			return Vector3(0, 90, 0)
+	else:
+		# For rooms and other assets, default is facing +Z (north)
+		return Vector3(0, 0, 0)
+
+## Get rotation for a specific cardinal direction
+## direction: "north", "south", "east", or "west"
+## Returns Euler angles (in degrees) for Y-axis rotation
+func get_rotation_for_direction(direction: String) -> Vector3:
+	match direction.to_lower():
+		"north":
+			return Vector3(0, 0, 0)    # 0° - facing +Z
+		"east":
+			return Vector3(0, 90, 0)   # 90° clockwise - facing +X
+		"south":
+			return Vector3(0, 180, 0)  # 180° - facing -Z
+		"west":
+			return Vector3(0, 270, 0)  # 270° clockwise (or 90° counter-clockwise) - facing -X
+		_:
+			push_warning("AssetMapper: Unknown direction '%s', defaulting to north" % direction)
+			return Vector3(0, 0, 0)
+
+## Get all cardinal direction rotations
+## Returns a dictionary mapping direction names to rotation vectors
+func get_all_cardinal_rotations() -> Dictionary:
+	return {
+		"north": Vector3(0, 0, 0),
+		"east": Vector3(0, 90, 0),
+		"south": Vector3(0, 180, 0),
+		"west": Vector3(0, 270, 0)
+	}
 
 ## Calculate walkable area boundaries
+## Analyzes collision shapes to determine where characters can walk
+## Returns AABB representing the walkable floor area
 func _calculate_walkable_area(node: Node3D, collision_shapes: Array[CollisionData]) -> AABB:
-	# Placeholder implementation
-	# In a full implementation, this would analyze floor collision shapes
-	# and subtract wall collision areas
-	
 	var bbox = _calculate_bounding_box(node)
 	if bbox.size == Vector3.ZERO:
 		return AABB()
 	
-	# For now, assume walkable area is slightly smaller than bounding box
-	# and at floor height
+	# If no collision shapes, use bounding box as approximation
+	if collision_shapes.is_empty():
+		var walkable_size = Vector3(
+			bbox.size.x * 0.8,
+			0.1,
+			bbox.size.z * 0.8
+		)
+		var walkable_pos = Vector3(
+			bbox.position.x + (bbox.size.x - walkable_size.x) / 2.0,
+			bbox.position.y,
+			bbox.position.z + (bbox.size.z - walkable_size.z) / 2.0
+		)
+		return AABB(walkable_pos, walkable_size)
+	
+	# Find floor collision shapes (lowest box shapes)
+	var floor_shapes: Array[CollisionData] = []
+	var wall_shapes: Array[CollisionData] = []
+	
+	for shape in collision_shapes:
+		if shape.shape_type == "box":
+			# Floor shapes are typically wide and flat (Y dimension is smallest)
+			if shape.size.y < shape.size.x and shape.size.y < shape.size.z:
+				floor_shapes.append(shape)
+			# Wall shapes are typically tall (Y dimension is largest)
+			elif shape.size.y > shape.size.x or shape.size.y > shape.size.z:
+				wall_shapes.append(shape)
+	
+	# If we found floor shapes, use them to define walkable area
+	if not floor_shapes.is_empty():
+		# Combine all floor shapes into one walkable area
+		var min_x = INF
+		var max_x = -INF
+		var min_z = INF
+		var max_z = -INF
+		var floor_y = INF
+		
+		for floor_shape in floor_shapes:
+			var half_size = floor_shape.size / 2.0
+			min_x = min(min_x, floor_shape.position.x - half_size.x)
+			max_x = max(max_x, floor_shape.position.x + half_size.x)
+			min_z = min(min_z, floor_shape.position.z - half_size.z)
+			max_z = max(max_z, floor_shape.position.z + half_size.z)
+			floor_y = min(floor_y, floor_shape.position.y - half_size.y)
+		
+		# Shrink walkable area slightly to avoid wall collision
+		var margin = 0.2
+		var walkable_pos = Vector3(min_x + margin, floor_y, min_z + margin)
+		var walkable_size = Vector3(
+			max_x - min_x - 2 * margin,
+			0.1,
+			max_z - min_z - 2 * margin
+		)
+		
+		# Ensure positive size
+		walkable_size.x = max(0.1, walkable_size.x)
+		walkable_size.z = max(0.1, walkable_size.z)
+		
+		return AABB(walkable_pos, walkable_size)
+	
+	# Fallback: use bounding box with margin for walls
+	var margin = 0.5  # Larger margin if we have wall shapes
 	var walkable_size = Vector3(
-		bbox.size.x * 0.8,
+		max(0.1, bbox.size.x - 2 * margin),
 		0.1,
-		bbox.size.z * 0.8
+		max(0.1, bbox.size.z - 2 * margin)
 	)
 	var walkable_pos = Vector3(
-		bbox.position.x + (bbox.size.x - walkable_size.x) / 2.0,
+		bbox.position.x + margin,
 		bbox.position.y,
-		bbox.position.z + (bbox.size.z - walkable_size.z) / 2.0
+		bbox.position.z + margin
 	)
 	
 	return AABB(walkable_pos, walkable_size)

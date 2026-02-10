@@ -1,0 +1,379 @@
+{
+	"metadata": {
+		"corridor": {
+			"asset_format": "GLB",
+			"asset_name": "corridor",
+			"asset_path": "res://assets/models/kenney-dungeon/corridor.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -2.0,
+					"y": -0.00000000000000288764564323129,
+					"z": -2.00000047683716
+				},
+				"size": {
+					"x": 4.0,
+					"y": 3.0,
+					"z": 4.00000095367432
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.79999995231628
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": 1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.5,
+						"z": 2.00000047683716
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.79999995231628
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": -1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.5,
+						"z": -2.00000047683716
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.79999995231628
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 2.0,
+						"y": 1.5,
+						"z": 0.0
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.79999995231628
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -2.0,
+						"y": 1.5,
+						"z": 0.0
+					},
+					"type": "door"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 2.0,
+				"y": 1.79999995231628
+			},
+			"floor_height": -0.00000000000000288764564323129,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770725130,
+			"origin_offset": {
+				"x": 0.0,
+				"y": 1.5,
+				"z": 0.0
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -1.60000002384186,
+					"y": -0.00000000000000288764564323129,
+					"z": -1.60000038146973
+				},
+				"size": {
+					"x": 3.20000004768372,
+					"y": 0.100000001490116,
+					"z": 3.20000076293945
+				}
+			},
+			"wall_thickness": 0.0
+		},
+		"room-large": {
+			"asset_format": "GLB",
+			"asset_name": "room-large",
+			"asset_path": "res://assets/models/kenney-dungeon/room-large.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -10.0,
+					"y": -0.0000000000000170777173462812,
+					"z": -10.0
+				},
+				"size": {
+					"x": 20.0,
+					"y": 3.32690000534058,
+					"z": 20.0
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.99614000320435
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": 1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.66345000267029,
+						"z": 10.0
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.99614000320435
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": -1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.66345000267029,
+						"z": -10.0
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.99614000320435
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 10.0,
+						"y": 1.66345000267029,
+						"z": 0.0
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.99614000320435
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -10.0,
+						"y": 1.66345000267029,
+						"z": 0.0
+					},
+					"type": "door"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 2.0,
+				"y": 1.99614000320435
+			},
+			"floor_height": -0.0000000000000170777173462812,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770725130,
+			"origin_offset": {
+				"x": 0.0,
+				"y": 1.66345000267029,
+				"z": 0.0
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -8.0,
+					"y": -0.0000000000000170777173462812,
+					"z": -8.0
+				},
+				"size": {
+					"x": 16.0,
+					"y": 0.100000001490116,
+					"z": 16.0
+				}
+			},
+			"wall_thickness": 0.0
+		},
+		"room-small": {
+			"asset_format": "GLB",
+			"asset_name": "room-small",
+			"asset_path": "res://assets/models/kenney-dungeon/room-small.glb",
+			"asset_source": "",
+			"bounding_box": {
+				"position": {
+					"x": -6.0,
+					"y": -0.0000000000000170777173462812,
+					"z": -5.99999952316284
+				},
+				"size": {
+					"x": 12.0,
+					"y": 3.13328576087952,
+					"z": 12.0
+				}
+			},
+			"collision_shapes": [],
+			"connection_points": [
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.87997150421143
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": 1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.56664288043976,
+						"z": 6.00000047683716
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.87997150421143
+					},
+					"normal": {
+						"x": 0.0,
+						"y": 0.0,
+						"z": -1.0
+					},
+					"position": {
+						"x": 0.0,
+						"y": 1.56664288043976,
+						"z": -5.99999952316284
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.87997150421143
+					},
+					"normal": {
+						"x": 1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": 6.0,
+						"y": 1.56664288043976,
+						"z": 0.000000476837158203125
+					},
+					"type": "door"
+				},
+				{
+					"dimensions": {
+						"x": 2.0,
+						"y": 1.87997150421143
+					},
+					"normal": {
+						"x": -1.0,
+						"y": 0.0,
+						"z": 0.0
+					},
+					"position": {
+						"x": -6.0,
+						"y": 1.56664288043976,
+						"z": 0.000000476837158203125
+					},
+					"type": "door"
+				}
+			],
+			"default_rotation": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"doorway_dimensions": {
+				"x": 2.0,
+				"y": 1.87997150421143
+			},
+			"floor_height": -0.0000000000000170777173462812,
+			"measurement_accuracy": 0.1,
+			"measurement_timestamp": 1770725130,
+			"origin_offset": {
+				"x": 0.0,
+				"y": 1.56664288043976,
+				"z": 0.000000476837158203125
+			},
+			"rotation_pivot": {
+				"x": 0.0,
+				"y": 0.0,
+				"z": 0.0
+			},
+			"walkable_area": {
+				"position": {
+					"x": -4.80000019073486,
+					"y": -0.0000000000000170777173462812,
+					"z": -4.79999971389771
+				},
+				"size": {
+					"x": 9.60000038146973,
+					"y": 0.100000001490116,
+					"z": 9.60000038146973
+				}
+			},
+			"wall_thickness": 0.0
+		}
+	},
+	"version_history": {
+
+	}
+}
