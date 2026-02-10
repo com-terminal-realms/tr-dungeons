@@ -107,12 +107,15 @@ func _setup_audio() -> void:
 		print("Main: Monster alert sound loaded")
 
 
-## Play boss battle music (stops background music)
+## Play boss battle music (stops background music and alert sounds)
 func play_boss_music() -> void:
 	print("=== MUSIC: play_boss_music() called ===")
 	if background_music and background_music.playing:
 		print("MUSIC: Stopping background music")
 		background_music.stop()
+	if alert_sound and alert_sound.playing:
+		print("MUSIC: Stopping alert sound (boss music takes priority)")
+		alert_sound.stop()
 	if boss_music:
 		print("MUSIC: Starting boss battle music")
 		boss_music.play()

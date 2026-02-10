@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://b7qxvxvxvxvxv"]
+[gd_scene load_steps=12 format=3 uid="uid://b7qxvxvxvxvxv"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="0"]
 [ext_resource type="PackedScene" uid="uid://player_scene_001" path="res://scenes/player/player.tscn" id="1"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/corridor.glb" id="10"]
 [ext_resource type="PackedScene" uid="uid://door_scene_001" path="res://scenes/door.tscn" id="11"]
 [ext_resource type="PackedScene" path="res://assets/models/kenney-dungeon/gate-door.glb" id="12"]
+[ext_resource type="Script" path="res://scripts/components/boss_trigger.gd" id="boss_trigger_script"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -22,6 +23,9 @@ size = Vector3(20, 0.2, 20)
 
 [sub_resource type="StandardMaterial3D" id="Material_boss"]
 albedo_color = Color(0.2, 0.4, 0.1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape_boss_trigger"]
+size = Vector3(15, 5, 15)
 
 [sub_resource type="Environment" id="Environment_default"]
 background_mode = 1
@@ -232,12 +236,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Boss" parent="NavigationRegion3D/Room5" instance=ExtResource("2")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.01, 0)
+is_boss = true
 
 [node name="MeshInstance3D" parent="NavigationRegion3D/Room5/Boss"]
 surface_material_override/0 = SubResource("Material_boss")
 
 [node name="Health" parent="NavigationRegion3D/Room5/Boss"]
 max_health = 200
+
+[node name="BossTrigger" type="Area3D" parent="NavigationRegion3D/Room5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+script = ExtResource("boss_trigger_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Room5/BossTrigger"]
+shape = SubResource("BoxShape_boss_trigger")
 
 [node name="Player" parent="." instance=ExtResource("1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.004, 0)
