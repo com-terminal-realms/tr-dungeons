@@ -7,6 +7,7 @@ extends SceneTree
 const POC_ASSETS = [
 	"res://assets/models/kenney-dungeon/corridor.glb",
 	"res://assets/models/kenney-dungeon/room-small.glb",
+	"res://assets/models/kenney-dungeon/room-wide.glb",
 	"res://assets/models/kenney-dungeon/room-large.glb"
 ]
 

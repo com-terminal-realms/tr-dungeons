@@ -1,8 +1,8 @@
-# Asset: room-small
+# Asset: room-wide
 
 ## Metadata
 
-- **Asset Path**: `res://assets/models/kenney-dungeon/room-small.glb`
+- **Asset Path**: `res://assets/models/kenney-dungeon/room-wide.glb`
 - **Asset Format**: GLB
 - **Measurement Timestamp**: 2026-02-10T13:29:11
 - **Measurement Accuracy**: ±0.10 units
@@ -11,21 +11,21 @@
 
 ### Bounding Box
 
-- **Position**: (-6.00, -0.00, -6.00)
-- **Size**: (12.00, 3.13, 12.00)
-- **Width (X)**: 12.00 units
-- **Height (Y)**: 3.13 units
+- **Position**: (-10.00, -0.00, -6.00)
+- **Size**: (20.00, 3.33, 12.00)
+- **Width (X)**: 20.00 units
+- **Height (Y)**: 3.33 units
 - **Length (Z)**: 12.00 units
 
 ### Origin Offset
 
-- **Offset from Origin**: (0.00, 1.57, 0.00)
-- **Distance**: 1.57 units
+- **Offset from Origin**: (0.00, 1.66, 0.00)
+- **Distance**: 1.66 units
 
 ### Floor and Walls
 
 - **Floor Height**: -0.00 units
-- **Doorway Dimensions**: 2.00 × 1.88 units (W × H)
+- **Doorway Dimensions**: 2.00 × 2.00 units (W × H)
 
 ## Connection Points
 
@@ -34,30 +34,30 @@ Total: 4 connection point(s)
 ### Connection Point 1
 
 - **Type**: door
-- **Position**: (0.00, 1.57, 6.00)
+- **Position**: (0.00, 1.66, 6.00)
 - **Normal**: (0.00, 0.00, 1.00)
-- **Dimensions**: 2.00 × 1.88 units (W × H)
+- **Dimensions**: 2.00 × 2.00 units (W × H)
 
 ### Connection Point 2
 
 - **Type**: door
-- **Position**: (0.00, 1.57, -6.00)
+- **Position**: (0.00, 1.66, -6.00)
 - **Normal**: (0.00, 0.00, -1.00)
-- **Dimensions**: 2.00 × 1.88 units (W × H)
+- **Dimensions**: 2.00 × 2.00 units (W × H)
 
 ### Connection Point 3
 
 - **Type**: door
-- **Position**: (6.00, 1.57, 0.00)
+- **Position**: (10.00, 1.66, 0.00)
 - **Normal**: (1.00, 0.00, 0.00)
-- **Dimensions**: 2.00 × 1.88 units (W × H)
+- **Dimensions**: 2.00 × 2.00 units (W × H)
 
 ### Connection Point 4
 
 - **Type**: door
-- **Position**: (-6.00, 1.57, 0.00)
+- **Position**: (-10.00, 1.66, 0.00)
 - **Normal**: (-1.00, 0.00, 0.00)
-- **Dimensions**: 2.00 × 1.88 units (W × H)
+- **Dimensions**: 2.00 × 2.00 units (W × H)
 
 ## Collision Geometry
 
@@ -65,9 +65,9 @@ No collision shapes defined.
 
 ## Walkable Area
 
-- **Position**: (-4.80, -0.00, -4.80)
-- **Size**: (9.60, 0.10, 9.60)
-- **Area**: 92.16 square units
+- **Position**: (-8.00, -0.00, -4.80)
+- **Size**: (16.00, 0.10, 9.60)
+- **Area**: 153.60 square units
 
 ## Rotation
 
@@ -105,8 +105,8 @@ Side View (XY plane):
   -X <-+-> +X
 
 Dimensions:
-  Width (X):  12.00 units
-  Height (Y): 3.13 units
+  Width (X):  20.00 units
+  Height (Y): 3.33 units
   Length (Z): 12.00 units
 
 Connection Points:
