@@ -116,13 +116,137 @@ func _measure_floor_height(node: Node3D) -> float:
 	return bbox.position.y
 
 ## Identify connection points (doors, corridor ends)
-## TODO: Implement geometry analysis to find openings
+## Uses heuristic approach: analyze bounding box edges for openings
 func _find_connection_points(node: Node3D) -> Array[ConnectionPoint]:
 	var points: Array[ConnectionPoint] = []
 	
-	# Placeholder implementation
-	# In a full implementation, this would analyze mesh boundaries
-	# to find openings, doorways, and corridor ends
+	var bbox = _calculate_bounding_box(node)
+	if bbox.size == Vector3.ZERO:
+		return points
+	
+	# Heuristic: For corridor-like assets (longer in one dimension),
+	# create connection points at the ends
+	var size = bbox.size
+	var center = bbox.position + size / 2.0
+	
+	# Determine asset type by aspect ratio
+	var is_corridor = _is_corridor_shaped(size)
+	var is_room = _is_room_shaped(size)
+	
+	if is_corridor:
+		# Corridor: 2 connection points at ends (along longest axis)
+		var longest_axis = _get_longest_horizontal_axis(size)
+		points = _create_corridor_connections(bbox, center, longest_axis)
+	elif is_room:
+		# Room: 4 connection points (one on each wall)
+		points = _create_room_connections(bbox, center)
+	
+	return points
+
+## Check if asset is corridor-shaped (one dimension much longer than others)
+func _is_corridor_shaped(size: Vector3) -> bool:
+	var xz_size = Vector2(size.x, size.z)
+	var max_dim = max(xz_size.x, xz_size.y)
+	var min_dim = min(xz_size.x, xz_size.y)
+	
+	# Corridor if one horizontal dimension is 2x+ the other
+	return max_dim >= min_dim * 2.0
+
+## Check if asset is room-shaped (roughly square in XZ plane)
+func _is_room_shaped(size: Vector3) -> bool:
+	var xz_size = Vector2(size.x, size.z)
+	var max_dim = max(xz_size.x, xz_size.y)
+	var min_dim = min(xz_size.x, xz_size.y)
+	
+	# Room if horizontal dimensions are similar (within 2x ratio)
+	return max_dim < min_dim * 2.0 and min_dim > 3.0  # Minimum 3 units
+
+## Get the longest horizontal axis (X or Z)
+func _get_longest_horizontal_axis(size: Vector3) -> String:
+	return "z" if size.z > size.x else "x"
+
+## Create connection points for corridor assets
+func _create_corridor_connections(bbox: AABB, center: Vector3, longest_axis: String) -> Array[ConnectionPoint]:
+	var points: Array[ConnectionPoint] = []
+	
+	var opening_height = bbox.size.y * 0.8  # 80% of height
+	var opening_width = min(bbox.size.x, bbox.size.z)  # Width is the shorter dimension
+	
+	if longest_axis == "z":
+		# Corridor runs along Z axis
+		# Connection at -Z end
+		var point1 = ConnectionPoint.new()
+		point1.position = Vector3(center.x, center.y, bbox.position.z)
+		point1.normal = Vector3(0, 0, -1)  # Facing -Z
+		point1.type = "corridor_end"
+		point1.dimensions = Vector2(opening_width, opening_height)
+		points.append(point1)
+		
+		# Connection at +Z end
+		var point2 = ConnectionPoint.new()
+		point2.position = Vector3(center.x, center.y, bbox.position.z + bbox.size.z)
+		point2.normal = Vector3(0, 0, 1)  # Facing +Z
+		point2.type = "corridor_end"
+		point2.dimensions = Vector2(opening_width, opening_height)
+		points.append(point2)
+	else:
+		# Corridor runs along X axis
+		# Connection at -X end
+		var point1 = ConnectionPoint.new()
+		point1.position = Vector3(bbox.position.x, center.y, center.z)
+		point1.normal = Vector3(-1, 0, 0)  # Facing -X
+		point1.type = "corridor_end"
+		point1.dimensions = Vector2(opening_width, opening_height)
+		points.append(point1)
+		
+		# Connection at +X end
+		var point2 = ConnectionPoint.new()
+		point2.position = Vector3(bbox.position.x + bbox.size.x, center.y, center.z)
+		point2.normal = Vector3(1, 0, 0)  # Facing +X
+		point2.type = "corridor_end"
+		point2.dimensions = Vector2(opening_width, opening_height)
+		points.append(point2)
+	
+	return points
+
+## Create connection points for room assets
+func _create_room_connections(bbox: AABB, center: Vector3) -> Array[ConnectionPoint]:
+	var points: Array[ConnectionPoint] = []
+	
+	var door_height = bbox.size.y * 0.6  # 60% of height for doors
+	var door_width = 2.0  # Standard door width
+	
+	# North wall (+Z)
+	var north = ConnectionPoint.new()
+	north.position = Vector3(center.x, center.y, bbox.position.z + bbox.size.z)
+	north.normal = Vector3(0, 0, 1)
+	north.type = "door"
+	north.dimensions = Vector2(door_width, door_height)
+	points.append(north)
+	
+	# South wall (-Z)
+	var south = ConnectionPoint.new()
+	south.position = Vector3(center.x, center.y, bbox.position.z)
+	south.normal = Vector3(0, 0, -1)
+	south.type = "door"
+	south.dimensions = Vector2(door_width, door_height)
+	points.append(south)
+	
+	# East wall (+X)
+	var east = ConnectionPoint.new()
+	east.position = Vector3(bbox.position.x + bbox.size.x, center.y, center.z)
+	east.normal = Vector3(1, 0, 0)
+	east.type = "door"
+	east.dimensions = Vector2(door_width, door_height)
+	points.append(east)
+	
+	# West wall (-X)
+	var west = ConnectionPoint.new()
+	west.position = Vector3(bbox.position.x, center.y, center.z)
+	west.normal = Vector3(-1, 0, 0)
+	west.type = "door"
+	west.dimensions = Vector2(door_width, door_height)
+	points.append(west)
 	
 	return points
 

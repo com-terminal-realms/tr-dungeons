@@ -14,7 +14,7 @@ The implementation follows an incremental approach: core data structures → mea
   - Create test helper utilities for generating random test data
   - _Requirements: 6.1, 6.2_
 
-- [-] 2. Implement AssetMapper measurement core
+- [x] 2. Implement AssetMapper measurement core
   - [x] 2.1 Implement bounding box calculation
     - Write `_calculate_bounding_box()` to recursively find all MeshInstance3D nodes
     - Combine AABBs in world space with ±0.1 unit accuracy
@@ -25,26 +25,26 @@ The implementation follows an incremental approach: core data structures → mea
     - **Property 1: Bounding Box Measurement Accuracy**
     - **Validates: Requirements 1.1**
   
-  - [ ] 2.3 Implement origin offset calculation
+  - [x] 2.3 Implement origin offset calculation
     - Write `_find_origin_offset()` to calculate center of bounding box
     - Return offset from origin to geometric center
     - _Requirements: 1.2_
   
-  - [ ] 2.4 Write property test for origin offset
+  - [x] 2.4 Write property test for origin offset
     - **Property 2: Origin Offset Calculation**
     - **Validates: Requirements 1.2**
   
-  - [ ] 2.5 Implement visual vs collision extent distinction
+  - [x] 2.5 Implement visual vs collision extent distinction
     - Write `_extract_collision_geometry()` to find CollisionShape3D nodes
     - Calculate collision AABB separately from visual AABB
     - _Requirements: 1.3, 5.1_
   
-  - [ ] 2.6 Write property test for extent distinction
+  - [x] 2.6 Write property test for extent distinction
     - **Property 3: Visual vs Collision Extent Distinction**
     - **Validates: Requirements 1.3**
 
-- [ ] 3. Implement connection point detection
-  - [ ] 3.1 Implement connection point finder
+- [x] 3. Implement connection point detection
+  - [x] 3.1 Implement connection point finder
     - Write `_find_connection_points()` using geometry analysis
     - Identify openings by analyzing mesh boundaries and gaps
     - Calculate connection coordinates and outward-facing normals

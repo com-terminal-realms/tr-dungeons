@@ -135,3 +135,92 @@ func test_collision_data_to_dict_and_back():
 	assert_eq(restored.shape_type, "box", "Shape type should be preserved")
 	assert_almost_eq(restored.position.y, 2.0, 0.001, "Position Y should be preserved")
 	assert_almost_eq(restored.size.z, 6.0, 0.001, "Size Z should be preserved")
+
+func test_corridor_shaped_detection():
+	# Test corridor-shaped asset (long in one dimension)
+	var corridor_size = Vector3(2.0, 3.0, 10.0)  # Long in Z
+	assert_true(mapper._is_corridor_shaped(corridor_size), "Should detect corridor shape (Z-axis)")
+	
+	var corridor_size_x = Vector3(10.0, 3.0, 2.0)  # Long in X
+	assert_true(mapper._is_corridor_shaped(corridor_size_x), "Should detect corridor shape (X-axis)")
+	
+	# Test non-corridor (square-ish)
+	var room_size = Vector3(5.0, 3.0, 6.0)  # Similar X and Z
+	assert_false(mapper._is_corridor_shaped(room_size), "Should not detect square shape as corridor")
+
+func test_room_shaped_detection():
+	# Test room-shaped asset (roughly square in XZ)
+	var room_size = Vector3(5.0, 3.0, 6.0)
+	assert_true(mapper._is_room_shaped(room_size), "Should detect room shape")
+	
+	# Test corridor (not room-shaped)
+	var corridor_size = Vector3(2.0, 3.0, 10.0)
+	assert_false(mapper._is_room_shaped(corridor_size), "Should not detect corridor as room")
+	
+	# Test too small (not a room)
+	var small_size = Vector3(2.0, 3.0, 2.0)
+	assert_false(mapper._is_room_shaped(small_size), "Should not detect small asset as room")
+
+func test_longest_horizontal_axis():
+	# Test Z is longest
+	var size_z = Vector3(2.0, 3.0, 10.0)
+	assert_eq(mapper._get_longest_horizontal_axis(size_z), "z", "Should identify Z as longest")
+	
+	# Test X is longest
+	var size_x = Vector3(10.0, 3.0, 2.0)
+	assert_eq(mapper._get_longest_horizontal_axis(size_x), "x", "Should identify X as longest")
+
+func test_corridor_connection_points():
+	# Create corridor-shaped asset (long in Z)
+	var size = Vector3(2.0, 3.0, 10.0)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var points = mapper._find_connection_points(test_scene)
+	
+	# Should have 2 connection points
+	assert_eq(points.size(), 2, "Corridor should have 2 connection points")
+	
+	# Both should be corridor_end type
+	assert_eq(points[0].type, "corridor_end", "First point should be corridor_end")
+	assert_eq(points[1].type, "corridor_end", "Second point should be corridor_end")
+	
+	# Normals should face opposite directions along Z axis
+	var normal_sum = points[0].normal + points[1].normal
+	assert_almost_eq(normal_sum.length(), 0.0, 0.01, "Normals should face opposite directions")
+
+func test_room_connection_points():
+	# Create room-shaped asset (square-ish)
+	var size = Vector3(8.0, 3.0, 10.0)
+	var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+	add_child_autofree(test_scene)
+	
+	var points = mapper._find_connection_points(test_scene)
+	
+	# Should have 4 connection points (one per wall)
+	assert_eq(points.size(), 4, "Room should have 4 connection points")
+	
+	# All should be door type
+	for point in points:
+		assert_eq(point.type, "door", "Room connection points should be doors")
+	
+	# Should have one point facing each cardinal direction
+	var has_north = false
+	var has_south = false
+	var has_east = false
+	var has_west = false
+	
+	for point in points:
+		if point.normal.z > 0.9:
+			has_north = true
+		elif point.normal.z < -0.9:
+			has_south = true
+		elif point.normal.x > 0.9:
+			has_east = true
+		elif point.normal.x < -0.9:
+			has_west = true
+	
+	assert_true(has_north, "Should have north-facing door")
+	assert_true(has_south, "Should have south-facing door")
+	assert_true(has_east, "Should have east-facing door")
+	assert_true(has_west, "Should have west-facing door")

@@ -188,3 +188,140 @@ func test_property_json_round_trip():
 		
 		return {"success": true}
 	)
+
+# Feature: dungeon-asset-mapping, Property 4: Connection Point Discovery
+func test_property_connection_point_discovery():
+	assert_property_holds("Connection Point Discovery", func(iteration: int) -> Dictionary:
+		# Generate random asset size
+		var is_corridor = rng.randf() > 0.5
+		var size: Vector3
+		
+		if is_corridor:
+			# Create corridor-shaped asset (one dimension 2x+ longer)
+			var long_dim = rng.randf_range(8.0, 15.0)
+			var short_dim = rng.randf_range(2.0, 4.0)
+			var height = rng.randf_range(2.5, 4.0)
+			
+			if rng.randf() > 0.5:
+				size = Vector3(short_dim, height, long_dim)  # Long in Z
+			else:
+				size = Vector3(long_dim, height, short_dim)  # Long in X
+		else:
+			# Create room-shaped asset (roughly square)
+			var base_size = rng.randf_range(5.0, 12.0)
+			var variation = rng.randf_range(0.8, 1.2)
+			var height = rng.randf_range(2.5, 4.0)
+			size = Vector3(base_size, height, base_size * variation)
+		
+		# Create test scene
+		var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+		
+		# Find connection points
+		var mapper = AssetMapper.new()
+		var points = mapper._find_connection_points(test_scene)
+		
+		# Clean up
+		test_scene.queue_free()
+		
+		# Verify connection points were found
+		if points.is_empty():
+			return {
+				"success": false,
+				"input": "size=%s, is_corridor=%s" % [size, is_corridor],
+				"reason": "No connection points found"
+			}
+		
+		# Verify correct number of points
+		var expected_count = 2 if is_corridor else 4
+		if points.size() != expected_count:
+			return {
+				"success": false,
+				"input": "size=%s, is_corridor=%s" % [size, is_corridor],
+				"reason": "Expected %d connection points, found %d" % [expected_count, points.size()]
+			}
+		
+		# Verify all points have valid normals (unit length)
+		for i in range(points.size()):
+			var normal_length = points[i].normal.length()
+			if abs(normal_length - 1.0) > 0.01:
+				return {
+					"success": false,
+					"input": "size=%s, point_index=%d" % [size, i],
+					"reason": "Connection point normal not unit length: %.4f" % normal_length
+				}
+		
+		# Verify all points have positive dimensions
+		for i in range(points.size()):
+			if points[i].dimensions.x <= 0 or points[i].dimensions.y <= 0:
+				return {
+					"success": false,
+					"input": "size=%s, point_index=%d" % [size, i],
+					"reason": "Connection point has invalid dimensions: %s" % points[i].dimensions
+				}
+		
+		return {"success": true}
+	)
+
+# Feature: dungeon-asset-mapping, Property 5: Connection Point Coordinate System
+func test_property_connection_point_coordinate_system():
+	assert_property_holds("Connection Point Coordinate System", func(iteration: int) -> Dictionary:
+		# Generate random asset size
+		var size = Vector3(
+			rng.randf_range(3.0, 10.0),
+			rng.randf_range(2.5, 4.0),
+			rng.randf_range(3.0, 10.0)
+		)
+		
+		# Create test scene
+		var test_scene = AssetTestHelpers.create_test_asset_scene(size)
+		
+		# Find connection points
+		var mapper = AssetMapper.new()
+		var bbox = mapper._calculate_bounding_box(test_scene)
+		var points = mapper._find_connection_points(test_scene)
+		
+		# Clean up
+		test_scene.queue_free()
+		
+		if points.is_empty():
+			return {"success": true}  # Skip if no points
+		
+		# Verify all connection points are on or near the bounding box surface
+		for i in range(points.size()):
+			var point = points[i]
+			var pos = point.position
+			
+			# Check if point is within or on the bounding box (with small tolerance)
+			var tolerance = 0.5
+			var min_bound = bbox.position - Vector3(tolerance, tolerance, tolerance)
+			var max_bound = bbox.position + bbox.size + Vector3(tolerance, tolerance, tolerance)
+			
+			if pos.x < min_bound.x or pos.x > max_bound.x or \
+			   pos.y < min_bound.y or pos.y > max_bound.y or \
+			   pos.z < min_bound.z or pos.z > max_bound.z:
+				return {
+					"success": false,
+					"input": "size=%s, point_index=%d, bbox=%s" % [size, i, bbox],
+					"reason": "Connection point %s is outside bounding box bounds [%s, %s]" % [
+						pos, min_bound, max_bound
+					]
+				}
+			
+			# Verify normal points outward (away from center)
+			var center = bbox.position + bbox.size / 2.0
+			var to_point = (pos - center).normalized()
+			var dot_product = to_point.dot(point.normal)
+			
+			# Normal should point in same general direction as vector from center to point
+			# (dot product should be positive, allowing some tolerance for edge cases)
+			if dot_product < -0.1:
+				return {
+					"success": false,
+					"input": "size=%s, point_index=%d" % [size, i],
+					"reason": "Connection point normal %s doesn't point outward (dot=%.3f)" % [
+						point.normal, dot_product
+					]
+				}
+		
+		return {"success": true}
+	)
