@@ -55,28 +55,36 @@ func _find_player() -> Node3D:
 ## Start boss battle music
 func _start_boss_music() -> void:
 	if _boss_music_started:
+		print("Boss (%s): Music already started, skipping" % name)
 		return
 	
 	# Check if another boss already started music
 	var bosses = get_tree().get_nodes_in_group("boss")
 	for boss in bosses:
 		if boss != self and boss.has("_boss_music_started") and boss._boss_music_started:
-			print("Boss: Another boss already playing music, skipping")
+			print("Boss (%s): Another boss already playing music, skipping" % name)
 			return
 	
+	print("=== Boss (%s): Starting boss battle music ===" % name)
 	var main_scene := get_tree().root.get_node_or_null("Main")
 	if main_scene and main_scene.has_method("play_boss_music"):
 		main_scene.play_boss_music()
 		_boss_music_started = true
-		print("Boss: Boss music started for ", name)
+		print("Boss (%s): Boss music started successfully" % name)
+	else:
+		print("Boss (%s): ERROR - Could not find Main scene or play_boss_music method" % name)
 
 ## Stop boss battle music
 func _stop_boss_music() -> void:
 	if not _boss_music_started:
+		print("Boss (%s): Music not started, nothing to stop" % name)
 		return
 	
+	print("=== Boss (%s): Stopping boss battle music ===" % name)
 	var main_scene := get_tree().root.get_node_or_null("Main")
 	if main_scene and main_scene.has_method("stop_boss_music"):
 		main_scene.stop_boss_music()
 		_boss_music_started = false
-		print("Boss: Boss music stopped")
+		print("Boss (%s): Boss music stopped successfully" % name)
+	else:
+		print("Boss (%s): ERROR - Could not find Main scene or stop_boss_music method" % name)

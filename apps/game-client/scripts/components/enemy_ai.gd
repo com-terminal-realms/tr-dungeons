@@ -224,9 +224,14 @@ func _play_animation(anim_name: String) -> void:
 func _play_alert_sound() -> void:
 	# Don't play alert sound for bosses (they have their own boss music)
 	if _owner_node and _owner_node.get("is_boss") == true:
+		print("EnemyAI: Skipping alert sound - this is a BOSS enemy (name: %s)" % _owner_node.name)
 		return
+	
+	print("EnemyAI: Playing alert sound for regular enemy (name: %s)" % (_owner_node.name if _owner_node else "unknown"))
 	
 	# Get main scene to play alert sound
 	var main_scene := get_tree().root.get_node_or_null("Main")
 	if main_scene and main_scene.has_method("play_monster_alert"):
 		main_scene.play_monster_alert()
+	else:
+		print("EnemyAI: ERROR - Could not find Main scene or play_monster_alert method")

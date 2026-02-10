@@ -28,18 +28,26 @@ func _on_body_exited(body: Node3D) -> void:
 
 func _start_boss_music() -> void:
 	if _boss_music_playing:
+		print("BossTrigger: Boss music already playing, skipping")
 		return
 	
+	print("=== BossTrigger: Starting boss music (player entered trigger area) ===")
 	if _main_scene and _main_scene.has_method("play_boss_music"):
 		_main_scene.play_boss_music()
 		_boss_music_playing = true
-		print("BossTrigger: Boss music started")
+		print("BossTrigger: Boss music started successfully")
+	else:
+		print("BossTrigger: ERROR - Could not find Main scene or play_boss_music method")
 
 func _stop_boss_music() -> void:
 	if not _boss_music_playing:
+		print("BossTrigger: Boss music not playing, nothing to stop")
 		return
 	
+	print("=== BossTrigger: Stopping boss music (player exited trigger area) ===")
 	if _main_scene and _main_scene.has_method("stop_boss_music"):
 		_main_scene.stop_boss_music()
 		_boss_music_playing = false
-		print("BossTrigger: Boss music stopped")
+		print("BossTrigger: Boss music stopped successfully")
+	else:
+		print("BossTrigger: ERROR - Could not find Main scene or stop_boss_music method")
