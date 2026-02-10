@@ -144,19 +144,42 @@ func load_door_states(state_data: Dictionary) -> void:
 
 ## Place doors at all connection points in the dungeon
 func place_doors_at_connections(dungeon_root: Node3D) -> void:
-	print("DoorManager: Placing single test door in Room1 northwest position...")
+	print("DoorManager: Placing test doors at all four exits of Room1...")
 	
 	# Room1 is at (0, 0, 0), room-large is 20x20 units
-	# Northwest wall is at x=-10, z=-10
-	# Place door at northwest wall, centered on the wall
-	var door_position := Vector3(-10.0, 0.0, 0.0)  # West wall, centered vertically
-	var door_rotation := Vector3(0, 90, 0)  # Facing east (into the room)
+	# Room half-size is 10 units, so walls are at ±10 from center
 	
-	var door := _instantiate_door_at(door_position, door_rotation)
-	if door:
-		dungeon_root.add_child(door)
-		register_door(door)
-		print("DoorManager: Test door placed at %s" % door_position)
+	# Define all four door positions and rotations
+	var door_configs := [
+		{
+			"name": "West",
+			"position": Vector3(-10.0, 0.0, 0.0),
+			"rotation": Vector3(0, 90, 0)  # Facing east (into room)
+		},
+		{
+			"name": "East",
+			"position": Vector3(10.0, 0.0, 0.0),
+			"rotation": Vector3(0, -90, 0)  # Facing west (into room)
+		},
+		{
+			"name": "North",
+			"position": Vector3(0.0, 0.0, -10.0),
+			"rotation": Vector3(0, 0, 0)  # Facing south (into room)
+		},
+		{
+			"name": "South",
+			"position": Vector3(0.0, 0.0, 10.0),
+			"rotation": Vector3(0, 180, 0)  # Facing north (into room)
+		}
+	]
+	
+	# Place a door at each exit
+	for config in door_configs:
+		var door := _instantiate_door_at(config["position"], config["rotation"])
+		if door:
+			dungeon_root.add_child(door)
+			register_door(door)
+			print("DoorManager: %s door placed at %s" % [config["name"], config["position"]])
 
 
 ## Detect connection points between rooms and corridors
