@@ -222,6 +222,10 @@ func _play_animation(anim_name: String) -> void:
 
 ## Play alert sound when detecting player
 func _play_alert_sound() -> void:
+	# Don't play alert sound for bosses (they have their own boss music)
+	if _owner_node and _owner_node.get("is_boss") == true:
+		return
+	
 	# Get main scene to play alert sound
 	var main_scene := get_tree().root.get_node_or_null("Main")
 	if main_scene and main_scene.has_method("play_monster_alert"):
