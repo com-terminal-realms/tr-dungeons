@@ -53,11 +53,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15.93)
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -3.95)
 
+[node name="Floor1" type="StaticBody3D" parent="NavigationRegion3D/Corridor1to2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor1to2/Floor1"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
+[node name="Floor2" type="StaticBody3D" parent="NavigationRegion3D/Corridor1to2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor1to2/Floor2"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor1to2" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 3.95)
+
+[node name="Floor3" type="StaticBody3D" parent="NavigationRegion3D/Corridor1to2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor1to2/Floor3"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
 
 [node name="Room2" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 31.85)
@@ -80,11 +101,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 47.78)
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -3.95)
 
+[node name="Floor1" type="StaticBody3D" parent="NavigationRegion3D/Corridor2to3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor2to3/Floor1"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
+[node name="Floor2" type="StaticBody3D" parent="NavigationRegion3D/Corridor2to3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor2to3/Floor2"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor2to3" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 3.95)
+
+[node name="Floor3" type="StaticBody3D" parent="NavigationRegion3D/Corridor2to3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor2to3/Floor3"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
 
 [node name="Room3" type="Node3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 63.70)
@@ -107,11 +149,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 79.63)
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, -3.95)
 
+[node name="Floor1" type="StaticBody3D" parent="NavigationRegion3D/Corridor3to4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor3to4/Floor1"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece2" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
 
+[node name="Floor2" type="StaticBody3D" parent="NavigationRegion3D/Corridor3to4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor3to4/Floor2"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
+
 [node name="CorridorPiece3" parent="NavigationRegion3D/Corridor3to4" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 3.95)
+
+[node name="Floor3" type="StaticBody3D" parent="NavigationRegion3D/Corridor3to4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.95)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor3to4/Floor3"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room3" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -136,6 +199,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 107.53)
 
 [node name="CorridorPiece1" parent="NavigationRegion3D/Corridor4to5" instance=ExtResource("10")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
+
+[node name="Floor1" type="StaticBody3D" parent="NavigationRegion3D/Corridor4to5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Corridor4to5/Floor1"]
+shape = SubResource("BoxShape_floor")
+transform = Transform3D(0.2, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0, 0)
 
 [node name="Enemy1" parent="NavigationRegion3D/Room4" instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 0)
