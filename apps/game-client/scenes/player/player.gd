@@ -9,6 +9,7 @@ var _movement: Movement
 var _combat: Combat
 var _move_target: Vector3 = Vector3.ZERO
 var _is_moving_to_target: bool = false
+var _rmb_target: Node3D = null  # Target selected by RMB
 var _camera: Camera3D
 var _animation_player: AnimationPlayer
 var _is_attacking: bool = false
@@ -52,17 +53,33 @@ func _physics_process(delta: float) -> void:
 	
 	# Check for RMB movement
 	if _is_moving_to_target:
-		# Calculate direction to target
-		var direction := global_position.direction_to(_move_target)
-		direction.y = 0  # Keep movement horizontal
-		
-		# Check if we've reached the target
-		var distance := global_position.distance_to(_move_target)
-		if distance < 0.5:  # Within 0.5 units
-			_is_moving_to_target = false
-			input_dir = Vector3.ZERO
+		# Check if we have an RMB target (enemy) or just a ground position
+		if _rmb_target and is_instance_valid(_rmb_target):
+			# Moving to an enemy - stop when within cone range
+			var distance := global_position.distance_to(_rmb_target.global_position)
+			
+			if distance <= _combat.cone_range:
+				# Within range, stop moving
+				_is_moving_to_target = false
+				_rmb_target = null
+				input_dir = Vector3.ZERO
+			else:
+				# Calculate direction to target
+				var direction := global_position.direction_to(_rmb_target.global_position)
+				direction.y = 0  # Keep movement horizontal
+				input_dir = direction
 		else:
-			input_dir = direction
+			# Moving to a ground position
+			var direction := global_position.direction_to(_move_target)
+			direction.y = 0  # Keep movement horizontal
+			
+			# Check if we've reached the target
+			var distance := global_position.distance_to(_move_target)
+			if distance < 0.5:  # Within 0.5 units
+				_is_moving_to_target = false
+				input_dir = Vector3.ZERO
+			else:
+				input_dir = direction
 	else:
 		# Handle WASD input (overrides RMB movement)
 		input_dir = _get_input_direction()
@@ -70,6 +87,7 @@ func _physics_process(delta: float) -> void:
 		# If WASD is pressed, cancel RMB movement
 		if input_dir.length() > 0:
 			_is_moving_to_target = false
+			_rmb_target = null
 	
 	# Transform input to world space (accounting for isometric camera)
 	var world_dir := _transform_to_world_space(input_dir)
@@ -112,11 +130,20 @@ func _get_input_direction() -> Vector3:
 	
 	return input.normalized()
 
-## Transform input direction to world space for isometric camera
-## For now, this is a simple pass-through. Will be updated when camera is implemented.
+## Transform input direction to world space based on camera rotation
+## Makes WASD relative to camera view for intuitive controls
 func _transform_to_world_space(input_dir: Vector3) -> Vector3:
-	# TODO: Transform based on camera rotation (45° for isometric)
-	# For now, assume standard orientation
+	if input_dir.length() == 0:
+		return Vector3.ZERO
+	
+	# Get camera rotation around Y axis
+	if _camera and _camera is IsometricCamera:
+		var camera_rotation_y: float = _camera.current_rotation_y
+		# Rotate input by camera's Y rotation
+		var rotated := input_dir.rotated(Vector3.UP, deg_to_rad(camera_rotation_y))
+		return rotated
+	
+	# Fallback to world space if no camera
 	return input_dir
 
 ## Handle attack targeting
@@ -128,31 +155,28 @@ func _handle_attack() -> void:
 	if _is_attacking:
 		return  # Already attacking
 	
-	# Find nearest enemy in range
-	var nearest_enemy := _find_nearest_enemy()
+	_is_attacking = true
+	
+	# Find nearest enemy in cone to face toward
+	var nearest_enemy := _find_nearest_enemy_in_cone()
 	if nearest_enemy:
-		print("Player: Attacking enemy at ", nearest_enemy.global_position)
-		_is_attacking = true
-		
-		# Rotate to face the enemy
+		# Rotate to face AWAY from the enemy (because character model is backwards)
 		var direction_to_enemy := global_position.direction_to(nearest_enemy.global_position)
 		direction_to_enemy.y = 0  # Keep rotation horizontal
-		if direction_to_enemy.length() > 0:
-			# Look away from enemy (character model faces backwards)
-			look_at(global_position - direction_to_enemy, Vector3.UP)
-		
-		# Play attack animation
-		if _animation_player:
-			_animation_player.play("Sword_Attack")
-			# Wait for animation to finish
-			await _animation_player.animation_finished
-		
-		# Do damage
-		var success := _combat.attack(nearest_enemy)
-		print("Player: Attack success = ", success)
-		_is_attacking = false
-	else:
-		print("Player: No enemy in range to attack")
+		# Face opposite direction so the visual model faces the enemy
+		look_at(global_position - direction_to_enemy, Vector3.UP)
+	
+	# Play attack animation
+	if _animation_player:
+		_animation_player.play("Sword_Attack")
+		# Wait for animation to finish
+		await _animation_player.animation_finished
+	
+	# Perform cone attack
+	var hit_targets := _combat.attack_cone()
+	print("Player: Hit ", hit_targets.size(), " targets")
+	
+	_is_attacking = false
 
 ## Find nearest enemy in attack range
 func _find_nearest_enemy() -> Node3D:
@@ -164,6 +188,21 @@ func _find_nearest_enemy() -> Node3D:
 		if enemy is Node3D:
 			var distance := global_position.distance_to(enemy.global_position)
 			if distance < nearest_distance and _combat.is_in_range(enemy):
+				nearest = enemy
+				nearest_distance = distance
+	
+	return nearest
+
+## Find nearest enemy in cone to face toward
+func _find_nearest_enemy_in_cone() -> Node3D:
+	var enemies := get_tree().get_nodes_in_group("enemies")
+	var nearest: Node3D = null
+	var nearest_distance := INF
+	
+	for enemy in enemies:
+		if enemy is Node3D:
+			var distance := global_position.distance_to(enemy.global_position)
+			if distance < nearest_distance and distance <= _combat.cone_range:
 				nearest = enemy
 				nearest_distance = distance
 	
@@ -201,11 +240,27 @@ func _handle_move_to_click() -> void:
 	var result := space_state.intersect_ray(query)
 	
 	if result:
-		# Set move target to clicked position
-		_move_target = result.position
-		_move_target.y = global_position.y  # Keep same height
-		_is_moving_to_target = true
-		print("Player: Moving to ", _move_target)
+		var clicked_object = result.get("collider")
+		
+		# Check if clicked on an enemy
+		if clicked_object and clicked_object is Node3D and clicked_object.is_in_group("enemies"):
+			# Check if already within range
+			var distance := global_position.distance_to(clicked_object.global_position)
+			if distance <= _combat.cone_range:
+				print("Player: Already in range of enemy, ignoring RMB")
+				return
+			
+			# Set RMB target to the enemy
+			_rmb_target = clicked_object
+			_is_moving_to_target = true
+			print("Player: Moving to enemy ", clicked_object.name)
+		else:
+			# Fallback to ground movement
+			_rmb_target = null
+			_move_target = result.position
+			_move_target.y = global_position.y  # Keep same height
+			_is_moving_to_target = true
+			print("Player: Moving to ", _move_target)
 
 ## Update character animation based on movement
 func _update_animation(direction: Vector3) -> void:

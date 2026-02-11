@@ -29,6 +29,10 @@ func take_damage(amount: int) -> void:
 		push_error("Damage amount must be non-negative: %d" % amount)
 		return
 	
+	if not _data:
+		push_error("Health: _data is null! Health component not properly initialized.")
+		return
+	
 	if not _is_alive:
 		return  # Already dead, ignore damage
 	

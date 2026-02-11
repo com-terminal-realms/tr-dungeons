@@ -7,6 +7,8 @@ extends Resource
 @export var attack_damage: int = 10
 @export var attack_range: float = 2.0
 @export var attack_cooldown: float = 1.0
+@export var cone_angle: float = 90.0  # Degrees
+@export var cone_range: float = 3.0   # Units
 
 func _init(data: Dictionary = {}) -> void:
 	if data.has("attack_damage"):
@@ -15,13 +17,19 @@ func _init(data: Dictionary = {}) -> void:
 		attack_range = data["attack_range"]
 	if data.has("attack_cooldown"):
 		attack_cooldown = data["attack_cooldown"]
+	if data.has("cone_angle"):
+		cone_angle = data["cone_angle"]
+	if data.has("cone_range"):
+		cone_range = data["cone_range"]
 
 ## Convert to dictionary for serialization
 func to_dict() -> Dictionary:
 	return {
 		"attack_damage": attack_damage,
 		"attack_range": attack_range,
-		"attack_cooldown": attack_cooldown
+		"attack_cooldown": attack_cooldown,
+		"cone_angle": cone_angle,
+		"cone_range": cone_range
 	}
 
 ## Create from dictionary
@@ -40,6 +48,12 @@ func validate() -> Dictionary:
 	
 	if attack_cooldown < 0:
 		errors.append("attack_cooldown cannot be negative")
+	
+	if cone_angle <= 0 or cone_angle > 360:
+		errors.append("cone_angle must be between 0 and 360 degrees")
+	
+	if cone_range <= 0:
+		errors.append("cone_range must be positive")
 	
 	return {
 		"valid": errors.is_empty(),

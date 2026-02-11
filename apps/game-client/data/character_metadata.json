@@ -44,7 +44,19 @@
 			"floor_offset": 1.00396728515625,
 			"measurement_accuracy": 0.01,
 			"measurement_timestamp": 1770750596,
-			"scene_path": "res://scenes/player/player.tscn"
+			"scene_path": "res://scenes/player/player.tscn",
+			"orientation_issue": {
+				"description": "Character model faces +Z instead of Godot convention -Z",
+				"current_forward": "+Z (positive Z axis)",
+				"expected_forward": "-Z (negative Z axis)",
+				"phase_difference": "180 degrees",
+				"workaround_applied": true,
+				"workaround_details": {
+					"combat_cone_detection": "Uses basis.z instead of -basis.z",
+					"attack_rotation": "Uses look_at(position - direction) instead of look_at(position + direction)"
+				},
+				"fix_required": "Rotate CharacterModel node 180° in Y axis OR re-export asset with correct orientation"
+			}
 		}
 	},
 	"version": "1.0"
