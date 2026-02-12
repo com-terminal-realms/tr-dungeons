@@ -123,3 +123,33 @@ This should be run as a background process so logs can be monitored.
 - All scenes must be in .tscn text format (not binary)
 - Scenes must be version-controllable in Git
 - Use modular prefab-style scenes for reusable components
+
+## Control Scheme Rules
+
+**CRITICAL**: The control scheme is documented in `apps/game-client/docs/CONTROL_SCHEME.md` and must not be changed without updating that file.
+
+### Movement Controls
+
+- **RMB click ONLY** for all character movement
+- **NO WASD MOVEMENT** - WASD keys are completely removed from movement
+- WASD keys are reserved for future combat abilities
+- Never re-implement WASD movement without explicit user approval
+
+### Camera Controls
+
+- **RMB hold + drag**: Rotate camera around player (5-pixel threshold)
+- **Mouse wheel**: Zoom in/out (8.0 to 25.0 units)
+- **Arrow keys**: Alternative camera controls (left/right rotate, up/down zoom)
+
+### Combat Controls
+
+- **LMB**: Cone attack (90° angle, 3.0 range, multi-target)
+- **H key**: Heal (20 HP)
+
+### Before Changing Controls
+
+1. Read `apps/game-client/docs/CONTROL_SCHEME.md`
+2. Understand the design rationale
+3. Get user approval for changes
+4. Update documentation after changes
+5. Test all controls before committing
