@@ -23,16 +23,15 @@ func _ready() -> void:
 	print("IsometricCamera: _ready() called")
 	print("IsometricCamera: Target is ", target)
 	
-	if not target:
-		push_error("IsometricCamera: No target set!")
-		return
-	
-	# Wait one frame for target to be ready
+	# Wait one frame for target to be ready (main.gd sets it immediately)
 	await get_tree().process_frame
 	
-	print("IsometricCamera: Target found at ", target.global_position)
-	update_camera_position()
-	print("IsometricCamera: Camera positioned at ", global_position)
+	if target:
+		print("IsometricCamera: Target found at ", target.global_position)
+		update_camera_position()
+		print("IsometricCamera: Camera positioned at ", global_position)
+	else:
+		print("IsometricCamera: Warning - No target set after initialization")
 
 func _input(event: InputEvent) -> void:
 	# Handle mouse wheel zoom

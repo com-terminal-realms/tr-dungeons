@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Restart Godot Game",
+  "description": "Kills all running Godot processes and starts the game fresh for testing",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "pkill -9 godot && sleep 1 && cd apps/game-client && godot ."
+  }
+}

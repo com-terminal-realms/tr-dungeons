@@ -59,7 +59,7 @@ func _find_health_in_parent() -> Node:
 		return null
 	
 	for child in parent.get_children():
-		if child.get_class() == "Node" and child.name == "Health":
+		if child is Health:
 			return child
 	return null
 

@@ -68,6 +68,40 @@ This should be run as a background process so logs can be monitored.
 3. **Press F5** in Godot to run the game
 4. **View logs** in the Godot output panel or terminal
 
+## Cache Management
+
+**CRITICAL: Never delete the `.godot/` cache directory without rebuilding it.**
+
+The `.godot/` directory contains:
+- Imported assets (.glb, .gltf, .ogg files)
+- Class registrations (custom classes like Door, Health, etc.)
+- Compiled scripts and metadata
+
+### If Cache is Missing or Corrupted
+
+1. **NEVER run headless** - This will fail with parse errors
+2. **Open Godot editor** to rebuild cache:
+   ```bash
+   cd apps/game-client
+   godot --editor .
+   ```
+3. **Wait for import to complete** - Watch the bottom-right progress bar
+4. **Close editor** when import is done
+5. **Now you can run headless** for testing
+
+### Signs of Cache Issues
+
+- Parse errors about missing classes (Door, Health, Movement, Combat)
+- "Could not find type" errors
+- Missing imported asset errors (.glb, .gltf, .ogg files)
+- "Cannot open file 'res://.godot/imported/...'" errors
+
+### Prevention
+
+- Don't manually delete `.godot/` directory
+- If you must clean cache, immediately rebuild it with editor
+- Add `.godot/` to `.gitignore` (already done)
+
 ## Commit Standards
 
 **CRITICAL: Never commit code with errors.**
