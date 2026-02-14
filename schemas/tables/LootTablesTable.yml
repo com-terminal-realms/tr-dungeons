@@ -1,6 +1,11 @@
+type: table
 name: LootTablesTable
 description: DynamoDB table for loot table configurations
-model: LootTable
+targets:
+  - api
+model:
+  name: LootTable
+  attributes: {}
 keys:
   partition_key:
     name: pk

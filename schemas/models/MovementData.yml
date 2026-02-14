@@ -3,6 +3,8 @@
 type: standard
 version: '1.0'
 name: MovementData
+targets:
+  - api
 
 model:
   attributes:

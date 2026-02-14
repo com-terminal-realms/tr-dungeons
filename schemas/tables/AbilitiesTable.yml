@@ -1,6 +1,11 @@
+type: table
 name: AbilitiesTable
 description: DynamoDB table for ability definitions
-model: Ability
+targets:
+  - api
+model:
+  name: Ability
+  attributes: {}
 keys:
   partition_key:
     name: pk

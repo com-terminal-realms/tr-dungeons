@@ -1,5 +1,3 @@
-version: '1.0'
-
 project:
   name: tr-dungeons
   customerId: terminal-realms
@@ -9,15 +7,20 @@ paths:
   schemas: ./schemas
 
 output:
-  backend:
-    models: ./apps/api/models
-    enabled: true
-  infrastructure:
-    cdk:
-      output: ./infrastructure/cdk/resources
-      enabled: true
-
-options:
   python:
-    base_class: pydantic.BaseModel
-    generate_validators: true
+    targets:
+      api:
+        path: ./apps/api/models
+        enabled: true
+  
+  typescript:
+    targets:
+      api:
+        path: ./apps/web/src/models
+        enabled: false
+  
+  cdk:
+    targets:
+      api:
+        path: ./infrastructure/cdk/resources
+        enabled: true

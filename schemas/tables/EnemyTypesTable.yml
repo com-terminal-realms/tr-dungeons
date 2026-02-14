@@ -1,6 +1,11 @@
+type: table
 name: EnemyTypesTable
 description: DynamoDB table for enemy type configurations
-model: EnemyType
+targets:
+  - api
+model:
+  name: EnemyType
+  attributes: {}
 keys:
   partition_key:
     name: pk

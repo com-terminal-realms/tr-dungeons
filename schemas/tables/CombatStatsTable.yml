@@ -1,6 +1,11 @@
+type: table
 name: CombatStatsTable
 description: DynamoDB table for combat statistics configurations
-model: CombatStats
+targets:
+  - api
+model:
+  name: CombatStats
+  attributes: {}
 keys:
   partition_key:
     name: pk

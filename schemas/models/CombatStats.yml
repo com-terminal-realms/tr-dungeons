@@ -1,88 +1,105 @@
+# Combat statistics model schema
+type: standard
+version: '1.0'
 name: CombatStats
 description: Combat statistics for player and enemy entities
-fields:
-  - name: id
-    type: string
-    required: true
-    description: Unique identifier for the combat stats configuration
-  
-  - name: max_health
-    type: decimal
-    required: true
-    description: Maximum health points
-    min_value: 1.0
-    default: 100.0
-  
-  - name: max_mana
-    type: decimal
-    required: true
-    description: Maximum mana points for abilities
-    min_value: 0.0
-    default: 100.0
-  
-  - name: max_stamina
-    type: decimal
-    required: true
-    description: Maximum stamina points for dodge and sprint
-    min_value: 0.0
-    default: 100.0
-  
-  - name: attack_damage
-    type: decimal
-    required: true
-    description: Base attack damage
-    min_value: 0.0
-    default: 10.0
-  
-  - name: attack_speed
-    type: decimal
-    required: true
-    description: Attacks per second
-    min_value: 0.1
-    default: 1.0
-  
-  - name: attack_range
-    type: decimal
-    required: true
-    description: Attack range in meters
-    min_value: 0.5
-    default: 2.0
-  
-  - name: armor
-    type: decimal
-    required: true
-    description: Damage reduction value
-    min_value: 0.0
-    default: 0.0
-  
-  - name: move_speed
-    type: decimal
-    required: true
-    description: Movement speed in meters per second
-    min_value: 0.1
-    default: 5.0
-  
-  - name: critical_chance
-    type: decimal
-    required: true
-    description: Probability of critical hit (0.0 to 1.0)
-    min_value: 0.0
-    max_value: 1.0
-    default: 0.05
-  
-  - name: critical_multiplier
-    type: decimal
-    required: true
-    description: Damage multiplier for critical hits
-    min_value: 1.0
-    default: 2.0
-  
-  - name: created_at
-    type: datetime
-    required: true
-    description: Timestamp when the stats were created
-  
-  - name: updated_at
-    type: datetime
-    required: false
-    description: Timestamp when the stats were last updated
+targets:
+  - api
+
+model:
+  attributes:
+    id:
+      type: string
+      required: true
+      description: Unique identifier for the combat stats configuration
+    
+    max_health:
+      type: number
+      required: true
+      description: Maximum health points
+      validation:
+        minimum: 1.0
+      default: 100.0
+    
+    max_mana:
+      type: number
+      required: true
+      description: Maximum mana points for abilities
+      validation:
+        minimum: 0.0
+      default: 100.0
+    
+    max_stamina:
+      type: number
+      required: true
+      description: Maximum stamina points for dodge and sprint
+      validation:
+        minimum: 0.0
+      default: 100.0
+    
+    attack_damage:
+      type: number
+      required: true
+      description: Base attack damage
+      validation:
+        minimum: 0.0
+      default: 10.0
+    
+    attack_speed:
+      type: number
+      required: true
+      description: Attacks per second
+      validation:
+        minimum: 0.1
+      default: 1.0
+    
+    attack_range:
+      type: number
+      required: true
+      description: Attack range in meters
+      validation:
+        minimum: 0.5
+      default: 2.0
+    
+    armor:
+      type: number
+      required: true
+      description: Damage reduction value
+      validation:
+        minimum: 0.0
+      default: 0.0
+    
+    move_speed:
+      type: number
+      required: true
+      description: Movement speed in meters per second
+      validation:
+        minimum: 0.1
+      default: 5.0
+    
+    critical_chance:
+      type: number
+      required: true
+      description: Probability of critical hit (0.0 to 1.0)
+      validation:
+        minimum: 0.0
+        maximum: 1.0
+      default: 0.05
+    
+    critical_multiplier:
+      type: number
+      required: true
+      description: Damage multiplier for critical hits
+      validation:
+        minimum: 1.0
+      default: 2.0
+    
+    created_at:
+      type: datetime
+      required: true
+      description: Timestamp when the stats were created
+    
+    updated_at:
+      type: datetime
+      required: false
+      description: Timestamp when the stats were last updated
