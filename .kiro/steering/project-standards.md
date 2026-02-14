@@ -147,6 +147,44 @@ The hook is located at `.git/hooks/pre-commit` and is automatically active. If i
 chmod +x .git/hooks/pre-commit
 ```
 
+## Tagging Working Baselines
+
+**CRITICAL: Working baseline tags require user testing and confirmation.**
+
+### Process for Creating Working Baseline Tags
+
+1. **Fix all errors** - Pre-commit hook validates no errors in logs
+2. **Commit the fixes** - Pre-commit hook will run automatically
+3. **Ask user to test** - User must manually test the game
+4. **Wait for confirmation** - User confirms game is actually working
+5. **Create tag** - Only after user confirmation:
+   ```bash
+   git tag -a "v0.X.X-working-baseline" -m "Baseline: <description>"
+   git push --tags
+   ```
+
+### Why User Testing is Required
+
+The pre-commit hook only validates:
+- No ERROR or SCRIPT ERROR messages in logs
+- Game starts without crashing
+
+The pre-commit hook does NOT validate:
+- Game is actually playable
+- Features work correctly
+- No visual glitches or grey screens
+- Controls respond properly
+- Game logic is correct
+
+**Only the user can confirm the game is truly working.**
+
+### Tag Naming Convention
+
+- Format: `v<major>.<minor>.<patch>-working-baseline`
+- Increment patch for fixes, minor for features, major for breaking changes
+- Always include `-working-baseline` suffix for baseline tags
+- Example: `v0.3.4-working-baseline`
+
 ## Fix Approval Process
 
 **CRITICAL: Never attempt to fix issues without user approval of the fix plan first.**
@@ -179,19 +217,31 @@ This process prevents cascading failures and ensures we maintain control over ch
    - What needs to be re-applied after reset
 4. **WAIT** - Get explicit user approval
 5. **RESET** - Execute: `git reset --hard <tag-name>`
-6. **START** - Start the game for user to test
-7. **CONFIRM** - User confirms game is working
-8. **TAG** - Create new semver tag with `-working-baseline` suffix:
-   ```bash
-   git tag -a "v0.X.X-working-baseline" -m "Baseline: <description>"
-   git push --tags
-   ```
+6. **FIX** - Apply necessary fixes to resolve errors
+7. **COMMIT** - Commit fixes (pre-commit hook validates no errors)
+8. **ASK USER TO TEST** - User must test the game manually
+9. **WAIT FOR CONFIRMATION** - User confirms game is working
+10. **TAG** - Only after user confirmation, create new semver tag with `-working-baseline` suffix:
+    ```bash
+    git tag -a "v0.X.X-working-baseline" -m "Baseline: <description>"
+    git push --tags
+    ```
+
+**CRITICAL: Never create a `-working-baseline` tag without user testing and confirmation.**
+
+The pre-commit hook only validates that there are no errors in the logs. It does NOT confirm the game is actually playable or functional. Only the user can confirm this.
 
 **Tag Naming Convention:**
 - Format: `v<major>.<minor>.<patch>-working-baseline`
 - Increment patch for fixes, minor for features, major for breaking changes
 - Always include `-working-baseline` suffix for baseline tags
 - Example: `v0.3.4-working-baseline`
+
+**When to Create Working Baseline Tags:**
+- After fixing critical bugs and user confirms game works
+- After completing a feature and user confirms it works
+- Before starting risky refactoring work
+- At any milestone where user confirms game is stable
 
 ## Asset Standards
 
