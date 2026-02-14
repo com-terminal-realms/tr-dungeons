@@ -1,6 +1,6 @@
 project:
   name: tr-dungeons
-  customerId: terminal-realms
+  customerId: com-terminal-realms
   projectId: tr-dungeons
 
 paths:
@@ -9,20 +9,25 @@ paths:
 output:
   python:
     enabled: true
-    base_dir: apps/api
-    models_subdir: models
     targets:
       api:
-        enabled: true
+        base_dir: apps/api
+        models_subdir: models
+        enums_subdir: enums
   
   typescript:
     enabled: false
   
   infrastructure:
+    format: cloudformation
     cdk:
       base_dir: infrastructure/cdk
       language: python
       generate_stack: false
+
+generation:
+  validate_schemas: true
+  cleanup_old_files: false
 
 logging:
   level: INFO
