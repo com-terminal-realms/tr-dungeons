@@ -1,7 +1,7 @@
 project:
   name: tr-dungeons
-  customerId: com-terminal-realms
-  projectId: tr-dungeons
+  customerId: tr
+  projectId: dungeons
 
 paths:
   schemas: schemas
