@@ -23,6 +23,7 @@ black = "*"
 flake8 = "*"
 mypy = "*"
 httpx = "*"
+orb-schema-generator = "*"
 
 [requires]
 python_version = "3.11"
