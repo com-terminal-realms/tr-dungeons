@@ -12,9 +12,14 @@ var _is_moving_to_target: bool = false
 var _camera: Camera3D
 var _animation_player: AnimationPlayer
 var _is_attacking: bool = false
+var _movement_indicator: Node3D = null
+var _movement_indicator_scene: PackedScene = null
 
 func _ready() -> void:
 	print("Player: Initializing at ", global_position)
+	
+	# Load movement indicator scene
+	_movement_indicator_scene = load("res://scenes/ui/movement_indicator.tscn")
 	
 	# Get component references
 	_health = $Health
@@ -61,6 +66,8 @@ func _physics_process(delta: float) -> void:
 		if distance < 0.5:  # Within 0.5 units
 			_is_moving_to_target = false
 			input_dir = Vector3.ZERO
+			# Remove movement indicator when arrived
+			_remove_movement_indicator()
 		else:
 			input_dir = direction
 	else:
@@ -70,6 +77,8 @@ func _physics_process(delta: float) -> void:
 		# If WASD is pressed, cancel RMB movement
 		if input_dir.length() > 0:
 			_is_moving_to_target = false
+			# Remove movement indicator when WASD is used
+			_remove_movement_indicator()
 	
 	# Transform input to world space (accounting for isometric camera)
 	var world_dir := _transform_to_world_space(input_dir)
@@ -206,6 +215,38 @@ func _handle_move_to_click() -> void:
 		_move_target.y = global_position.y  # Keep same height
 		_is_moving_to_target = true
 		print("Player: Moving to ", _move_target)
+		
+		# Spawn movement indicator at clicked position
+		_spawn_movement_indicator(result.position)
+
+## Spawn movement indicator at target position
+func _spawn_movement_indicator(position: Vector3) -> void:
+	# Remove previous indicator if it exists
+	_remove_movement_indicator()
+	
+	if not _movement_indicator_scene:
+		push_warning("Player: Movement indicator scene not loaded!")
+		return
+	
+	# Instantiate indicator
+	_movement_indicator = _movement_indicator_scene.instantiate()
+	
+	# Add to scene (as child of NavigationRegion3D or root)
+	var nav_region := get_node("/root/Main/NavigationRegion3D")
+	if nav_region:
+		nav_region.add_child(_movement_indicator)
+	else:
+		get_tree().root.add_child(_movement_indicator)
+	
+	# Set position at floor level (y=0)
+	_movement_indicator.global_position = Vector3(position.x, 0.0, position.z)
+	print("Player: Movement indicator spawned at ", _movement_indicator.global_position)
+
+## Remove movement indicator
+func _remove_movement_indicator() -> void:
+	if _movement_indicator:
+		_movement_indicator.remove_immediately()
+		_movement_indicator = null
 
 ## Update character animation based on movement
 func _update_animation(direction: Vector3) -> void:
