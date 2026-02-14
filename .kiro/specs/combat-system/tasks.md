@@ -46,6 +46,17 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Execute `orb-schema-generator` to generate Python models and CDK constructs
     - Verify generated files in `apps/api/models/` and `infrastructure/cdk/resources/`
     - _Requirements: 11.3_
+  
+  - [x] 2.7 Create multiplayer-ready schemas (future-proofing)
+    - Created `schemas/models/PlayerSession.yml` for player session tracking
+    - Created `schemas/models/RoomState.yml` for dungeon room instances
+    - Created `schemas/models/CombatEvent.yml` for combat event logging
+    - Created `schemas/tables/PlayerSessionsTable.yml`
+    - Created `schemas/tables/RoomStatesTable.yml`
+    - Created `schemas/tables/CombatEventsTable.yml`
+    - Created `MULTIPLAYER_ARCHITECTURE.md` documentation
+    - Note: These schemas are for future Phase 2 (Co-op) implementation
+    - _Requirements: Future multiplayer support_
 
 - [ ] 3. Core Data Structures
   - [ ] 3.1 Implement CombatStats resource

@@ -1,0 +1,105 @@
+# Combat event model schema
+type: standard
+version: '1.0'
+name: CombatEvent
+description: Combat event for multiplayer synchronization and logging
+targets:
+  - api
+
+model:
+  attributes:
+    event_id:
+      type: string
+      required: true
+      description: Unique identifier for the combat event
+    
+    room_id:
+      type: string
+      required: true
+      description: Room where the event occurred
+    
+    event_type:
+      type: string
+      required: true
+      description: Type of combat event
+      enum: [damage_dealt, damage_taken, ability_used, enemy_died, player_died, loot_dropped, loot_picked_up, door_opened, door_closed]
+    
+    timestamp:
+      type: datetime
+      required: true
+      description: When the event occurred
+    
+    source_player_id:
+      type: string
+      required: false
+      description: Player who initiated the event (if applicable)
+    
+    source_enemy_id:
+      type: string
+      required: false
+      description: Enemy who initiated the event (if applicable)
+    
+    target_player_id:
+      type: string
+      required: false
+      description: Player who was targeted by the event (if applicable)
+    
+    target_enemy_id:
+      type: string
+      required: false
+      description: Enemy who was targeted by the event (if applicable)
+    
+    ability_id:
+      type: string
+      required: false
+      description: Ability used (for ability_used events)
+    
+    damage_amount:
+      type: number
+      required: false
+      description: Amount of damage dealt/taken
+      validation:
+        minimum: 0.0
+    
+    is_critical:
+      type: boolean
+      required: false
+      description: Whether the damage was a critical hit
+      default: false
+    
+    item_id:
+      type: string
+      required: false
+      description: Item involved (for loot events)
+    
+    item_quantity:
+      type: integer
+      required: false
+      description: Quantity of item (for loot events)
+      validation:
+        minimum: 1
+    
+    position_x:
+      type: number
+      required: false
+      description: X position where event occurred
+    
+    position_y:
+      type: number
+      required: false
+      description: Y position where event occurred
+    
+    position_z:
+      type: number
+      required: false
+      description: Z position where event occurred
+    
+    metadata:
+      type: object
+      required: false
+      description: Additional event-specific data as JSON
+    
+    created_at:
+      type: datetime
+      required: true
+      description: Timestamp when the event was recorded

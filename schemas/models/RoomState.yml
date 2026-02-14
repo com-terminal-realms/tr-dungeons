@@ -1,0 +1,171 @@
+# Room state model schema
+type: standard
+version: '1.0'
+name: RoomState
+description: Dungeon room instance state for multiplayer synchronization
+targets:
+  - api
+
+model:
+  attributes:
+    room_id:
+      type: string
+      required: true
+      description: Unique identifier for the room instance
+    
+    dungeon_id:
+      type: string
+      required: true
+      description: Identifier of the dungeon template this room belongs to
+    
+    room_type:
+      type: string
+      required: true
+      description: Type of room (start, combat, boss, treasure, exit)
+      enum: [start, combat, boss, treasure, exit]
+    
+    max_players:
+      type: integer
+      required: true
+      description: Maximum number of players allowed in this room
+      validation:
+        minimum: 1
+        maximum: 8
+      default: 4
+    
+    current_player_count:
+      type: integer
+      required: true
+      description: Current number of players in the room
+      validation:
+        minimum: 0
+      default: 0
+    
+    is_cleared:
+      type: boolean
+      required: true
+      description: Whether all enemies in the room have been defeated
+      default: false
+    
+    enemies:
+      type: array
+      required: true
+      description: Array of enemy instances in the room
+      items:
+        type: object
+        properties:
+          enemy_instance_id:
+            type: string
+            required: true
+            description: Unique identifier for this enemy instance
+          enemy_type_id:
+            type: string
+            required: true
+            description: Reference to EnemyType configuration
+          current_health:
+            type: number
+            required: true
+            description: Current health of the enemy
+          position_x:
+            type: number
+            required: true
+            description: Enemy X position
+          position_y:
+            type: number
+            required: true
+            description: Enemy Y position
+          position_z:
+            type: number
+            required: true
+            description: Enemy Z position
+          is_alive:
+            type: boolean
+            required: true
+            description: Whether the enemy is alive
+          aggro_player_id:
+            type: string
+            required: false
+            description: ID of player this enemy is currently targeting
+    
+    loot_drops:
+      type: array
+      required: true
+      description: Array of loot items dropped in the room
+      items:
+        type: object
+        properties:
+          loot_instance_id:
+            type: string
+            required: true
+            description: Unique identifier for this loot drop
+          item_id:
+            type: string
+            required: true
+            description: Identifier of the item
+          item_type:
+            type: string
+            required: true
+            description: Type of item
+          quantity:
+            type: integer
+            required: true
+            description: Quantity of the item
+          position_x:
+            type: number
+            required: true
+            description: Loot X position
+          position_y:
+            type: number
+            required: true
+            description: Loot Y position
+          position_z:
+            type: number
+            required: true
+            description: Loot Z position
+          is_picked_up:
+            type: boolean
+            required: true
+            description: Whether the loot has been picked up
+          picked_up_by:
+            type: string
+            required: false
+            description: Player ID who picked up the loot
+    
+    doors:
+      type: array
+      required: true
+      description: Array of door states in the room
+      items:
+        type: object
+        properties:
+          door_id:
+            type: string
+            required: true
+            description: Identifier for the door
+          is_open:
+            type: boolean
+            required: true
+            description: Whether the door is open
+          is_locked:
+            type: boolean
+            required: true
+            description: Whether the door is locked
+          connected_room_id:
+            type: string
+            required: false
+            description: Room ID this door connects to
+    
+    created_at:
+      type: datetime
+      required: true
+      description: Timestamp when the room instance was created
+    
+    updated_at:
+      type: datetime
+      required: false
+      description: Timestamp when the room state was last updated
+    
+    expires_at:
+      type: datetime
+      required: false
+      description: Timestamp when this room instance expires (if empty)

@@ -1,0 +1,36 @@
+# Combat events DynamoDB table schema
+type: table
+version: '1.0'
+name: CombatEventsTable
+description: DynamoDB table for combat event logging and synchronization
+targets:
+  - api
+
+model:
+  name: CombatEvent
+  attributes:
+    room_id:
+      type: string
+      key_type: HASH
+    event_id:
+      type: string
+      key_type: RANGE
+    timestamp:
+      type: datetime
+      index: timestamp-index
+
+table:
+  billing_mode: PAY_PER_REQUEST
+  stream_enabled: true
+  stream_view_type: NEW_AND_OLD_IMAGES
+  point_in_time_recovery: false
+  
+  global_secondary_indexes:
+    - index_name: timestamp-index
+      partition_key: room_id
+      sort_key: timestamp
+      projection_type: ALL
+  
+  ttl:
+    enabled: true
+    attribute_name: expires_at

@@ -5,6 +5,7 @@ name: Ability
 description: Ability definition with costs, cooldown, and effects
 targets:
   - api
+  - game
 
 model:
   attributes:

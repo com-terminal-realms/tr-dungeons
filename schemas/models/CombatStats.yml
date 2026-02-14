@@ -5,6 +5,7 @@ name: CombatStats
 description: Combat statistics for player and enemy entities
 targets:
   - api
+  - game
 
 model:
   attributes:

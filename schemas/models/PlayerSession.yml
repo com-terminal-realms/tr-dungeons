@@ -1,0 +1,94 @@
+# Player session model schema
+type: standard
+version: '1.0'
+name: PlayerSession
+description: Player session data for multiplayer tracking
+targets:
+  - api
+
+model:
+  attributes:
+    session_id:
+      type: string
+      required: true
+      description: Unique identifier for the player session
+    
+    player_id:
+      type: string
+      required: true
+      description: Unique identifier for the player account
+    
+    character_name:
+      type: string
+      required: true
+      description: Character display name
+      validation:
+        min_length: 1
+        max_length: 50
+    
+    room_id:
+      type: string
+      required: false
+      description: Current room/dungeon instance the player is in
+    
+    combat_stats_id:
+      type: string
+      required: true
+      description: Reference to player's CombatStats configuration
+    
+    current_health:
+      type: number
+      required: true
+      description: Current health points
+      validation:
+        minimum: 0.0
+    
+    current_mana:
+      type: number
+      required: true
+      description: Current mana points
+      validation:
+        minimum: 0.0
+    
+    current_stamina:
+      type: number
+      required: true
+      description: Current stamina points
+      validation:
+        minimum: 0.0
+    
+    position_x:
+      type: number
+      required: false
+      description: Player X position in world space
+    
+    position_y:
+      type: number
+      required: false
+      description: Player Y position in world space
+    
+    position_z:
+      type: number
+      required: false
+      description: Player Z position in world space
+    
+    is_alive:
+      type: boolean
+      required: true
+      description: Whether the player is currently alive
+      default: true
+    
+    last_heartbeat:
+      type: datetime
+      required: true
+      description: Last time the client sent a heartbeat (for disconnect detection)
+    
+    created_at:
+      type: datetime
+      required: true
+      description: Timestamp when the session was created
+    
+    updated_at:
+      type: datetime
+      required: false
+      description: Timestamp when the session was last updated

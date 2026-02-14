@@ -14,8 +14,24 @@ output:
         base_dir: apps/api
         models_subdir: models
         enums_subdir: enums
+      game:
+        base_dir: generated/python
+        models_subdir: models
+        enums_subdir: enums
+  
+  gdscript:
+    enabled: true
+    targets:
+      game:
+        base_dir: apps/game-client/scripts
+        models_subdir: models
+        enums_subdir: enums
+        api_clients_subdir: backend
   
   typescript:
+    enabled: false
+  
+  graphql:
     enabled: false
   
   infrastructure:

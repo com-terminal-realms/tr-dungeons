@@ -1,0 +1,43 @@
+# Player sessions DynamoDB table schema
+type: table
+version: '1.0'
+name: PlayerSessionsTable
+description: DynamoDB table for player session tracking
+targets:
+  - api
+
+model:
+  name: PlayerSession
+  attributes:
+    session_id:
+      type: string
+      key_type: HASH
+    player_id:
+      type: string
+      index: player-index
+    room_id:
+      type: string
+      index: room-index
+    last_heartbeat:
+      type: datetime
+      ttl: true
+      ttl_attribute: expires_at
+
+table:
+  billing_mode: PAY_PER_REQUEST
+  stream_enabled: true
+  stream_view_type: NEW_AND_OLD_IMAGES
+  point_in_time_recovery: true
+  
+  global_secondary_indexes:
+    - index_name: player-index
+      partition_key: player_id
+      projection_type: ALL
+    
+    - index_name: room-index
+      partition_key: room_id
+      projection_type: ALL
+  
+  ttl:
+    enabled: true
+    attribute_name: expires_at

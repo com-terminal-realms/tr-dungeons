@@ -1,0 +1,36 @@
+# Room states DynamoDB table schema
+type: table
+version: '1.0'
+name: RoomStatesTable
+description: DynamoDB table for dungeon room instance state
+targets:
+  - api
+
+model:
+  name: RoomState
+  attributes:
+    room_id:
+      type: string
+      key_type: HASH
+    dungeon_id:
+      type: string
+      index: dungeon-index
+    expires_at:
+      type: datetime
+      ttl: true
+      ttl_attribute: expires_at
+
+table:
+  billing_mode: PAY_PER_REQUEST
+  stream_enabled: true
+  stream_view_type: NEW_AND_OLD_IMAGES
+  point_in_time_recovery: true
+  
+  global_secondary_indexes:
+    - index_name: dungeon-index
+      partition_key: dungeon_id
+      projection_type: ALL
+  
+  ttl:
+    enabled: true
+    attribute_name: expires_at

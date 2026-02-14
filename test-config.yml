@@ -1,0 +1,60 @@
+project:
+  name: orb-schema-generator-development
+  customerId: orb
+  projectId: schema-generator
+paths:
+  schemas: schemas
+  templates: null
+  subdirectories:
+    core: core
+    tables: tables
+    models: models
+    registries: registries
+    graphql: graphql
+    lambdas: lambdas
+output:
+  python:
+    enabled: true
+    base_dir: apps/api
+    enums_subdir: enums
+    models_subdir: models
+  typescript:
+    enabled: true
+    base_dir: apps/web
+    enums_subdir: enums
+    models_subdir: models
+  dart:
+    enabled: false
+    base_dir: apps/mobile/lib
+    enums_subdir: enums
+    models_subdir: models
+  graphql:
+    base_dir: apps/api/graphql
+    enums_subdir: ''
+    models_subdir: ''
+  infrastructure:
+    format: cloudformation
+    cdk:
+      base_dir: infrastructure/cdk
+      language: python
+      generate_stack: true
+      stack_name: backend_stack
+    cloudformation:
+      base_dir: infrastructure/cloudformation
+    appsync:
+      resolverOutputDir: null
+      auth: null
+      logging: null
+      apiKey: null
+      ssm: null
+    lambda:
+      resolverOutputDir: null
+      lambdaArnPattern: null
+      useSsmParameters: true
+generation:
+  validate_schemas: true
+  validate_graphql: true
+  cleanup_old_files: true
+logging:
+  level: INFO
+  file: schema_generator.log
