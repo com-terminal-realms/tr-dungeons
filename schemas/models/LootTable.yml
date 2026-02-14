@@ -1,0 +1,57 @@
+name: LootTable
+description: Loot drop configuration with probabilities and quantities
+fields:
+  - name: id
+    type: string
+    required: true
+    description: Unique identifier for the loot table
+  
+  - name: name
+    type: string
+    required: true
+    description: Display name of the loot table
+    min_length: 1
+    max_length: 100
+  
+  - name: drops
+    type: array
+    required: true
+    description: Array of loot drop definitions
+    items:
+      type: object
+      properties:
+        item_id:
+          type: string
+          required: true
+          description: Identifier of the item to drop
+        item_type:
+          type: string
+          required: true
+          description: Type of item (gold, equipment, consumable)
+          enum: [gold, equipment, consumable]
+        chance:
+          type: decimal
+          required: true
+          description: Probability of drop (0.0 to 1.0)
+          min_value: 0.0
+          max_value: 1.0
+        min_quantity:
+          type: integer
+          required: true
+          description: Minimum quantity to drop
+          min_value: 1
+        max_quantity:
+          type: integer
+          required: true
+          description: Maximum quantity to drop
+          min_value: 1
+  
+  - name: created_at
+    type: datetime
+    required: true
+    description: Timestamp when the loot table was created
+  
+  - name: updated_at
+    type: datetime
+    required: false
+    description: Timestamp when the loot table was last updated

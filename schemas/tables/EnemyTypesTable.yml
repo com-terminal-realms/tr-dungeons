@@ -1,0 +1,16 @@
+name: EnemyTypesTable
+description: DynamoDB table for enemy type configurations
+model: EnemyType
+keys:
+  partition_key:
+    name: pk
+    type: string
+  sort_key:
+    name: sk
+    type: string
+indexes:
+  - name: name-index
+    partition_key:
+      name: name
+      type: string
+    projection: all

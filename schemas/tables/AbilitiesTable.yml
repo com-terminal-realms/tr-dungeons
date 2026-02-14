@@ -1,0 +1,16 @@
+name: AbilitiesTable
+description: DynamoDB table for ability definitions
+model: Ability
+keys:
+  partition_key:
+    name: pk
+    type: string
+  sort_key:
+    name: sk
+    type: string
+indexes:
+  - name: ability-type-index
+    partition_key:
+      name: ability_type
+      type: string
+    projection: all

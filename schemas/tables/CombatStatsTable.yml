@@ -1,0 +1,16 @@
+name: CombatStatsTable
+description: DynamoDB table for combat statistics configurations
+model: CombatStats
+keys:
+  partition_key:
+    name: pk
+    type: string
+  sort_key:
+    name: sk
+    type: string
+indexes:
+  - name: created-at-index
+    partition_key:
+      name: created_at
+      type: string
+    projection: all

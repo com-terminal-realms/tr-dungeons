@@ -8,41 +8,41 @@ The implementation will be done in the `feature/combat-system` branch and includ
 
 ## Tasks
 
-- [ ] 1. Setup and Foundation
+- [x] 1. Setup and Foundation
   - Create feature branch `feature/combat-system` from main
   - Set up directory structure for combat scripts
   - Configure collision layers in project settings (Layers 1-7 as specified)
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 16.1, 16.2, 16.3_
 
-- [ ] 2. Backend Schema Definitions
-  - [ ] 2.1 Create CombatStats schema
+- [-] 2. Backend Schema Definitions
+  - [x] 2.1 Create CombatStats schema
     - Create `schemas/models/combat_stats.yaml` with all combat stat properties
     - Define validation rules for stat ranges
     - _Requirements: 11.1, 11.2_
   
-  - [ ] 2.2 Create EnemyType schema
+  - [x] 2.2 Create EnemyType schema
     - Create `schemas/models/enemy_type.yaml` with enemy configuration
     - Include stats reference, AI parameters, loot table reference
     - _Requirements: 3.1, 10.1_
   
-  - [ ] 2.3 Create LootTable schema
+  - [x] 2.3 Create LootTable schema
     - Create `schemas/models/loot_table.yaml` with drop definitions
     - Define drop probability structure
     - _Requirements: 10.1, 10.2_
   
-  - [ ] 2.4 Create Ability schema
+  - [x] 2.4 Create Ability schema
     - Create `schemas/models/ability.yaml` with ability parameters
     - Include cooldown, costs, damage, and effect properties
     - _Requirements: 6.1, 6.4, 6.5_
   
-  - [ ] 2.5 Create DynamoDB table schemas
+  - [x] 2.5 Create DynamoDB table schemas
     - Create `schemas/tables/combat_stats_table.yaml`
     - Create `schemas/tables/enemy_types_table.yaml`
     - Create `schemas/tables/loot_tables_table.yaml`
     - Create `schemas/tables/abilities_table.yaml`
     - _Requirements: 11.3_
   
-  - [ ] 2.6 Run schema generator
+  - [-] 2.6 Run schema generator
     - Execute `orb-schema-generator` to generate Python models and CDK constructs
     - Verify generated files in `apps/api/models/` and `infrastructure/cdk/resources/`
     - _Requirements: 11.3_
