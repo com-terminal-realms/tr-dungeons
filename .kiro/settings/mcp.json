@@ -2,12 +2,16 @@
   "mcpServers": {
     "orb-templates": {
       "command": "/home/fishbeak/.orb-mcp-venv/bin/python",
-      "args": ["-m", "orb_templates_mcp.server"],
+      "args": [
+        "-m",
+        "orb_templates_mcp.server"
+      ],
       "disabled": false,
       "autoApprove": [
         "search_standards",
         "validate_naming",
-        "get_workflow_template"
+        "get_workflow_template",
+        "search_standards_tool"
       ]
     }
   }

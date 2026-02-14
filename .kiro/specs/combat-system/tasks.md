@@ -14,7 +14,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - Configure collision layers in project settings (Layers 1-7 as specified)
   - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 16.1, 16.2, 16.3_
 
-- [-] 2. Backend Schema Definitions
+- [x] 2. Backend Schema Definitions
   - [x] 2.1 Create CombatStats schema
     - Create `schemas/models/combat_stats.yaml` with all combat stat properties
     - Define validation rules for stat ranges
@@ -42,7 +42,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Create `schemas/tables/abilities_table.yaml`
     - _Requirements: 11.3_
   
-  - [-] 2.6 Run schema generator
+  - [x] 2.6 Run schema generator
     - Execute `orb-schema-generator` to generate Python models and CDK constructs
     - Verify generated files in `apps/api/models/` and `infrastructure/cdk/resources/`
     - _Requirements: 11.3_

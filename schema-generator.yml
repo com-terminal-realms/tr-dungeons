@@ -4,23 +4,26 @@ project:
   projectId: tr-dungeons
 
 paths:
-  schemas: ./schemas
+  schemas: schemas
 
 output:
   python:
+    enabled: true
+    base_dir: apps/api
+    models_subdir: models
     targets:
       api:
-        path: ./apps/api/models
         enabled: true
   
   typescript:
-    targets:
-      api:
-        path: ./apps/web/src/models
-        enabled: false
+    enabled: false
   
-  cdk:
-    targets:
-      api:
-        path: ./infrastructure/cdk/resources
-        enabled: true
+  infrastructure:
+    cdk:
+      base_dir: infrastructure/cdk
+      language: python
+      generate_stack: false
+
+logging:
+  level: INFO
+  file: schema_generator.log
