@@ -1,22 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://detection_indicator_001"]
+[gd_scene load_steps=2 format=3 uid="uid://detection_indicator_001"]
 
 [ext_resource type="Script" path="res://scenes/ui/detection_indicator.gd" id="1"]
 
-[sub_resource type="StandardMaterial3D" id="Material_indicator"]
-transparency = 1
-albedo_color = Color(1, 0, 0, 0.7)
-emission_enabled = true
-emission = Color(1, 0, 0, 1)
-emission_energy_multiplier = 1.5
-
-[sub_resource type="SphereMesh" id="SphereMesh_indicator"]
-material = SubResource("Material_indicator")
-radius = 0.3
-height = 0.6
-radial_segments = 8
-rings = 4
-
-[node name="DetectionIndicator" type="MeshInstance3D"]
+[node name="DetectionIndicator" type="Label3D"]
 script = ExtResource("1")
-mesh = SubResource("SphereMesh_indicator")
+text = "Attacking!"
+billboard = 1
+font_size = 48
+outline_size = 8
 visible = false
