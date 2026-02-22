@@ -152,6 +152,12 @@ func take_damage(amount: float, source: Node = null) -> void:
 	
 	damage_taken.emit(final_damage, source)
 	
+	# Track stats if player is taking damage
+	if parent and parent.is_in_group("player"):
+		if DungeonStatsTracker.instance:
+			var source_name: String = source.name if source else "Unknown"
+			DungeonStatsTracker.instance.record_player_damage(final_damage, source_name)
+	
 	# Spawn damage number
 	if parent is Node3D:
 		DamageNumber.spawn(final_damage, parent.global_position, is_critical)
@@ -205,6 +211,20 @@ func deal_damage_to(target: Node, damage: float) -> void:
 	if target_combat:
 		target_combat.take_damage(damage, get_parent())
 		damage_dealt.emit(damage, target)
+		
+		# Track stats if player is attacking
+		var attacker := get_parent()
+		if attacker and attacker.is_in_group("player"):
+			if DungeonStatsTracker.instance:
+				var target_name: String = target.name if target else "Unknown"
+				DungeonStatsTracker.instance.record_player_attack(true, damage, target_name)
+	else:
+		# Miss - no combat component found
+		var attacker := get_parent()
+		if attacker and attacker.is_in_group("player"):
+			if DungeonStatsTracker.instance:
+				var target_name: String = target.name if target else "Unknown"
+				DungeonStatsTracker.instance.record_player_attack(false, 0.0, target_name)
 
 ## Get stats component (for external access)
 func get_stats_component() -> StatsComponent:
@@ -220,6 +240,20 @@ func _on_hurtbox_hit(hitbox_area: HitboxArea3D) -> void:
 func _on_died() -> void:
 	if state_machine:
 		state_machine.transition_to(StateMachine.State.DEAD)
+	
+	var parent := get_parent()
+	
+	# Track stats
+	if parent:
+		if parent.is_in_group("player"):
+			# Player death
+			if DungeonStatsTracker.instance:
+				DungeonStatsTracker.instance.record_player_death()
+		elif parent.is_in_group("enemies"):
+			# Enemy death
+			if DungeonStatsTracker.instance:
+				var is_boss := parent.is_in_group("boss")
+				DungeonStatsTracker.instance.record_enemy_killed(parent.name, is_boss)
 	
 	# Play death animation
 	if animation_player and animation_player.has_animation("death"):
@@ -305,8 +339,8 @@ func _apply_red_flash() -> void:
 	var original_material := mesh_instance.get_surface_override_material(0)
 	mesh_instance.set_surface_override_material(0, red_material)
 	
-	# Restore after 0.1 seconds
-	get_tree().create_timer(0.1).timeout.connect(func():
+	# Restore after 0.5 seconds
+	get_tree().create_timer(0.5).timeout.connect(func():
 		if mesh_instance:
 			mesh_instance.set_surface_override_material(0, original_material)
 	)

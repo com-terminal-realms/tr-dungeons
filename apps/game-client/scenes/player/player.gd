@@ -27,15 +27,15 @@ func _ready() -> void:
 	_movement_indicator_scene = load("res://scenes/ui/movement_indicator.tscn")
 	
 	# Get component references
-	_health = $Health
-	_movement = $Movement
-	_combat = $Combat
+	_health = $Health as Health
+	_movement = $Movement as Movement
+	_combat = $Combat as Combat
 	_animation_player = $CharacterModel/AnimationPlayer if has_node("CharacterModel/AnimationPlayer") else $AnimationPlayer
 	
 	# Get new combat system components
-	_stats_component = $StatsComponent
-	_combat_component = $CombatComponent
-	_inventory = $Inventory
+	_stats_component = $StatsComponent as StatsComponent
+	_combat_component = $CombatComponent as CombatComponent
+	_inventory = $Inventory as Inventory
 	
 	print("Player: New combat components - Stats:", _stats_component != null, " Combat:", _combat_component != null, " Inventory:", _inventory != null)
 	
@@ -370,6 +370,10 @@ func _handle_heal() -> void:
 	var heal_amount := 20
 	_health.heal(heal_amount)
 	print("Player: Healed for ", heal_amount, " HP. Current health: ", _health._data.current_health)
+	
+	# Track stats
+	if DungeonStatsTracker.instance:
+		DungeonStatsTracker.instance.record_player_heal(heal_amount)
 
 ## Add gold to inventory (new combat system)
 func add_gold(amount: int) -> void:

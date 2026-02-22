@@ -8,9 +8,13 @@ var alert_sound: AudioStreamPlayer
 
 # Combat system
 var respawn_manager: Node
+var stats_tracker: Node
 
 func _ready() -> void:
 	print("Main: Scene ready")
+	
+	# Set up stats tracker
+	_setup_stats_tracker()
 	
 	# Set up audio players
 	_setup_audio()
@@ -19,9 +23,9 @@ func _ready() -> void:
 	_setup_respawn_manager()
 	
 	# Get references
-	var player = $Player
-	var camera = $Camera
-	var nav_region = $NavigationRegion3D
+	var player := $Player
+	var camera := $Camera
+	var nav_region := $NavigationRegion3D
 	
 	print("Main: Player = ", player)
 	print("Main: Camera = ", camera)
@@ -39,7 +43,7 @@ func _ready() -> void:
 		print("Main: Baking navigation mesh...")
 		var nav_mesh = NavigationMesh.new()
 		nav_mesh.cell_size = 0.25
-		nav_mesh.cell_height = 0.2
+		nav_mesh.cell_height = 0.25  # Match navigation map cell_height
 		nav_mesh.agent_height = 2.0
 		nav_mesh.agent_radius = 0.5
 		nav_mesh.agent_max_climb = 0.5
@@ -178,6 +182,21 @@ func _input(event: InputEvent) -> void:
 				else:
 					background_music.play()
 					print("Main: Background music started")
+		
+		# Press END to show dungeon stats and end session
+		elif key_event.keycode == KEY_END:
+			if stats_tracker:
+				stats_tracker.end_session()
+
+
+## Set up stats tracker
+func _setup_stats_tracker() -> void:
+	var StatsTracker := load("res://scripts/systems/dungeon_stats_tracker.gd")
+	stats_tracker = Node.new()
+	stats_tracker.set_script(StatsTracker)
+	stats_tracker.name = "DungeonStatsTracker"
+	add_child(stats_tracker)
+	print("Main: Dungeon stats tracker created")
 
 
 
@@ -197,7 +216,7 @@ func _setup_interaction_prompt() -> void:
 ## Set up respawn manager for combat system
 func _setup_respawn_manager() -> void:
 	# Create respawn manager
-	var RespawnManager = load("res://scripts/systems/respawn_manager.gd")
+	var RespawnManager := load("res://scripts/systems/respawn_manager.gd")
 	respawn_manager = Node.new()
 	respawn_manager.set_script(RespawnManager)
 	respawn_manager.name = "RespawnManager"
@@ -205,7 +224,7 @@ func _setup_respawn_manager() -> void:
 	respawn_manager.add_to_group("respawn_manager")
 	
 	# Set initial checkpoint at player spawn
-	var player = $Player
+	var player := $Player
 	if player and respawn_manager:
 		respawn_manager.set_checkpoint(player.global_position)
 		print("Main: Respawn manager created and checkpoint set")
