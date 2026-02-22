@@ -3,7 +3,7 @@
 extends Label3D
 
 @export var offset_y: float = 2.5  # Height above enemy
-@export var display_duration: float = 2.0  # How long to show before fading
+@export var display_duration: float = 1.0  # How long to show before fading
 
 var elapsed: float = 0.0
 var is_showing: bool = false
