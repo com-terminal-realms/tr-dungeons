@@ -114,6 +114,8 @@ func record_enemy_killed(enemy_name: String, is_boss: bool = false) -> void:
 	enemies_killed += 1
 	if is_boss:
 		boss_killed = true
+		# Trigger victory screen
+		_show_victory_screen()
 	
 	_add_combat_event({
 		"event_type": "enemy_killed",
@@ -247,3 +249,36 @@ func _get_combat_data() -> Dictionary:
 ## Get all combat events (for CombatEventModel array)
 func get_combat_events() -> Array[Dictionary]:
 	return combat_events
+
+## Show victory screen with stats
+func _show_victory_screen() -> void:
+	# End the session
+	session_end_time = Time.get_unix_time_from_system()
+	
+	# Find or create the stats screen
+	var stats_screen: Control = null
+	
+	# Check if it already exists in the scene
+	var main := get_tree().root.get_node_or_null("Main")
+	if main:
+		stats_screen = main.get_node_or_null("DungeonStatsScreen")
+	
+	# If not found, instantiate it
+	if not stats_screen:
+		var stats_screen_scene := load("res://scenes/ui/dungeon_stats_screen.tscn") as PackedScene
+		if stats_screen_scene:
+			stats_screen = stats_screen_scene.instantiate()
+			if main:
+				main.add_child(stats_screen)
+			else:
+				get_tree().root.add_child(stats_screen)
+	
+	# Show the stats
+	if stats_screen and stats_screen.has_method("show_stats"):
+		stats_screen.show_stats(self)
+	
+	# Also print to console for debugging
+	print("\n" + "=".repeat(60))
+	print("BOSS DEFEATED - DUNGEON COMPLETE!")
+	print("=".repeat(60))
+	end_session()
