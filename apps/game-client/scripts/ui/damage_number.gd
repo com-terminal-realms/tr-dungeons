@@ -37,11 +37,11 @@ static func spawn(damage: float, position: Vector3, is_critical: bool = false) -
 	if is_critical:
 		damage_number.modulate = Color(1.0, 1.0, 0.0, 1.0)
 		damage_number.outline_modulate = Color(1.0, 0.5, 0.0, 1.0)
-		damage_number.font_size = 32
+		damage_number.font_size = 64
 	else:
 		damage_number.modulate = Color(1.0, 0.0, 0.0, 1.0)
 		damage_number.outline_modulate = Color(0.5, 0.0, 0.0, 1.0)
-		damage_number.font_size = 24
+		damage_number.font_size = 48
 	
 	# Add to scene
 	var tree := Engine.get_main_loop() as SceneTree
