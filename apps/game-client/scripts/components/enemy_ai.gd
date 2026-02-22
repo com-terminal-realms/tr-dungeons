@@ -84,13 +84,14 @@ func _update_ai_state() -> void:
 	if distance <= detection_range:
 		_target = player
 		
-		# Show detection indicator
-		if _detection_indicator and _detection_indicator.has_method("show_indicator"):
-			_detection_indicator.show_indicator()
-		
-		# Play alert sound when first detecting player (IDLE -> CHASE transition)
-		if _previous_state == State.IDLE and _state != State.ATTACK:
-			_play_alert_sound()
+		# Show detection indicator only on first detection (IDLE -> CHASE/ATTACK transition)
+		if _previous_state == State.IDLE:
+			if _detection_indicator and _detection_indicator.has_method("show_indicator"):
+				_detection_indicator.show_indicator()
+			
+			# Play alert sound when first detecting player
+			if _state != State.ATTACK:
+				_play_alert_sound()
 		
 		# Check if in attack range
 		if _combat.is_in_range(player):
@@ -101,13 +102,12 @@ func _update_ai_state() -> void:
 		_state = State.IDLE
 		_target = null
 		
-		# Hide detection indicator
+		# Hide detection indicator when losing target
 		if _detection_indicator and _detection_indicator.has_method("hide_indicator"):
 			_detection_indicator.hide_indicator()
 	
 	# Update previous state for next frame
 	_previous_state = _state
-
 ## Update navigation path to target
 func _update_navigation() -> void:
 	if not _navigation_agent or not _target:
