@@ -45,6 +45,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - [x] 2.6 Run schema generator
     - Execute `orb-schema-generator` to generate Python models and CDK constructs
     - Verify generated files in `apps/api/models/` and `infrastructure/cdk/resources/`
+    - - ✅ VERIFIED: All models generated successfully (AbilityModel.py, CombatStatsModel.py, EnemyTypeModel.py, LootTableModel.py, CombatEventModel.py, PlayerSessionModel.py, RoomStateModel.py)
     - _Requirements: 11.3_
   
   - [x] 2.7 Create multiplayer-ready schemas (future-proofing)
@@ -59,7 +60,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: Future multiplayer support_
 
 - [ ] 3. Core Data Structures
-  - [ ] 3.1 Implement CombatStats resource
+  - [x] 3.1 Implement CombatStats resource
     - Create `scripts/combat/combat_stats.gd` with all stat properties
     - Add export annotations for editor configuration
     - _Requirements: 11.1, 11.2, 11.3_
@@ -68,18 +69,18 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - **Property 29: Combat Stats Serialization Round-Trip**
     - **Validates: Requirements 11.3**
   
-  - [ ] 3.3 Create example CombatStats resources
+  - [x] 3.3 Create example CombatStats resources
     - Create `data/combat_stats/player_stats.tres`
     - Create `data/combat_stats/goblin_stats.tres`
     - _Requirements: 11.2, 11.4_
   
-  - [ ] 3.4 Implement DamageEvent class
+  - [x] 3.4 Implement DamageEvent class
     - Create `scripts/combat/damage_event.gd` for damage data
     - Include amount, source, target, is_critical, damage_type
     - _Requirements: 12.1, 12.3_
 
 - [ ] 4. StatsComponent Implementation
-  - [ ] 4.1 Create StatsComponent with resource management
+  - [x] 4.1 Create StatsComponent with resource management
     - Create `scripts/combat/stats_component.gd`
     - Implement health, mana, stamina properties and signals
     - Implement regeneration logic in _process()
@@ -103,7 +104,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.3_
 
 - [ ] 5. State Machine Implementation
-  - [ ] 5.1 Create StateMachine with state enum and transitions
+  - [x] 5.1 Create StateMachine with state enum and transitions
     - Create `scripts/combat/state_machine.gd`
     - Implement State enum (IDLE, MOVING, ATTACKING, DODGING, CASTING, STUNNED, DEAD)
     - Implement transition_to() with validation
@@ -123,13 +124,13 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 7. Hitbox and Hurtbox System
-  - [ ] 7.1 Create HitboxArea3D script
+  - [x] 7.1 Create HitboxArea3D script
     - Create `scripts/combat/hitbox_area3d.gd`
     - Implement get_damage() method
     - Configure collision layers (Layer 4 for player, Layer 5 for enemy)
     - _Requirements: 15.4, 15.5, 15.8_
   
-  - [ ] 7.2 Create HurtboxArea3D script
+  - [x] 7.2 Create HurtboxArea3D script
     - Create `scripts/combat/hurtbox_area3d.gd`
     - Implement area_entered signal handling
     - Configure collision masks appropriately
@@ -140,13 +141,13 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - **Validates: Requirements 15.8**
 
 - [ ] 8. Ability System Foundation
-  - [ ] 8.1 Create Ability base class
+  - [x] 8.1 Create Ability base class
     - Create `scripts/combat/ability.gd`
     - Implement ability_name, cooldown, mana_cost, stamina_cost, cast_time properties
     - Implement activate() virtual method
     - _Requirements: 6.4, 6.5_
   
-  - [ ] 8.2 Create AbilityController
+  - [x] 8.2 Create AbilityController
     - Create `scripts/combat/ability_controller.gd`
     - Implement ability registration, activation, and cooldown tracking
     - Implement resource cost validation
@@ -172,7 +173,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.5_
 
 - [ ] 9. CombatComponent Implementation
-  - [ ] 9.1 Create CombatComponent with core combat logic
+  - [x] 9.1 Create CombatComponent with core combat logic
     - Create `scripts/combat/combat_component.gd`
     - Implement attack(), dodge(), take_damage() methods
     - Implement calculate_damage() with armor and critical hits
@@ -214,7 +215,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 11. Melee Attack Ability
-  - [ ] 11.1 Implement MeleeAttack ability
+  - [x] 11.1 Implement MeleeAttack ability
     - Create `scripts/combat/abilities/melee_attack.gd`
     - Implement attack animation triggering
     - Implement hitbox activation during attack frames
@@ -242,7 +243,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.1_
 
 - [ ] 12. Dodge Roll Implementation
-  - [ ] 12.1 Implement dodge roll in CombatComponent
+  - [x] 12.1 Implement dodge roll in CombatComponent
     - Implement dodge() method with direction parameter
     - Grant i-frames for 0.3 seconds
     - Apply dodge movement (4 meters)
@@ -266,7 +267,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - **Validates: Requirements 4.7**
 
 - [ ] 13. Projectile System
-  - [ ] 13.1 Create Projectile class
+  - [x] 13.1 Create Projectile class
     - Create `scripts/combat/projectile.gd`
     - Implement movement, collision detection, and destruction
     - Configure collision layers (Layer 6)
@@ -287,7 +288,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.1_
 
 - [ ] 14. Fireball Ability
-  - [ ] 14.1 Implement Fireball ability
+  - [x] 14.1 Implement Fireball ability
     - Create `scripts/combat/abilities/fireball.gd`
     - Implement cast animation and projectile spawning
     - Configure mana cost (20) and cooldown (3 seconds)
@@ -307,7 +308,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 16. Enemy AI Implementation
-  - [ ] 16.1 Create EnemyAI component
+  - [x] 16.1 Create EnemyAI component
     - Create `scripts/combat/enemy_ai.gd`
     - Implement AIState enum (IDLE, PATROL, CHASE, ATTACK, RETURN)
     - Implement state processing methods
@@ -332,28 +333,28 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.1_
 
 - [ ] 17. Loot System
-  - [ ] 17.1 Create LootTable resource
+  - [x] 17.1 Create LootTable resource
     - Create `scripts/loot/loot_table.gd`
     - Implement roll() method with probability calculations
     - _Requirements: 10.1, 10.2_
   
-  - [ ] 17.2 Create LootDrop resource
+  - [x] 17.2 Create LootDrop resource
     - Create `scripts/loot/loot_drop.gd`
     - Implement item_id, chance, quantity properties
     - _Requirements: 10.2_
   
-  - [ ] 17.3 Implement loot drop spawning
+  - [x] 17.3 Implement loot drop spawning
     - Add loot drop logic to CombatComponent death handling
     - Create 3D pickup objects at death location
     - _Requirements: 10.2, 10.3_
   
-  - [ ] 17.4 Implement item pickup system
+  - [x] 17.4 Implement item pickup system
     - Create pickup area detection (2-meter radius)
     - Implement automatic pickup on proximity
     - Display pickup notification
     - _Requirements: 10.4, 10.5, 10.6_
   
-  - [ ] 17.5 Implement gold and equipment handling
+  - [x] 17.5 Implement gold and equipment handling
     - Add gold to player total on pickup
     - Add equipment to player inventory on pickup
     - _Requirements: 10.7, 10.8_
@@ -376,7 +377,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.6_
 
 - [ ] 18. Hit Feedback System
-  - [ ] 18.1 Implement visual feedback effects
+  - [x] 18.1 Implement visual feedback effects
     - Create slash effect for melee hits
     - Create red flash for damage taken
     - Create particle effects for hits
@@ -388,12 +389,12 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Add distinct sounds for critical hits
     - _Requirements: 1.7, 1.8, 8.5_
   
-  - [ ] 18.3 Implement camera shake
+  - [x] 18.3 Implement camera shake
     - Add camera shake on player damage
     - Scale intensity with damage amount
     - _Requirements: 8.1_
   
-  - [ ] 18.4 Implement hit freeze and knockback
+  - [x] 18.4 Implement hit freeze and knockback
     - Add frame freeze for heavy hits (>20 damage)
     - Apply 0.5m knockback to hit enemies
     - _Requirements: 8.2, 8.3_
@@ -403,12 +404,12 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - **Validates: Requirements 8.3**
 
 - [ ] 19. Death and Respawn System
-  - [ ] 19.1 Implement death screen UI
+  - [x] 19.1 Implement death screen UI
     - Create death screen with combat statistics
     - Add 2-second delay before showing respawn button
     - _Requirements: 9.1, 9.2_
   
-  - [ ] 19.2 Implement respawn logic
+  - [x] 19.2 Implement respawn logic
     - Respawn player at last checkpoint
     - Restore health and mana to maximum
     - Reset enemies in current room
@@ -485,31 +486,31 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.1_
 
 - [ ] 23. UI Implementation
-  - [ ] 23.1 Create health bar UI
+  - [x] 23.1 Create health bar UI
     - Create player health bar (screen space)
     - Create enemy health bars (world space)
     - Connect to health_changed signals
     - _Requirements: 2.6, 2.7_
   
-  - [ ] 23.2 Create resource bars UI
+  - [x] 23.2 Create resource bars UI
     - Create stamina bar below health bar
     - Create mana bar below stamina bar
     - Connect to resource change signals
     - Add visual indicators for insufficient resources
     - _Requirements: 5.6, 5.8, 7.4, 7.6_
   
-  - [ ] 23.3 Create damage numbers
+  - [x] 23.3 Create damage numbers
     - Implement floating damage numbers above targets
     - Animate numbers (fade out, float up)
     - _Requirements: 2.5_
   
-  - [ ] 23.4 Create ability cooldown UI
+  - [x] 23.4 Create ability cooldown UI
     - Display ability icons with cooldown overlays
     - Gray out abilities when insufficient resources
     - _Requirements: 7.6_
 
 - [ ] 24. Player Entity Setup
-  - [ ] 24.1 Create player scene with combat components
+  - [x] 24.1 Create player scene with combat components
     - Create `scenes/entities/player.tscn`
     - Add CharacterBody3D, CollisionShape3D, MeshInstance3D
     - Add CombatComponent with all sub-components
@@ -517,7 +518,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Configure collision layers (Layer 2)
     - _Requirements: 15.2_
   
-  - [ ] 24.2 Integrate player input handling
+  - [x] 24.2 Integrate player input handling
     - Connect left mouse button to attack()
     - Connect right mouse button to fireball cast
     - Connect spacebar to dodge()
@@ -531,7 +532,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 1.1, 2.9, 4.6, 6.6_
 
 - [ ] 25. Enemy Entity Setup
-  - [ ] 25.1 Create enemy scene template
+  - [x] 25.1 Create enemy scene template
     - Create `scenes/entities/enemy.tscn`
     - Add CharacterBody3D, CollisionShape3D, MeshInstance3D
     - Add CombatComponent with all sub-components
@@ -541,7 +542,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Configure collision layers (Layer 3)
     - _Requirements: 15.3_
   
-  - [ ] 25.2 Create goblin enemy variant
+  - [x] 25.2 Create goblin enemy variant
     - Instantiate enemy template
     - Assign goblin_stats.tres
     - Configure AI parameters (detection radius, attack range)
@@ -586,7 +587,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - _Requirements: 17.1_
 
 - [ ] 28. Test Scene Creation
-  - [ ] 28.1 Create combat test arena
+  - [x] 28.1 Create combat test arena
     - Create `scenes/test/combat_arena.tscn`
     - Add navigation mesh
     - Add player spawn point
@@ -594,7 +595,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
     - Add checkpoint marker
     - _Requirements: 9.3_
   
-  - [ ] 28.2 Populate test arena with enemies
+  - [x] 28.2 Populate test arena with enemies
     - Add 3-5 goblin enemies
     - Configure spawn positions
     - Test combat scenarios manually
@@ -632,7 +633,7 @@ The implementation will be done in the `feature/combat-system` branch and includ
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 31. Documentation and Merge
-  - [ ] 31.1 Update project documentation
+  - [x] 31.1 Update project documentation
     - Document combat system architecture
     - Document API endpoints
     - Document collision layer setup

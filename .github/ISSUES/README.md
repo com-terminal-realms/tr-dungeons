@@ -6,14 +6,15 @@ This directory tracks issues filed with other teams that affect this project.
 
 | Issue | Team | Status | Impact |
 |-------|------|--------|--------|
-| [#92](https://github.com/com-oneredboot/orb-schema-generator/issues/92) | orb-schema-generator | Fixed in v1.3.1 | GDScript validator warning (RESOLVED) |
-| TBD | orb-schema-generator | Open | GDScript targets not generating files |
+| [#98](https://github.com/com-oneredboot/orb-schema-generator/issues/98) | orb-schema-generator | Open | v2.0.2 requires all targets in all generators, blocks language-specific targets (bug) |
 
 ## Resolved Issues
 
 | Issue | Team | Resolution |
 |-------|------|------------|
-<!-- Move entries here when resolved -->
+| [#92](https://github.com/com-oneredboot/orb-schema-generator/issues/92) | orb-schema-generator | Fixed in v1.3.1 - GDScript validator warning resolved |
+| [#93](https://github.com/com-oneredboot/orb-schema-generator/issues/93) | orb-schema-generator | Fixed in v1.3.2 - GDScript target resolution fixed |
+| [#94](https://github.com/com-oneredboot/orb-schema-generator/issues/94) | orb-schema-generator | Closed as won't implement - Current target naming system deemed sufficient |
 
 ## Usage
 

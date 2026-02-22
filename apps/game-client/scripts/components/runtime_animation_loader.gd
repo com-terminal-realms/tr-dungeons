@@ -19,6 +19,10 @@ func _ready() -> void:
 		push_error("RuntimeAnimationLoader: No AnimationPlayer found!")
 		return
 	
+	# Set the root node to the parent (CharacterModel) to ensure correct path resolution
+	animation_player.root_node = animation_player.get_path_to(get_parent())
+	print("RuntimeAnimationLoader: Set AnimationPlayer root_node to: ", animation_player.root_node)
+	
 	# Load the UAL scene
 	var ual_scene = load(animation_library_path)
 	if not ual_scene:
@@ -58,6 +62,7 @@ func _ready() -> void:
 	ual_instance.queue_free()
 	
 	print("RuntimeAnimationLoader: Successfully loaded ", animation_player.get_animation_list().size(), " animations")
+	print("RuntimeAnimationLoader: AnimationPlayer root_node: ", animation_player.root_node)
 
 func _find_animation_player(node: Node) -> AnimationPlayer:
 	if node is AnimationPlayer:

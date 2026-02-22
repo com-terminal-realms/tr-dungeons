@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=3 uid="uid://combat_enemy_001"]
+
+[ext_resource type="Script" path="res://scenes/entities/combat_enemy.gd" id="1"]
+[ext_resource type="Resource" path="res://data/combat_stats/goblin_stats.tres" id="2"]
+[ext_resource type="Script" path="res://scripts/combat/stats_component.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/combat/state_machine.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/combat/combat_component.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/combat/enemy_ai.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/combat/hitbox_area3d.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/combat/hurtbox_area3d.gd" id="8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.4
+height = 1.6
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1"]
+radius = 0.4
+height = 1.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.8, 0.2, 0.2, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 1.5
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.8
+
+[node name="CombatEnemy" type="CharacterBody3D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_1")
+mesh = SubResource("CapsuleMesh_1")
+
+[node name="StatsComponent" type="Node" parent="."]
+script = ExtResource("3")
+stats = ExtResource("2")
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="CombatComponent" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="EnemyAI" type="Node" parent="."]
+script = ExtResource("6")
+detection_radius = 10.0
+attack_range = 2.0
+patrol_radius = 5.0
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="HitboxArea3D" type="Area3D" parent="."]
+collision_layer = 32
+collision_mask = 16
+monitoring = false
+script = ExtResource("7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxArea3D"]
+shape = SubResource("SphereShape3D_1")
+
+[node name="HurtboxArea3D" type="Area3D" parent="."]
+collision_layer = 32
+collision_mask = 16
+script = ExtResource("8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxArea3D"]
+shape = SubResource("SphereShape3D_2")

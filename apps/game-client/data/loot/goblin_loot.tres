@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="LootTable" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/loot/loot_table.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/loot/loot_drop.gd" id="2"]
+
+[sub_resource type="Resource" id="LootDrop_1"]
+script = ExtResource("2")
+item_id = "gold"
+chance = 0.8
+min_quantity = 5
+max_quantity = 15
+
+[sub_resource type="Resource" id="LootDrop_2"]
+script = ExtResource("2")
+item_id = "health_potion"
+chance = 0.3
+min_quantity = 1
+max_quantity = 1
+
+[sub_resource type="Resource" id="LootDrop_3"]
+script = ExtResource("2")
+item_id = "rusty_sword"
+chance = 0.1
+min_quantity = 1
+max_quantity = 1
+
+[resource]
+script = ExtResource("1")
+drops = Array[Resource]([SubResource("LootDrop_1"), SubResource("LootDrop_2"), SubResource("LootDrop_3")])

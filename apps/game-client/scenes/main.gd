@@ -6,11 +6,17 @@ var background_music: AudioStreamPlayer
 var boss_music: AudioStreamPlayer
 var alert_sound: AudioStreamPlayer
 
+# Combat system
+var respawn_manager: Node
+
 func _ready() -> void:
 	print("Main: Scene ready")
 	
 	# Set up audio players
 	_setup_audio()
+	
+	# Set up respawn manager
+	_setup_respawn_manager()
 	
 	# Get references
 	var player = $Player
@@ -186,3 +192,20 @@ func _setup_interaction_prompt() -> void:
 		print("Main: Interaction prompt UI created and connected to DoorManager")
 	else:
 		push_warning("Main: Failed to load interaction prompt scene")
+
+
+## Set up respawn manager for combat system
+func _setup_respawn_manager() -> void:
+	# Create respawn manager
+	var RespawnManager = load("res://scripts/systems/respawn_manager.gd")
+	respawn_manager = Node.new()
+	respawn_manager.set_script(RespawnManager)
+	respawn_manager.name = "RespawnManager"
+	add_child(respawn_manager)
+	respawn_manager.add_to_group("respawn_manager")
+	
+	# Set initial checkpoint at player spawn
+	var player = $Player
+	if player and respawn_manager:
+		respawn_manager.set_checkpoint(player.global_position)
+		print("Main: Respawn manager created and checkpoint set")

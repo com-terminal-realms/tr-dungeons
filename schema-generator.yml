@@ -2,49 +2,40 @@ project:
   name: tr-dungeons
   customerId: tr
   projectId: dungeons
-
 paths:
   schemas: schemas
-
 output:
-  python:
-    enabled: true
-    targets:
-      api:
-        base_dir: apps/api
-        models_subdir: models
-        enums_subdir: enums
-      game:
-        base_dir: generated/python
-        models_subdir: models
-        enums_subdir: enums
-  
-  gdscript:
-    enabled: true
-    targets:
-      game:
-        base_dir: apps/game-client/scripts
-        models_subdir: models
-        enums_subdir: enums
-        api_clients_subdir: backend
-  
-  typescript:
-    enabled: false
-  
-  graphql:
-    enabled: false
-  
+  code:
+    python:
+      targets:
+        api:
+          base_dir: apps/api
+          models_subdir: models
+          enums_subdir: enums
+        backend:
+          base_dir: generated/python
+          models_subdir: models
+          enums_subdir: enums
+        client:
+          base_dir: generated/python/client
+          models_subdir: models
+          enums_subdir: enums
+    gdscript:
+      targets:
+        client:
+          base_dir: apps/game-client/scripts
+          models_subdir: models
+          enums_subdir: enums
+          api_clients_subdir: backend
   infrastructure:
     format: cloudformation
     cdk:
       base_dir: infrastructure/cdk
       language: python
       generate_stack: false
-
 generation:
   validate_schemas: true
   cleanup_old_files: false
-
 logging:
   level: INFO
   file: schema_generator.log

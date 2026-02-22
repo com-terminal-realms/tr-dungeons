@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://goblin_001"]
+
+[ext_resource type="PackedScene" path="res://scenes/entities/combat_enemy.tscn" id="1"]
+[ext_resource type="Resource" path="res://data/combat_stats/goblin_stats.tres" id="2"]
+[ext_resource type="Resource" path="res://data/loot/goblin_loot.tres" id="3"]
+
+[node name="Goblin" instance=ExtResource("1")]
+
+[node name="StatsComponent" parent="." index="3"]
+stats = ExtResource("2")
+
+[node name="CombatComponent" parent="." index="5"]
+loot_table = ExtResource("3")
+
+[node name="EnemyAI" parent="." index="6"]
+detection_radius = 8.0
+attack_range = 1.5
+patrol_radius = 4.0

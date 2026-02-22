@@ -27,6 +27,7 @@ func _ready() -> void:
 ## Move the character in the given direction
 ## direction: Normalized direction vector (will be normalized if not already)
 ## delta: Frame delta time
+## Handles both velocity application and character rotation to face movement direction
 func move(direction: Vector3, delta: float = 0.0) -> void:
 	if not _character_body:
 		push_error("Cannot move: CharacterBody3D not found")
@@ -50,6 +51,7 @@ func move(direction: Vector3, delta: float = 0.0) -> void:
 	_character_body.velocity = velocity
 	
 	# Rotate character to face movement direction
+	# Uses standard atan2(x, z) for forward-facing rotation
 	if direction.length() > 0.001:
 		var target_rotation := atan2(direction.x, direction.z)
 		var current_rotation := _character_body.rotation.y

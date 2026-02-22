@@ -15,6 +15,11 @@ var _is_attacking: bool = false
 var _movement_indicator: Node3D = null
 var _movement_indicator_scene: PackedScene = null
 
+# New combat system components
+var _stats_component: StatsComponent
+var _combat_component: CombatComponent
+var _inventory: Inventory
+
 func _ready() -> void:
 	print("Player: Initializing at ", global_position)
 	
@@ -27,6 +32,13 @@ func _ready() -> void:
 	_combat = $Combat
 	_animation_player = $CharacterModel/AnimationPlayer if has_node("CharacterModel/AnimationPlayer") else $AnimationPlayer
 	
+	# Get new combat system components
+	_stats_component = $StatsComponent
+	_combat_component = $CombatComponent
+	_inventory = $Inventory
+	
+	print("Player: New combat components - Stats:", _stats_component != null, " Combat:", _combat_component != null, " Inventory:", _inventory != null)
+	
 	if not _health:
 		push_error("Player: Health component not found!")
 	if not _movement:
@@ -38,9 +50,11 @@ func _ready() -> void:
 	else:
 		print("Player: AnimationPlayer found with animations: ", _animation_player.get_animation_list())
 	
-	# Connect to death signal for respawn
+	# Connect to death signal for respawn (both old and new systems)
 	if _health:
 		_health.died.connect(_on_death)
+	if _stats_component:
+		_stats_component.died.connect(_on_death)
 	
 	# Set initial spawn point
 	spawn_point = global_position
@@ -93,7 +107,55 @@ func _physics_process(delta: float) -> void:
 func _process(_delta: float) -> void:
 	# Handle left mouse click for attack
 	if Input.is_action_just_pressed("attack"):
-		_handle_attack()
+		print("Player: === LMB ATTACK TRIGGERED ===")
+		print("Player: Player position: ", global_position)
+		print("Player: Player rotation: ", rotation)
+		
+		# Stop movement when attacking
+		_is_moving_to_target = false
+		_remove_movement_indicator()
+		print("Player: Movement stopped")
+		
+		# Get mouse position in world via raycast
+		if _camera:
+			var mouse_pos := get_viewport().get_mouse_position()
+			print("Player: Mouse screen position: ", mouse_pos)
+			var from := _camera.project_ray_origin(mouse_pos)
+			var to := from + _camera.project_ray_normal(mouse_pos) * 1000.0
+			
+			var space_state := get_world_3d().direct_space_state
+			var query := PhysicsRayQueryParameters3D.create(from, to)
+			query.collide_with_areas = false
+			query.collide_with_bodies = true
+			
+			var result := space_state.intersect_ray(query)
+			
+			if result:
+				print("Player: Raycast hit at: ", result.position)
+				# Rotate player to face the clicked position
+				# This sets the Player node's rotation, which determines attack direction
+				var direction_to_click := global_position.direction_to(result.position)
+				direction_to_click.y = 0  # Keep rotation horizontal
+				if direction_to_click.length() > 0:
+					var target_rotation := atan2(direction_to_click.x, direction_to_click.z)
+					print("Player: Setting rotation from ", rotation.y, " to ", target_rotation)
+					rotation.y = target_rotation
+					print("Player: Rotation set to: ", rotation.y)
+			else:
+				print("Player: Raycast missed")
+		else:
+			print("Player: No camera found")
+		
+		# Trigger attack via new combat system
+		if _combat_component:
+			print("Player: Calling _combat_component.attack()")
+			var attack_result = _combat_component.attack()
+			print("Player: attack() returned: ", attack_result)
+		else:
+			print("Player: No _combat_component, using old system")
+			_handle_attack()
+		
+		print("Player: === LMB ATTACK COMPLETE ===")
 	
 	# Handle H key for heal
 	if Input.is_action_just_pressed("heal"):
@@ -105,6 +167,29 @@ func _input(event: InputEvent) -> void:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_RIGHT and mouse_event.pressed:
 			_handle_move_to_click()
+	
+	# New combat system input handling
+	if not _combat_component:
+		return
+	
+	# Dodge (spacebar)
+	if event.is_action_pressed("dodge"):
+		var dodge_direction := Vector3.ZERO
+		
+		# Get movement direction for dodge
+		var input_dir := _get_input_direction()
+		if input_dir.length() > 0.1:
+			dodge_direction = _transform_to_world_space(input_dir)
+		else:
+			# Dodge forward if not moving
+			dodge_direction = -global_transform.basis.z
+		
+		_combat_component.dodge(dodge_direction)
+	
+	# Cast fireball (right mouse button - but only if not moving)
+	if event.is_action_pressed("cast_fireball"):
+		if _combat_component.ability_controller:
+			_combat_component.ability_controller.activate_ability("fireball")
 
 ## Get input direction from WASD keys
 func _get_input_direction() -> Vector3:
@@ -147,8 +232,8 @@ func _handle_attack() -> void:
 		var direction_to_enemy := global_position.direction_to(nearest_enemy.global_position)
 		direction_to_enemy.y = 0  # Keep rotation horizontal
 		if direction_to_enemy.length() > 0:
-			# Look away from enemy (character model faces backwards)
-			look_at(global_position - direction_to_enemy, Vector3.UP)
+			var target_rotation := atan2(direction_to_enemy.x, direction_to_enemy.z)
+			rotation.y = target_rotation
 		
 		# Play attack animation
 		if _animation_player:
@@ -249,13 +334,21 @@ func _remove_movement_indicator() -> void:
 		_movement_indicator = null
 
 ## Update character animation based on movement
+## This runs every frame to keep Walk/Idle animations playing
+## CRITICAL: Must not override attack animations from combat system
 func _update_animation(direction: Vector3) -> void:
 	if not _animation_player:
 		return
 	
-	# Don't interrupt attack animation
+	# Don't interrupt attack animation from old combat system
 	if _is_attacking:
 		return
+	
+	# Don't interrupt attack animation from new combat system
+	# The combat system state machine controls when attack animations play
+	if _combat_component and _combat_component.state_machine:
+		if _combat_component.state_machine.current_state == StateMachine.State.ATTACKING:
+			return
 	
 	var is_moving := direction.length() > 0.1
 	
@@ -277,3 +370,13 @@ func _handle_heal() -> void:
 	var heal_amount := 20
 	_health.heal(heal_amount)
 	print("Player: Healed for ", heal_amount, " HP. Current health: ", _health._data.current_health)
+
+## Add gold to inventory (new combat system)
+func add_gold(amount: int) -> void:
+	if _inventory:
+		_inventory.add_gold(amount)
+
+## Add item to inventory (new combat system)
+func add_item(item_data: Dictionary) -> void:
+	if _inventory:
+		_inventory.add_item(item_data)

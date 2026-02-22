@@ -1,6 +1,7 @@
-## EnemyAI component
+## OldEnemyAI component (legacy)
 ## Handles enemy behavior: detection, pathfinding, and state management
-class_name EnemyAI
+## NOTE: This is the OLD AI system. New combat system uses scripts/combat/enemy_ai.gd
+class_name OldEnemyAI
 extends Node
 
 enum State {

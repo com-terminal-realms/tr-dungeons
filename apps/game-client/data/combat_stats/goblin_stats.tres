@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CombatStats" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/combat_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "goblin"
+max_health = 50.0
+max_mana = 0.0
+max_stamina = 50.0
+attack_damage = 8.0
+attack_speed = 1.0
+attack_range = 1.5
+armor = 2.0
+move_speed = 4.5
+critical_chance = 0.05
+critical_multiplier = 1.5
