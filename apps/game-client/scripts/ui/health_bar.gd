@@ -11,13 +11,20 @@ func _ready() -> void:
 	if not stats_component:
 		stats_component = _find_stats_component()
 	
+	print("HealthBar: Found StatsComponent: ", stats_component != null)
+	
 	# Connect to health changed signal
 	if stats_component:
+		print("HealthBar: Connecting to StatsComponent.health_changed")
+		print("HealthBar: Initial health: ", stats_component.current_health, "/", stats_component.stats.max_health if stats_component.stats else 0.0)
 		stats_component.health_changed.connect(_on_health_changed)
 		_on_health_changed(stats_component.current_health, stats_component.stats.max_health if stats_component.stats else 100.0)
+	else:
+		print("HealthBar: ERROR - No StatsComponent found!")
 
 ## Update health bar display
 func _on_health_changed(current: float, maximum: float) -> void:
+	print("HealthBar: _on_health_changed called - current: ", current, " max: ", maximum)
 	max_value = maximum
 	value = current
 	
@@ -36,6 +43,8 @@ func _find_stats_component() -> StatsComponent:
 	while node:
 		for child in node.get_children():
 			if child is StatsComponent:
+				print("HealthBar: Found StatsComponent in ", node.name)
 				return child
 		node = node.get_parent()
+	print("HealthBar: No StatsComponent found in hierarchy")
 	return null

@@ -50,11 +50,16 @@ func _ready() -> void:
 	else:
 		print("Player: AnimationPlayer found with animations: ", _animation_player.get_animation_list())
 	
-	# Connect to death signal for respawn (both old and new systems)
-	if _health:
-		_health.died.connect(_on_death)
+	# Connect to death signal for respawn - use NEW system only
+	# CRITICAL: Only connect to NEW StatsComponent.died, not OLD Health.died
+	# The health bar shows NEW StatsComponent, so death must be based on that
 	if _stats_component:
 		_stats_component.died.connect(_on_death)
+		print("Player: Connected to NEW StatsComponent.died signal")
+	elif _health:
+		# Fallback to OLD system only if NEW system not available
+		_health.died.connect(_on_death)
+		print("Player: WARNING - Using OLD Health.died signal (fallback)")
 	
 	# Set initial spawn point
 	spawn_point = global_position
@@ -69,7 +74,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	var input_dir := Vector3.ZERO
 	
-	# Check for RMB movement
+	# Check for RMB movement (click-to-move only)
 	if _is_moving_to_target:
 		# Calculate direction to target
 		var direction := global_position.direction_to(_move_target)
@@ -84,15 +89,6 @@ func _physics_process(delta: float) -> void:
 			_remove_movement_indicator()
 		else:
 			input_dir = direction
-	else:
-		# Handle WASD input (overrides RMB movement)
-		input_dir = _get_input_direction()
-		
-		# If WASD is pressed, cancel RMB movement
-		if input_dir.length() > 0:
-			_is_moving_to_target = false
-			# Remove movement indicator when WASD is used
-			_remove_movement_indicator()
 	
 	# Transform input to world space (accounting for isometric camera)
 	var world_dir := _transform_to_world_space(input_dir)
@@ -268,11 +264,17 @@ func _on_death() -> void:
 	# Respawn at spawn point
 	global_position = spawn_point
 	
-	# Reset health
-	if _health:
+	# Reset health - use NEW StatsComponent if available
+	if _stats_component and _stats_component.stats:
+		_stats_component.current_health = _stats_component.stats.max_health
+		_stats_component.health_changed.emit(_stats_component.current_health, _stats_component.stats.max_health)
+		print("Player: Respawned with NEW StatsComponent health: ", _stats_component.current_health)
+	elif _health:
+		# Fallback to OLD system
 		_health._data.current_health = _health._data.max_health
 		_health._is_alive = true
 		_health.health_changed.emit(_health._data.current_health, _health._data.max_health)
+		print("Player: Respawned with OLD Health: ", _health._data.current_health)
 
 ## Handle RMB click for movement
 func _handle_move_to_click() -> void:
@@ -363,17 +365,27 @@ func _update_animation(direction: Vector3) -> void:
 
 ## Handle heal action (H key)
 func _handle_heal() -> void:
-	if not _health:
-		return
-	
-	# Heal for 20 HP
-	var heal_amount := 20
-	_health.heal(heal_amount)
-	print("Player: Healed for ", heal_amount, " HP. Current health: ", _health._data.current_health)
-	
-	# Track stats
-	if DungeonStatsTracker.instance:
-		DungeonStatsTracker.instance.record_player_heal(heal_amount)
+	# Use NEW StatsComponent if available, fallback to OLD Health
+	if _stats_component and _stats_component.stats:
+		# Heal for 20 HP using NEW system
+		var heal_amount := 20.0
+		var old_health := _stats_component.current_health
+		_stats_component.current_health = min(_stats_component.stats.max_health, _stats_component.current_health + heal_amount)
+		_stats_component.health_changed.emit(_stats_component.current_health, _stats_component.stats.max_health)
+		print("Player: Healed for ", heal_amount, " HP. Current health: ", _stats_component.current_health)
+		
+		# Track stats
+		if DungeonStatsTracker.instance:
+			DungeonStatsTracker.instance.record_player_heal(heal_amount)
+	elif _health:
+		# Fallback to OLD system
+		var heal_amount := 20
+		_health.heal(heal_amount)
+		print("Player: Healed for ", heal_amount, " HP (OLD system). Current health: ", _health._data.current_health)
+		
+		# Track stats
+		if DungeonStatsTracker.instance:
+			DungeonStatsTracker.instance.record_player_heal(heal_amount)
 
 ## Add gold to inventory (new combat system)
 func add_gold(amount: int) -> void:

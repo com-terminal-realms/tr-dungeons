@@ -142,24 +142,17 @@ func take_damage(amount: float, source: Node = null) -> void:
 	if stats_component:
 		stats_component.reduce_health(final_damage)
 	
-	# ALSO apply damage to OLD Health component for health bar compatibility
-	var parent := get_parent()
-	if parent:
-		for child in parent.get_children():
-			if child is Health:
-				child.take_damage(int(final_damage))
-				break
-	
 	damage_taken.emit(final_damage, source)
 	
 	# Track stats if player is taking damage
+	var parent := get_parent()
 	if parent and parent.is_in_group("player"):
 		if DungeonStatsTracker.instance:
 			var source_name: String = source.name if source else "Unknown"
 			DungeonStatsTracker.instance.record_player_damage(final_damage, source_name)
 	
 	# Spawn damage number
-	if parent is Node3D:
+	if parent is Node3D and parent.is_inside_tree():
 		DamageNumber.spawn(final_damage, parent.global_position, is_critical)
 	
 	# Trigger hit feedback
