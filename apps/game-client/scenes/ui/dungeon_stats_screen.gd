@@ -7,16 +7,23 @@ class_name DungeonStatsScreen
 @onready var continue_button: Button = $Panel/MarginContainer/VBoxContainer/ContinueButton
 
 func _ready() -> void:
+	print("DungeonStatsScreen: _ready() called")
+	
 	# Hide by default
 	visible = false
 	
 	# Connect continue button
 	if continue_button:
+		print("DungeonStatsScreen: Continue button found, connecting signal")
 		continue_button.pressed.connect(_on_continue_pressed)
+	else:
+		print("DungeonStatsScreen: ERROR - Continue button not found!")
 
 ## Show the stats screen with dungeon statistics
 func show_stats(tracker: Node) -> void:
+	print("DungeonStatsScreen: show_stats() called")
 	if not tracker:
+		print("DungeonStatsScreen: ERROR - No tracker provided!")
 		return
 	
 	# Build stats text
@@ -57,9 +64,11 @@ func show_stats(tracker: Node) -> void:
 	
 	# Show the screen
 	visible = true
+	print("DungeonStatsScreen: Screen now visible")
 	
 	# Pause the game
 	get_tree().paused = true
+	print("DungeonStatsScreen: Game paused")
 
 ## Calculate accuracy percentage
 func _calculate_accuracy(combat_data: Dictionary) -> float:
@@ -73,11 +82,17 @@ func _calculate_accuracy(combat_data: Dictionary) -> float:
 
 ## Handle continue button press
 func _on_continue_pressed() -> void:
+	print("DungeonStatsScreen: Continue button pressed!")
+	
 	# Unpause game
 	get_tree().paused = false
+	print("DungeonStatsScreen: Game unpaused")
 	
 	# Hide screen
 	visible = false
+	print("DungeonStatsScreen: Screen hidden")
 	
-	# Could reload scene or return to menu here
-	# For now just hide the screen
+	# Reload the scene to restart the dungeon
+	print("DungeonStatsScreen: Reloading scene...")
+	get_tree().reload_current_scene()
+	print("DungeonStatsScreen: Scene reload requested")
