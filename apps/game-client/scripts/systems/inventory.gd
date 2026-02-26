@@ -19,6 +19,10 @@ func add_gold(amount: int) -> void:
 	gold += amount
 	gold_changed.emit(gold)
 	print("Gold: %d (+%d)" % [gold, amount])
+	
+	# Notify stats tracker
+	if DungeonStatsTracker.instance:
+		DungeonStatsTracker.instance.record_gold_collected(amount)
 
 ## Remove gold from inventory
 func remove_gold(amount: int) -> bool:
@@ -48,6 +52,10 @@ func add_item(item_data: Dictionary) -> void:
 	
 	item_added.emit(item_id, quantity)
 	print("Added item: %s x%d" % [item_id, quantity])
+	
+	# Notify stats tracker
+	if DungeonStatsTracker.instance:
+		DungeonStatsTracker.instance.record_item_collected(item_data)
 
 ## Remove item from inventory
 func remove_item(item_id: String, quantity: int = 1) -> bool:

@@ -266,21 +266,30 @@ func _remove_corpse() -> void:
 
 ## Spawn loot drops at death location
 func _spawn_loot_drops() -> void:
+	print("CombatComponent: _spawn_loot_drops() called")
 	if not loot_table:
+		print("CombatComponent: No loot table assigned")
 		return
 	
+	print("CombatComponent: Rolling loot table...")
 	var dropped_items := loot_table.roll()
+	print("CombatComponent: Loot roll result: ", dropped_items.size(), " items")
+	
 	if dropped_items.is_empty():
+		print("CombatComponent: No loot dropped")
 		return
 	
 	var parent := get_parent()
 	if not parent or not parent is Node3D:
+		print("CombatComponent: ERROR - Parent is not Node3D")
 		return
 	
 	var death_position: Vector3 = parent.global_position
+	print("CombatComponent: Spawning loot at position: ", death_position)
 	
 	# Spawn each dropped item using PickupItem
 	for item in dropped_items:
+		print("CombatComponent: Spawning item: ", item)
 		PickupItem.spawn(item, death_position)
 
 ## Handle dodge finished

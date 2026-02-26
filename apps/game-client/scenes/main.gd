@@ -62,6 +62,9 @@ func _ready() -> void:
 	
 	# Set up interaction prompt UI
 	_setup_interaction_prompt()
+	
+	# Set up inventory HUD
+	_setup_inventory_hud()
 
 
 ## Set up audio players for background music and sound effects
@@ -211,6 +214,18 @@ func _setup_interaction_prompt() -> void:
 		print("Main: Interaction prompt UI created and connected to DoorManager")
 	else:
 		push_warning("Main: Failed to load interaction prompt scene")
+
+
+## Set up inventory HUD
+func _setup_inventory_hud() -> void:
+	# Load and instantiate the inventory HUD scene
+	var hud_scene := load("res://scenes/ui/inventory_hud.tscn") as PackedScene
+	if hud_scene:
+		var hud := hud_scene.instantiate()
+		add_child(hud)
+		print("Main: Inventory HUD created")
+	else:
+		push_warning("Main: Failed to load inventory HUD scene")
 
 
 ## Set up respawn manager for combat system
