@@ -62,7 +62,7 @@ jobs:
       
       - name: Run black formatting check
         working-directory: infrastructure/cdk
-        run: black --check .
+        run: black --check --diff .
       
       - name: Run ruff linting
         working-directory: infrastructure/cdk
