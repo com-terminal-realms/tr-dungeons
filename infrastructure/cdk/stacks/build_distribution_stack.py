@@ -12,6 +12,7 @@ from aws_cdk import (
     Stack,
     Duration,
     RemovalPolicy,
+    CfnOutput,
     aws_s3 as s3,
     aws_sqs as sqs,
     aws_sns as sns,
@@ -154,4 +155,45 @@ class BuildDistributionStack(Stack):
             log_group_name="/aws/tr-dungeons/build-distribution",
             retention=logs.RetentionDays.ONE_MONTH,
             removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        # Stack outputs
+        CfnOutput(
+            self,
+            "BuildsBucketName",
+            value=self.builds_bucket.bucket_name,
+            description="S3 bucket name for build artifacts",
+            export_name="TRDungeonsBuildsBucketName",
+        )
+
+        CfnOutput(
+            self,
+            "NotificationQueueUrl",
+            value=self.notification_queue.queue_url,
+            description="SQS queue URL for build notifications",
+            export_name="TRDungeonsNotificationQueueUrl",
+        )
+
+        CfnOutput(
+            self,
+            "NotificationTopicArn",
+            value=self.notification_topic.topic_arn,
+            description="SNS topic ARN for build notifications",
+            export_name="TRDungeonsNotificationTopicArn",
+        )
+
+        CfnOutput(
+            self,
+            "MetadataTableName",
+            value=self.metadata_table.table_name,
+            description="DynamoDB table name for build metadata",
+            export_name="TRDungeonsMetadataTableName",
+        )
+
+        CfnOutput(
+            self,
+            "GitHubActionsRoleArn",
+            value=self.github_actions_role.role_arn,
+            description="IAM role ARN for GitHub Actions",
+            export_name="TRDungeonsGitHubActionsRoleArn",
         )
