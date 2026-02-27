@@ -1,4 +1,4 @@
-name: Build and Distribute Game
+name: deploy-game
 
 on:
   push:
