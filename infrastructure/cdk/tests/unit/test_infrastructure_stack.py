@@ -1,17 +1,17 @@
-"""Unit tests for BuildDistributionStack."""
+"""Unit tests for InfrastructureStack."""
 
 import aws_cdk as cdk
 from aws_cdk.assertions import Template, Match
 import pytest
 
-from stacks.build_distribution_stack import BuildDistributionStack
+from stacks.build_distribution_stack import InfrastructureStack
 
 
 @pytest.fixture
-def stack() -> BuildDistributionStack:
+def stack() -> InfrastructureStack:
     """Create a test stack instance."""
     app = cdk.App()
-    return BuildDistributionStack(
+    return InfrastructureStack(
         app,
         "TestStack",
         env=cdk.Environment(account="123456789012", region="us-east-1"),
@@ -19,7 +19,7 @@ def stack() -> BuildDistributionStack:
 
 
 @pytest.fixture
-def template(stack: BuildDistributionStack) -> Template:
+def template(stack: InfrastructureStack) -> Template:
     """Create a CloudFormation template from the stack."""
     return Template.from_stack(stack)
 
@@ -27,7 +27,7 @@ def template(stack: BuildDistributionStack) -> Template:
 class TestStackSynthesis:
     """Tests for stack synthesis."""
 
-    def test_stack_synthesizes_without_errors(self, stack: BuildDistributionStack):
+    def test_stack_synthesizes_without_errors(self, stack: InfrastructureStack):
         """Test that the stack synthesizes without errors."""
         # Should not raise any exceptions
         template = Template.from_stack(stack)

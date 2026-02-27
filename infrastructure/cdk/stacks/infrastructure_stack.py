@@ -1,11 +1,10 @@
-"""CDK stack for game build distribution system.
+"""CDK stack for TR-Dungeons infrastructure.
 
-This stack creates the AWS infrastructure for automated game builds:
+This stack creates the core AWS infrastructure:
 - S3 bucket for storing build artifacts
 - SQS queue for notification messages
 - SNS topic for fan-out notifications
 - DynamoDB table for build metadata
-- IAM role for GitHub Actions OIDC
 """
 
 from aws_cdk import (
@@ -17,14 +16,13 @@ from aws_cdk import (
     aws_sqs as sqs,
     aws_sns as sns,
     aws_dynamodb as dynamodb,
-    aws_iam as iam,
     aws_logs as logs,
 )
 from constructs import Construct
 
 
-class BuildDistributionStack(Stack):
-    """Stack for game build distribution infrastructure."""
+class InfrastructureStack(Stack):
+    """Stack for TR-Dungeons core infrastructure."""
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -111,39 +109,6 @@ class BuildDistributionStack(Stack):
             projection_type=dynamodb.ProjectionType.ALL,
         )
 
-        # IAM role for GitHub Actions with OIDC
-        # Reference existing OIDC provider (created once per account)
-        oidc_provider_arn = iam.OpenIdConnectProvider.from_open_id_connect_provider_arn(
-            self,
-            "GitHubProvider",
-            f"arn:aws:iam::{self.account}:oidc-provider/token.actions.githubusercontent.com",
-        )
-
-        self.github_actions_role = iam.Role(
-            self,
-            "GitHubActionsRole",
-            role_name="tr-dungeons-github-actions-role",
-            assumed_by=iam.FederatedPrincipal(
-                oidc_provider_arn.open_id_connect_provider_arn,
-                conditions={
-                    "StringEquals": {
-                        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-                    },
-                    "StringLike": {
-                        "token.actions.githubusercontent.com:sub": "repo:com-terminal-realms/tr-dungeons:*",
-                    },
-                },
-                assume_role_action="sts:AssumeRoleWithWebIdentity",
-            ),
-            description="Role for GitHub Actions to deploy builds",
-            max_session_duration=Duration.hours(1),
-        )
-
-        # Grant permissions to GitHub Actions role
-        self.builds_bucket.grant_read_write(self.github_actions_role)
-        self.notification_queue.grant_send_messages(self.github_actions_role)
-        self.metadata_table.grant_read_write_data(self.github_actions_role)
-
         # CloudWatch log group for monitoring
         logs.LogGroup(
             self,
@@ -184,12 +149,4 @@ class BuildDistributionStack(Stack):
             value=self.metadata_table.table_name,
             description="DynamoDB table name for build metadata",
             export_name="TRDungeonsMetadataTableName",
-        )
-
-        CfnOutput(
-            self,
-            "GitHubActionsRoleArn",
-            value=self.github_actions_role.role_arn,
-            description="IAM role ARN for GitHub Actions",
-            export_name="TRDungeonsGitHubActionsRoleArn",
         )

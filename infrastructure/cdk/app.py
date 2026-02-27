@@ -2,19 +2,34 @@
 """CDK app for TR-Dungeons infrastructure."""
 
 import aws_cdk as cdk
-from stacks.build_distribution_stack import BuildDistributionStack
-
+from stacks.bootstrap_stack import BootstrapStack
+from stacks.infrastructure_stack import InfrastructureStack
 
 app = cdk.App()
 
-BuildDistributionStack(
+# Get environment from context
+environment = app.node.try_get_context("environment") or "dev"
+
+# Bootstrap stack - creates project-specific deployment role
+BootstrapStack(
     app,
-    "TRDungeonsBuildDistribution",
+    f"TRDungeonsBootstrap-{environment}",
     env=cdk.Environment(
         account=app.node.try_get_context("account"),
         region=app.node.try_get_context("region") or "us-east-1",
     ),
-    description="Game build distribution infrastructure for TR-Dungeons",
+    description=f"Bootstrap infrastructure for TR-Dungeons {environment}",
+)
+
+# Infrastructure stack - core application resources
+InfrastructureStack(
+    app,
+    f"TRDungeonsInfrastructure-{environment}",
+    env=cdk.Environment(
+        account=app.node.try_get_context("account"),
+        region=app.node.try_get_context("region") or "us-east-1",
+    ),
+    description=f"Core infrastructure for TR-Dungeons {environment}",
 )
 
 app.synth()

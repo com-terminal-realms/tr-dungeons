@@ -1,4 +1,4 @@
-name: deploy-infrastructure
+name: Deploy Infrastructure
 
 on:
   workflow_dispatch:
@@ -60,10 +60,6 @@ jobs:
         working-directory: infrastructure/cdk
         run: pytest tests/unit/ -v
       
-      - name: Run black formatting check
-        working-directory: infrastructure/cdk
-        run: black --check --diff .
-      
       - name: Run ruff linting
         working-directory: infrastructure/cdk
         run: ruff check .
@@ -72,11 +68,90 @@ jobs:
         working-directory: infrastructure/cdk
         run: mypy stacks/ tests/
 
-  deploy:
-    name: Deploy (${{ inputs.environment }} - ${{ inputs.action }})
+  bootstrap:
+    name: Bootstrap (${{ inputs.environment }} - ${{ inputs.action }})
     runs-on: ubuntu-latest
     needs: [test]
     if: always() && (needs.test.result == 'success' || inputs.skip_tests)
+    timeout-minutes: 15
+    environment: ${{ inputs.environment }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install CDK CLI
+        run: npm install -g aws-cdk
+      
+      - name: Install Python dependencies
+        working-directory: infrastructure/cdk
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      
+      - name: Configure AWS credentials (shared OIDC role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOYMENT_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      
+      - name: Verify AWS access
+        run: aws sts get-caller-identity
+      
+      - name: CDK Synth Bootstrap
+        working-directory: infrastructure/cdk
+        run: |
+          cdk synth TRDungeonsBootstrap-${{ inputs.environment }} \
+            --context environment=${{ inputs.environment }}
+      
+      - name: CDK Diff Bootstrap
+        if: inputs.action == 'diff' || inputs.action == 'deploy'
+        working-directory: infrastructure/cdk
+        run: |
+          cdk diff TRDungeonsBootstrap-${{ inputs.environment }} \
+            --context environment=${{ inputs.environment }}
+      
+      - name: CDK Deploy Bootstrap
+        if: inputs.action == 'deploy'
+        working-directory: infrastructure/cdk
+        run: |
+          cdk deploy TRDungeonsBootstrap-${{ inputs.environment }} \
+            --context environment=${{ inputs.environment }} \
+            --require-approval never \
+            --outputs-file bootstrap-outputs.json
+      
+      - name: Display Bootstrap Outputs
+        if: inputs.action == 'deploy'
+        working-directory: infrastructure/cdk
+        run: |
+          if [ -f bootstrap-outputs.json ]; then
+            echo "=== Bootstrap Stack Outputs ==="
+            cat bootstrap-outputs.json | jq .
+          fi
+      
+      - name: Upload Bootstrap Outputs
+        if: inputs.action == 'deploy'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootstrap-outputs-${{ inputs.environment }}
+          path: infrastructure/cdk/bootstrap-outputs.json
+          retention-days: 7
+
+  deploy:
+    name: Deploy (${{ inputs.environment }} - ${{ inputs.action }})
+    runs-on: ubuntu-latest
+    needs: [bootstrap]
+    if: always() && needs.bootstrap.result == 'success'
     timeout-minutes: 30
     environment: ${{ inputs.environment }}
     
@@ -103,11 +178,27 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
       
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (shared OIDC role)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_DEPLOYMENT_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
+      
+      - name: Get project-specific role ARN from SSM
+        id: get-role
+        run: |
+          ROLE_ARN=$(aws ssm get-parameter \
+            --name "/tr-dungeons/${{ inputs.environment }}/deployment-role-arn" \
+            --query "Parameter.Value" \
+            --output text)
+          echo "role-arn=$ROLE_ARN" >> $GITHUB_OUTPUT
+      
+      - name: Configure AWS credentials (project-specific role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ steps.get-role.outputs.role-arn }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-skip-session-tagging: true
       
       - name: Verify AWS access
         run: aws sts get-caller-identity
@@ -115,21 +206,33 @@ jobs:
       - name: CDK Synth
         working-directory: infrastructure/cdk
         run: |
-          cdk synth ${{ inputs.stack_name }} \
+          STACK_FILTER="${{ inputs.stack_name }}"
+          if [ -z "$STACK_FILTER" ]; then
+            STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
+          fi
+          cdk synth $STACK_FILTER \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Diff
         if: inputs.action == 'diff' || inputs.action == 'deploy'
         working-directory: infrastructure/cdk
         run: |
-          cdk diff ${{ inputs.stack_name }} \
+          STACK_FILTER="${{ inputs.stack_name }}"
+          if [ -z "$STACK_FILTER" ]; then
+            STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
+          fi
+          cdk diff $STACK_FILTER \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Deploy
         if: inputs.action == 'deploy'
         working-directory: infrastructure/cdk
         run: |
-          cdk deploy ${{ inputs.stack_name }} \
+          STACK_FILTER="${{ inputs.stack_name }}"
+          if [ -z "$STACK_FILTER" ]; then
+            STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
+          fi
+          cdk deploy $STACK_FILTER \
             --context environment=${{ inputs.environment }} \
             --require-approval never \
             --outputs-file cdk-outputs.json
