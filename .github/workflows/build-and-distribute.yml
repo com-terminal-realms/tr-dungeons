@@ -1,0 +1,438 @@
+name: Build and Distribute Game
+
+on:
+  push:
+    tags:
+      - 'v*.*.*-release'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 0.4.1)'
+        required: true
+      changelog:
+        description: 'Changelog for this release'
+        required: true
+
+env:
+  GODOT_VERSION: '4.6'
+  AWS_REGION: 'us-east-1'
+  S3_BUCKET_NAME: 'tr-dungeons-builds'
+  SQS_QUEUE_URL: ${{ secrets.SQS_QUEUE_URL }}
+  DYNAMODB_TABLE_NAME: 'tr-dungeons-build-metadata'
+
+jobs:
+  setup:
+    name: Setup Build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+      git_sha: ${{ steps.extract.outputs.git_sha }}
+      changelog: ${{ steps.extract.outputs.changelog }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Extract version and metadata
+        id: extract
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            CHANGELOG="${{ github.event.inputs.changelog }}"
+          else
+            # Extract version from tag (v0.4.1-release -> 0.4.1)
+            TAG_NAME="${{ github.ref_name }}"
+            VERSION="${TAG_NAME#v}"
+            VERSION="${VERSION%-release}"
+            
+            # Get changelog from git log since last release tag
+            PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+            if [ -n "$PREV_TAG" ]; then
+              CHANGELOG=$(git log --pretty=format:"- %s" ${PREV_TAG}..HEAD)
+            else
+              CHANGELOG=$(git log --pretty=format:"- %s" HEAD)
+            fi
+          fi
+          
+          GIT_SHA="${{ github.sha }}"
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "git_sha=${GIT_SHA}" >> $GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${CHANGELOG}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "📦 Building version: ${VERSION}"
+          echo "🔖 Git SHA: ${GIT_SHA}"
+          echo "📝 Changelog:"
+          echo "${CHANGELOG}"
+
+  build-windows:
+    name: Build Windows
+    runs-on: ubuntu-latest
+    needs: setup
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: true
+      
+      - name: Verify Godot installation
+        run: |
+          godot --version
+          echo "✅ Godot ${{ env.GODOT_VERSION }} installed"
+      
+      - name: Build Windows executable
+        run: |
+          cd apps/game-client
+          mkdir -p ../../builds/windows
+          godot --headless --export-release "Windows Desktop" ../../builds/windows/tr-dungeons-windows.exe
+          echo "✅ Windows build complete"
+      
+      - name: Verify build output
+        run: |
+          if [ ! -f builds/windows/tr-dungeons-windows.exe ]; then
+            echo "❌ Windows build failed - executable not found"
+            exit 1
+          fi
+          SIZE=$(du -h builds/windows/tr-dungeons-windows.exe | cut -f1)
+          echo "✅ Windows build verified: ${SIZE}"
+      
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: builds/windows/tr-dungeons-windows.exe
+          retention-days: 7
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: setup
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: true
+      
+      - name: Verify Godot installation
+        run: |
+          godot --version
+          echo "✅ Godot ${{ env.GODOT_VERSION }} installed"
+      
+      - name: Build Linux executable
+        run: |
+          cd apps/game-client
+          mkdir -p ../../builds/linux
+          godot --headless --export-release "Linux/X11" ../../builds/linux/tr-dungeons-linux.x86_64
+          echo "✅ Linux build complete"
+      
+      - name: Verify build output
+        run: |
+          if [ ! -f builds/linux/tr-dungeons-linux.x86_64 ]; then
+            echo "❌ Linux build failed - executable not found"
+            exit 1
+          fi
+          SIZE=$(du -h builds/linux/tr-dungeons-linux.x86_64 | cut -f1)
+          echo "✅ Linux build verified: ${SIZE}"
+      
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: builds/linux/tr-dungeons-linux.x86_64
+          retention-days: 7
+
+  build-macos:
+    name: Build macOS
+    runs-on: ubuntu-latest
+    needs: setup
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ env.GODOT_VERSION }}
+          use-dotnet: false
+          include-templates: true
+      
+      - name: Verify Godot installation
+        run: |
+          godot --version
+          echo "✅ Godot ${{ env.GODOT_VERSION }} installed"
+      
+      - name: Build macOS bundle
+        run: |
+          cd apps/game-client
+          mkdir -p ../../builds/macos
+          godot --headless --export-release "macOS" ../../builds/macos/tr-dungeons-macos.zip
+          echo "✅ macOS build complete"
+      
+      - name: Verify build output
+        run: |
+          if [ ! -f builds/macos/tr-dungeons-macos.zip ]; then
+            echo "❌ macOS build failed - bundle not found"
+            exit 1
+          fi
+          SIZE=$(du -h builds/macos/tr-dungeons-macos.zip | cut -f1)
+          echo "✅ macOS build verified: ${SIZE}"
+      
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: builds/macos/tr-dungeons-macos.zip
+          retention-days: 7
+
+  upload-and-notify:
+    name: Upload to S3 and Notify
+    runs-on: ubuntu-latest
+    needs: [setup, build-windows, build-linux, build-macos]
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: builds
+      
+      - name: Organize artifacts
+        run: |
+          mkdir -p builds/{windows,linux,macos}
+          mv builds/windows-build/* builds/windows/ || true
+          mv builds/linux-build/* builds/linux/ || true
+          mv builds/macos-build/* builds/macos/ || true
+          rm -rf builds/*-build
+          
+          echo "📦 Artifacts organized:"
+          ls -lh builds/windows/ builds/linux/ builds/macos/
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/tr-dungeons-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install boto3
+      
+      - name: Upload Windows build to S3
+        id: upload-windows
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          GIT_SHA="${{ needs.setup.outputs.git_sha }}"
+          S3_KEY="builds/v${VERSION}/windows/tr-dungeons-windows.exe"
+          
+          python3 scripts/aws/upload_to_s3.py \
+            builds/windows/tr-dungeons-windows.exe \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" \
+            --version "${VERSION}" \
+            --platform windows \
+            --commit "${GIT_SHA}"
+          
+          # Generate presigned URL
+          URL=$(python3 scripts/aws/generate_presigned_url.py \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" | tail -n 1)
+          
+          SIZE_MB=$(du -m builds/windows/tr-dungeons-windows.exe | cut -f1)
+          
+          echo "url=${URL}" >> $GITHUB_OUTPUT
+          echo "size_mb=${SIZE_MB}" >> $GITHUB_OUTPUT
+      
+      - name: Upload Linux build to S3
+        id: upload-linux
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          GIT_SHA="${{ needs.setup.outputs.git_sha }}"
+          S3_KEY="builds/v${VERSION}/linux/tr-dungeons-linux.x86_64"
+          
+          python3 scripts/aws/upload_to_s3.py \
+            builds/linux/tr-dungeons-linux.x86_64 \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" \
+            --version "${VERSION}" \
+            --platform linux \
+            --commit "${GIT_SHA}"
+          
+          # Generate presigned URL
+          URL=$(python3 scripts/aws/generate_presigned_url.py \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" | tail -n 1)
+          
+          SIZE_MB=$(du -m builds/linux/tr-dungeons-linux.x86_64 | cut -f1)
+          
+          echo "url=${URL}" >> $GITHUB_OUTPUT
+          echo "size_mb=${SIZE_MB}" >> $GITHUB_OUTPUT
+      
+      - name: Upload macOS build to S3
+        id: upload-macos
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          GIT_SHA="${{ needs.setup.outputs.git_sha }}"
+          S3_KEY="builds/v${VERSION}/macos/tr-dungeons-macos.zip"
+          
+          python3 scripts/aws/upload_to_s3.py \
+            builds/macos/tr-dungeons-macos.zip \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" \
+            --version "${VERSION}" \
+            --platform macos \
+            --commit "${GIT_SHA}"
+          
+          # Generate presigned URL
+          URL=$(python3 scripts/aws/generate_presigned_url.py \
+            --bucket ${{ env.S3_BUCKET_NAME }} \
+            --key "${S3_KEY}" | tail -n 1)
+          
+          SIZE_MB=$(du -m builds/macos/tr-dungeons-macos.zip | cut -f1)
+          
+          echo "url=${URL}" >> $GITHUB_OUTPUT
+          echo "size_mb=${SIZE_MB}" >> $GITHUB_OUTPUT
+      
+      - name: Store metadata in DynamoDB
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          GIT_SHA="${{ needs.setup.outputs.git_sha }}"
+          CHANGELOG="${{ needs.setup.outputs.changelog }}"
+          
+          # Calculate expiration timestamp (7 days from now)
+          EXPIRES_AT=$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")
+          
+          # Construct builds JSON
+          BUILDS_JSON=$(cat <<EOF
+          {
+            "windows": {
+              "status": "success",
+              "url": "${{ steps.upload-windows.outputs.url }}",
+              "expires_at": "${EXPIRES_AT}",
+              "size_bytes": $(( ${{ steps.upload-windows.outputs.size_mb }} * 1024 * 1024 ))
+            },
+            "linux": {
+              "status": "success",
+              "url": "${{ steps.upload-linux.outputs.url }}",
+              "expires_at": "${EXPIRES_AT}",
+              "size_bytes": $(( ${{ steps.upload-linux.outputs.size_mb }} * 1024 * 1024 ))
+            },
+            "macos": {
+              "status": "success",
+              "url": "${{ steps.upload-macos.outputs.url }}",
+              "expires_at": "${EXPIRES_AT}",
+              "size_bytes": $(( ${{ steps.upload-macos.outputs.size_mb }} * 1024 * 1024 ))
+            }
+          }
+          EOF
+          )
+          
+          python3 scripts/aws/store_metadata.py \
+            --table ${{ env.DYNAMODB_TABLE_NAME }} \
+            --version "${VERSION}" \
+            --commit "${GIT_SHA}" \
+            --builds "${BUILDS_JSON}" \
+            --changelog "${CHANGELOG}" \
+            --workflow-id "${{ github.run_id }}"
+      
+      - name: Send notification to SQS
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          GIT_SHA="${{ needs.setup.outputs.git_sha }}"
+          CHANGELOG="${{ needs.setup.outputs.changelog }}"
+          
+          # Calculate expiration timestamp (7 days from now)
+          EXPIRES_AT=$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")
+          
+          # Construct builds JSON for notification
+          BUILDS_JSON=$(cat <<EOF
+          {
+            "windows": {
+              "url": "${{ steps.upload-windows.outputs.url }}",
+              "size_mb": ${{ steps.upload-windows.outputs.size_mb }},
+              "expires_at": "${EXPIRES_AT}"
+            },
+            "linux": {
+              "url": "${{ steps.upload-linux.outputs.url }}",
+              "size_mb": ${{ steps.upload-linux.outputs.size_mb }},
+              "expires_at": "${EXPIRES_AT}"
+            },
+            "macos": {
+              "url": "${{ steps.upload-macos.outputs.url }}",
+              "size_mb": ${{ steps.upload-macos.outputs.size_mb }},
+              "expires_at": "${EXPIRES_AT}"
+            }
+          }
+          EOF
+          )
+          
+          python3 scripts/aws/send_notification.py \
+            --queue-url "${{ env.SQS_QUEUE_URL }}" \
+            --version "${VERSION}" \
+            --commit "${GIT_SHA}" \
+            --changelog "${CHANGELOG}" \
+            --builds "${BUILDS_JSON}"
+      
+      - name: Generate build summary
+        run: |
+          VERSION="${{ needs.setup.outputs.version }}"
+          
+          cat >> $GITHUB_STEP_SUMMARY <<EOF
+          # 🎮 Build Distribution Complete
+          
+          **Version:** ${VERSION}
+          **Commit:** ${{ needs.setup.outputs.git_sha }}
+          **Workflow:** ${{ github.run_id }}
+          
+          ## 📦 Build Artifacts
+          
+          | Platform | Size | Status |
+          |----------|------|--------|
+          | Windows | ${{ steps.upload-windows.outputs.size_mb }} MB | ✅ Uploaded |
+          | Linux | ${{ steps.upload-linux.outputs.size_mb }} MB | ✅ Uploaded |
+          | macOS | ${{ steps.upload-macos.outputs.size_mb }} MB | ✅ Uploaded |
+          
+          ## 📝 Changelog
+          
+          ${{ needs.setup.outputs.changelog }}
+          
+          ## 🔗 Download Links
+          
+          Links expire in 7 days.
+          
+          - **Windows:** [Download](${{ steps.upload-windows.outputs.url }})
+          - **Linux:** [Download](${{ steps.upload-linux.outputs.url }})
+          - **macOS:** [Download](${{ steps.upload-macos.outputs.url }})
+          
+          ## ✅ Next Steps
+          
+          - Notifications sent to all subscribers via SQS/SNS
+          - Metadata stored in DynamoDB
+          - Old versions will be cleaned up automatically
+          EOF
