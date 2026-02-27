@@ -111,10 +111,16 @@ class BuildDistributionStack(Stack):
         )
 
         # IAM role for GitHub Actions with OIDC
-        github_provider = iam.OpenIdConnectProvider.from_open_id_connect_provider_arn(
+        # Create GitHub OIDC provider if it doesn't exist
+        github_provider = iam.OpenIdConnectProvider(
             self,
             "GitHubProvider",
-            open_id_connect_provider_arn=f"arn:aws:iam::{self.account}:oidc-provider/token.actions.githubusercontent.com",
+            url="https://token.actions.githubusercontent.com",
+            client_ids=["sts.amazonaws.com"],
+            thumbprints=[
+                "6938fd4d98bab03faadb97b34396831e3780aea1",  # GitHub Actions OIDC thumbprint
+                "1c58a3a8518e8759bf075b76b750d4f2df264fcd",  # Backup thumbprint
+            ],
         )
 
         self.github_actions_role = iam.Role(
