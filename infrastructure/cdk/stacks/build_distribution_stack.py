@@ -112,24 +112,19 @@ class BuildDistributionStack(Stack):
         )
 
         # IAM role for GitHub Actions with OIDC
-        # Create GitHub OIDC provider if it doesn't exist
-        github_provider = iam.OpenIdConnectProvider(
+        # Reference existing OIDC provider (created once per account)
+        oidc_provider_arn = iam.OpenIdConnectProvider.from_open_id_connect_provider_arn(
             self,
             "GitHubProvider",
-            url="https://token.actions.githubusercontent.com",
-            client_ids=["sts.amazonaws.com"],
-            thumbprints=[
-                "6938fd4d98bab03faadb97b34396831e3780aea1",  # GitHub Actions OIDC thumbprint
-                "1c58a3a8518e8759bf075b76b750d4f2df264fcd",  # Backup thumbprint
-            ],
+            f"arn:aws:iam::{self.account}:oidc-provider/token.actions.githubusercontent.com",
         )
 
         self.github_actions_role = iam.Role(
             self,
             "GitHubActionsRole",
             role_name="tr-dungeons-github-actions-role",
-            assumed_by=iam.WebIdentityPrincipal(
-                github_provider.open_id_connect_provider_arn,
+            assumed_by=iam.FederatedPrincipal(
+                oidc_provider_arn.open_id_connect_provider_arn,
                 conditions={
                     "StringEquals": {
                         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
@@ -138,6 +133,7 @@ class BuildDistributionStack(Stack):
                         "token.actions.githubusercontent.com:sub": "repo:com-terminal-realms/tr-dungeons:*",
                     },
                 },
+                assume_role_action="sts:AssumeRoleWithWebIdentity",
             ),
             description="Role for GitHub Actions to deploy builds",
             max_session_duration=Duration.hours(1),

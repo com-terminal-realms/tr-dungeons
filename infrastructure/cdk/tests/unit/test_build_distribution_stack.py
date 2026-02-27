@@ -302,10 +302,9 @@ class TestIAMRole:
 
     def test_iam_role_created(self, template: Template):
         """Test that IAM role is created."""
-        # Note: OIDC provider may create a service role, so we expect at least 1
-        # We verify our specific role exists by name in the next test
-        resources = template.find_resources("AWS::IAM::Role")
-        assert len(resources) >= 1, f"Expected at least 1 IAM role, found {len(resources)}"
+        # We expect exactly 1 IAM role (the GitHub Actions role)
+        # The OIDC provider is referenced, not created
+        template.resource_count_is("AWS::IAM::Role", 1)
 
     def test_iam_role_name(self, template: Template):
         """Test that IAM role has correct name."""
