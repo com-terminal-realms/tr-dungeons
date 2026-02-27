@@ -62,11 +62,7 @@ class TestS3Bucket:
             {
                 "BucketEncryption": {
                     "ServerSideEncryptionConfiguration": [
-                        {
-                            "ServerSideEncryptionByDefault": {
-                                "SSEAlgorithm": "AES256"
-                            }
-                        }
+                        {"ServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}
                     ]
                 }
             },
@@ -213,9 +209,7 @@ class TestDynamoDBTable:
         template.has_resource_properties(
             "AWS::DynamoDB::Table",
             {
-                "KeySchema": [
-                    {"AttributeName": "version", "KeyType": "HASH"}
-                ],
+                "KeySchema": [{"AttributeName": "version", "KeyType": "HASH"}],
                 "AttributeDefinitions": Match.array_with(
                     [{"AttributeName": "version", "AttributeType": "S"}]
                 ),
@@ -250,9 +244,7 @@ class TestDynamoDBGSIs:
                         Match.object_like(
                             {
                                 "IndexName": "timestamp-index",
-                                "KeySchema": [
-                                    {"AttributeName": "timestamp", "KeyType": "HASH"}
-                                ],
+                                "KeySchema": [{"AttributeName": "timestamp", "KeyType": "HASH"}],
                                 "Projection": {"ProjectionType": "ALL"},
                             }
                         )
@@ -320,11 +312,7 @@ class TestIAMRole:
             {
                 "AssumeRolePolicyDocument": {
                     "Statement": Match.array_with(
-                        [
-                            Match.object_like(
-                                {"Action": "sts:AssumeRoleWithWebIdentity"}
-                            )
-                        ]
+                        [Match.object_like({"Action": "sts:AssumeRoleWithWebIdentity"})]
                     )
                 }
             },
