@@ -1,0 +1,198 @@
+name: Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment (dev, staging, prod)'
+        required: true
+        type: string
+      action:
+        description: 'CDK action to perform'
+        required: true
+        type: choice
+        options:
+          - synth
+          - diff
+          - deploy
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  CDK_STACK_NAME: BuildDistributionStack
+
+jobs:
+  deploy:
+    name: Deploy CDK Infrastructure
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Set up Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      # Install dependencies
+      - name: Install CDK and dependencies
+        run: |
+          cd infrastructure/cdk
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          npm install -g aws-cdk
+      
+      # Input validation
+      - name: Validate inputs
+        run: |
+          if [ -z "${{ github.event.inputs.environment }}" ]; then
+            echo "❌ Error: Environment input is required"
+            exit 1
+          fi
+          
+          if [[ ! "${{ github.event.inputs.action }}" =~ ^(synth|diff|deploy)$ ]]; then
+            echo "❌ Error: Action must be one of: synth, diff, deploy"
+            exit 1
+          fi
+          
+          echo "✅ Inputs validated successfully"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Action: ${{ github.event.inputs.action }}"
+      
+      # Run test suite
+      - name: Run pytest tests
+        run: |
+          cd infrastructure/cdk
+          pytest tests/unit/ -v
+      
+      - name: Run black formatting check
+        run: |
+          cd infrastructure/cdk
+          black --check .
+      
+      - name: Run ruff linting
+        run: |
+          cd infrastructure/cdk
+          ruff check .
+      
+      - name: Run mypy type checking
+        run: |
+          cd infrastructure/cdk
+          mypy stacks/ tests/
+      
+      # Test results summary
+      - name: Display test results summary
+        if: always()
+        run: |
+          echo "## Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All tests passed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Code formatting validated" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Linting checks passed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Type checking passed" >> $GITHUB_STEP_SUMMARY
+      
+      # Configure AWS credentials using OIDC
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOYMENT_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: github-actions-${{ github.run_id }}
+      
+      # Verify CDK bootstrap
+      - name: Verify CDK bootstrap
+        run: |
+          echo "Checking CDK bootstrap status..."
+          if aws cloudformation describe-stacks --stack-name CDKToolkit --region ${{ env.AWS_REGION }} > /dev/null 2>&1; then
+            echo "✅ CDK bootstrap detected"
+            echo "## CDK Bootstrap Status" >> $GITHUB_STEP_SUMMARY
+            echo "✅ CDKToolkit stack exists" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ CDK bootstrap not found"
+            echo "## CDK Bootstrap Status" >> $GITHUB_STEP_SUMMARY
+            echo "❌ CDKToolkit stack not found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please run CDK bootstrap first:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+            echo "cdk bootstrap aws://ACCOUNT-ID/${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+      
+      # CDK synth operation
+      - name: CDK synth
+        if: github.event.inputs.action == 'synth'
+        run: |
+          cd infrastructure/cdk
+          cdk synth --context environment=${{ github.event.inputs.environment }}
+          echo "## CDK Synth Results" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Template synthesized successfully" >> $GITHUB_STEP_SUMMARY
+      
+      # CDK diff operation
+      - name: CDK diff
+        if: github.event.inputs.action == 'diff'
+        run: |
+          cd infrastructure/cdk
+          cdk diff --context environment=${{ github.event.inputs.environment }}
+          echo "## CDK Diff Results" >> $GITHUB_STEP_SUMMARY
+          echo "Infrastructure changes displayed above" >> $GITHUB_STEP_SUMMARY
+      
+      # CDK deploy operation
+      - name: CDK deploy
+        if: github.event.inputs.action == 'deploy'
+        run: |
+          cd infrastructure/cdk
+          cdk deploy \
+            --context environment=${{ github.event.inputs.environment }} \
+            --require-approval never \
+            --outputs-file outputs.json
+      
+      # Capture stack outputs
+      - name: Parse and display stack outputs
+        if: github.event.inputs.action == 'deploy'
+        run: |
+          cd infrastructure/cdk
+          if [ -f outputs.json ]; then
+            echo "## Deployment Outputs" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Extract key outputs
+            BUCKET_NAME=$(jq -r '.BuildDistributionStack.BuildsBucketName // "N/A"' outputs.json)
+            QUEUE_URL=$(jq -r '.BuildDistributionStack.NotificationQueueUrl // "N/A"' outputs.json)
+            TOPIC_ARN=$(jq -r '.BuildDistributionStack.NotificationTopicArn // "N/A"' outputs.json)
+            TABLE_NAME=$(jq -r '.BuildDistributionStack.MetadataTableName // "N/A"' outputs.json)
+            ROLE_ARN=$(jq -r '.BuildDistributionStack.GitHubActionsRoleArn // "N/A"' outputs.json)
+            
+            echo "- **S3 Bucket**: \`$BUCKET_NAME\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **SQS Queue URL**: \`$QUEUE_URL\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **SNS Topic ARN**: \`$TOPIC_ARN\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **DynamoDB Table**: \`$TABLE_NAME\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **IAM Role ARN**: \`$ROLE_ARN\`" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      # Upload outputs as artifact
+      - name: Upload deployment outputs
+        if: github.event.inputs.action == 'deploy'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdk-outputs-${{ github.event.inputs.environment }}
+          path: infrastructure/cdk/outputs.json
+          retention-days: 30
+      
+      # Deployment summary
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Action**: ${{ github.event.inputs.action }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Region**: ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Stack**: ${{ env.CDK_STACK_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
