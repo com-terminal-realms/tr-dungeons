@@ -53,20 +53,24 @@ jobs:
       - name: Install dependencies
         working-directory: infrastructure/cdk
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          pip install pipenv
+          pipenv install --dev
       
       - name: Run pytest
         working-directory: infrastructure/cdk
-        run: pytest tests/unit/ -v
+        run: pipenv run pytest tests/unit/ -v
+      
+      - name: Run black formatting check
+        working-directory: infrastructure/cdk
+        run: pipenv run black --check --diff .
       
       - name: Run ruff linting
         working-directory: infrastructure/cdk
-        run: ruff check .
+        run: pipenv run ruff check .
       
       - name: Run mypy type checking
         working-directory: infrastructure/cdk
-        run: mypy stacks/ tests/
+        run: pipenv run mypy stacks/ tests/
 
   bootstrap:
     name: Bootstrap (${{ inputs.environment }} - ${{ inputs.action }})
@@ -96,8 +100,8 @@ jobs:
       - name: Install Python dependencies
         working-directory: infrastructure/cdk
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          pip install pipenv
+          pipenv install
       
       - name: Configure AWS credentials (shared OIDC role)
         uses: aws-actions/configure-aws-credentials@v4
@@ -111,21 +115,21 @@ jobs:
       - name: CDK Synth Bootstrap
         working-directory: infrastructure/cdk
         run: |
-          cdk synth TRDungeonsBootstrap-${{ inputs.environment }} \
+          pipenv run cdk synth TRDungeonsBootstrap-${{ inputs.environment }} \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Diff Bootstrap
         if: inputs.action == 'diff' || inputs.action == 'deploy'
         working-directory: infrastructure/cdk
         run: |
-          cdk diff TRDungeonsBootstrap-${{ inputs.environment }} \
+          pipenv run cdk diff TRDungeonsBootstrap-${{ inputs.environment }} \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Deploy Bootstrap
         if: inputs.action == 'deploy'
         working-directory: infrastructure/cdk
         run: |
-          cdk deploy TRDungeonsBootstrap-${{ inputs.environment }} \
+          pipenv run cdk deploy TRDungeonsBootstrap-${{ inputs.environment }} \
             --context environment=${{ inputs.environment }} \
             --require-approval never \
             --outputs-file bootstrap-outputs.json
@@ -175,8 +179,8 @@ jobs:
       - name: Install Python dependencies
         working-directory: infrastructure/cdk
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          pip install pipenv
+          pipenv install
       
       - name: Configure AWS credentials (shared OIDC role)
         uses: aws-actions/configure-aws-credentials@v4
@@ -210,7 +214,7 @@ jobs:
           if [ -z "$STACK_FILTER" ]; then
             STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
           fi
-          cdk synth $STACK_FILTER \
+          pipenv run cdk synth $STACK_FILTER \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Diff
@@ -221,7 +225,7 @@ jobs:
           if [ -z "$STACK_FILTER" ]; then
             STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
           fi
-          cdk diff $STACK_FILTER \
+          pipenv run cdk diff $STACK_FILTER \
             --context environment=${{ inputs.environment }}
       
       - name: CDK Deploy
@@ -232,7 +236,7 @@ jobs:
           if [ -z "$STACK_FILTER" ]; then
             STACK_FILTER="TRDungeonsInfrastructure-${{ inputs.environment }}"
           fi
-          cdk deploy $STACK_FILTER \
+          pipenv run cdk deploy $STACK_FILTER \
             --context environment=${{ inputs.environment }} \
             --require-approval never \
             --outputs-file cdk-outputs.json
