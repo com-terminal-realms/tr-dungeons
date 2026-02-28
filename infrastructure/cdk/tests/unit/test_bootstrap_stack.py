@@ -95,33 +95,37 @@ class TestIAMRole:
         )
 
     def test_iam_role_has_iam_permissions(self, template: Template):
-        """Test that IAM role has IAM management permissions."""
+        """Test that IAM role has IAM management permissions via attached policy."""
+        # CDK's add_to_policy() creates a separate AWS::IAM::Policy resource
         template.has_resource_properties(
-            "AWS::IAM::Role",
+            "AWS::IAM::Policy",
             {
-                "Policies": Match.array_with(
-                    [
-                        {
-                            "PolicyDocument": {
-                                "Statement": Match.array_with(
-                                    [
-                                        {
-                                            "Action": Match.array_with(
-                                                [
-                                                    "iam:CreateRole",
-                                                    "iam:DeleteRole",
-                                                    "iam:GetRole",
-                                                ]
-                                            ),
-                                            "Effect": "Allow",
-                                            "Resource": "*",
-                                        }
-                                    ]
-                                )
-                            }
-                        }
-                    ]
-                )
+                "PolicyDocument": {
+                    "Statement": Match.array_with(
+                        [
+                            Match.object_like(
+                                {
+                                    "Action": Match.array_with(
+                                        [
+                                            "iam:CreateRole",
+                                            "iam:DeleteRole",
+                                            "iam:GetRole",
+                                            "iam:PutRolePolicy",
+                                            "iam:DeleteRolePolicy",
+                                            "iam:AttachRolePolicy",
+                                            "iam:DetachRolePolicy",
+                                            "iam:PassRole",
+                                            "iam:TagRole",
+                                            "iam:UntagRole",
+                                        ]
+                                    ),
+                                    "Effect": "Allow",
+                                    "Resource": "*",
+                                }
+                            )
+                        ]
+                    )
+                }
             },
         )
 
