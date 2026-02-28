@@ -4,7 +4,7 @@ import aws_cdk as cdk
 from aws_cdk.assertions import Template, Match
 import pytest
 
-from stacks.build_distribution_stack import InfrastructureStack
+from stacks.infrastructure_stack import InfrastructureStack
 
 
 @pytest.fixture
