@@ -53,6 +53,7 @@ jobs:
       - name: Install dependencies
         working-directory: infrastructure/cdk
         run: |
+          rm -rf .venv
           pip install pipenv
           pipenv install --dev
       
