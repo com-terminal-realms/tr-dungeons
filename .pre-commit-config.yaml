@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.1.0
+    hooks:
+      - id: black
+        files: ^infrastructure/cdk/
+        language_version: python3.13
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.4
+    hooks:
+      - id: ruff
+        files: ^infrastructure/cdk/
+        args: [--fix]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        files: ^infrastructure/cdk/
+        additional_dependencies: [aws-cdk-lib>=2.100.0, constructs>=10.0.0]
+        args: [--ignore-missing-imports]
+
+  - repo: local
+    hooks:
+      - id: pytest-cdk
+        name: pytest (CDK)
+        entry: bash -c 'cd infrastructure/cdk && pipenv run pytest tests/unit/ -v'
+        language: system
+        files: ^infrastructure/cdk/
+        pass_filenames: false
+        always_run: false
