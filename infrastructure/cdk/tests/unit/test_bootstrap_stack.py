@@ -1,8 +1,8 @@
 """Unit tests for BootstrapStack."""
 
 import aws_cdk as cdk
-from aws_cdk.assertions import Template, Match
 import pytest
+from aws_cdk.assertions import Match, Template
 
 from stacks.bootstrap_stack import BootstrapStack
 
@@ -60,14 +60,21 @@ class TestIAMRole:
                                 "Action": "sts:AssumeRoleWithWebIdentity",
                                 "Effect": "Allow",
                                 "Principal": {
-                                    "Federated": "arn:aws:iam::432045270100:oidc-provider/token.actions.githubusercontent.com"
+                                    "Federated": (
+                                        "arn:aws:iam::432045270100:oidc-provider/"
+                                        "token.actions.githubusercontent.com"
+                                    )
                                 },
                                 "Condition": {
                                     "StringEquals": {
-                                        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                                        "token.actions.githubusercontent.com:aud": (
+                                            "sts.amazonaws.com"
+                                        )
                                     },
                                     "StringLike": {
-                                        "token.actions.githubusercontent.com:sub": "repo:com-terminal-realms/tr-dungeons:*"
+                                        "token.actions.githubusercontent.com:sub": (
+                                            "repo:com-terminal-realms/tr-dungeons:*"
+                                        )
                                     },
                                 },
                             }

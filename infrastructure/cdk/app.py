@@ -2,6 +2,7 @@
 """CDK app for TR-Dungeons infrastructure."""
 
 import aws_cdk as cdk
+
 from stacks.bootstrap_stack import BootstrapStack
 from stacks.infrastructure_stack import InfrastructureStack
 

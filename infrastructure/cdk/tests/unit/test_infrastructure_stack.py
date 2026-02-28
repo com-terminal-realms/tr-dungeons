@@ -1,8 +1,8 @@
 """Unit tests for InfrastructureStack."""
 
 import aws_cdk as cdk
-from aws_cdk.assertions import Template, Match
 import pytest
+from aws_cdk.assertions import Match, Template
 
 from stacks.infrastructure_stack import InfrastructureStack
 

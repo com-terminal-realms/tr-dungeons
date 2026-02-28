@@ -14,6 +14,7 @@ hypothesis = ">=6.0.0"
 black = "==26.1.0"
 ruff = "*"
 mypy = ">=1.0.0"
+pre-commit = "*"
 
 [requires]
 python_version = "3.13"

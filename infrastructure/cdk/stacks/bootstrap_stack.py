@@ -5,7 +5,8 @@ This stack is deployed using the shared orb-infrastructure role.
 """
 
 import aws_cdk as cdk
-from aws_cdk import aws_iam as iam, aws_ssm as ssm
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_ssm as ssm
 from constructs import Construct
 
 
@@ -16,7 +17,7 @@ class BootstrapStack(cdk.Stack):
         self,
         scope: Construct,
         construct_id: str,
-        **kwargs: dict,
+        **kwargs,
     ) -> None:
         """Initialize the bootstrap stack.
 
@@ -50,7 +51,9 @@ class BootstrapStack(cdk.Stack):
                         "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
                     },
                     "StringLike": {
-                        "token.actions.githubusercontent.com:sub": "repo:com-terminal-realms/tr-dungeons:*"
+                        "token.actions.githubusercontent.com:sub": (
+                            "repo:com-terminal-realms/tr-dungeons:*"
+                        )
                     },
                 },
                 assume_role_action="sts:AssumeRoleWithWebIdentity",
