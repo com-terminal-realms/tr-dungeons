@@ -1,4 +1,4 @@
-name: Deploy Infrastructure
+name: deploy-infrstructure
 
 on:
   workflow_dispatch:
@@ -36,7 +36,7 @@ env:
 
 jobs:
   test:
-    name: Test
+    name: test
     runs-on: ubuntu-latest
     if: ${{ !inputs.skip_tests }}
     timeout-minutes: 15
