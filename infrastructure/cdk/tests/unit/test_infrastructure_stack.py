@@ -289,10 +289,6 @@ class TestDynamoDBGSIs:
         )
 
 
-
-
-
-
 class TestCloudWatchLogs:
     """Tests for CloudWatch log group configuration."""
 
