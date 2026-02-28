@@ -101,6 +101,7 @@ jobs:
       - name: Install Python dependencies
         working-directory: infrastructure/cdk
         run: |
+          rm -rf .venv
           pip install pipenv
           pipenv install
       
@@ -180,6 +181,7 @@ jobs:
       - name: Install Python dependencies
         working-directory: infrastructure/cdk
         run: |
+          rm -rf .venv
           pip install pipenv
           pipenv install
       
