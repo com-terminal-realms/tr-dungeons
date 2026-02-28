@@ -86,11 +86,7 @@ class TestIAMRole:
                     [
                         {
                             "Fn::Join": Match.array_with(
-                                [
-                                    Match.array_with(
-                                        [Match.string_like_regexp(".*PowerUserAccess")]
-                                    )
-                                ]
+                                [Match.array_with([Match.string_like_regexp(".*PowerUserAccess")])]
                             )
                         }
                     ]
@@ -150,6 +146,8 @@ class TestSSMParameter:
             "AWS::SSM::Parameter",
             {
                 "Type": "String",
-                "Value": {"Fn::GetAtt": Match.array_with([Match.string_like_regexp(".*Role.*"), "Arn"])},
+                "Value": {
+                    "Fn::GetAtt": Match.array_with([Match.string_like_regexp(".*Role.*"), "Arn"])
+                },
             },
         )
