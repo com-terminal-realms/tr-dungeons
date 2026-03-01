@@ -244,9 +244,7 @@ class TestDynamoDBGSIs:
                         Match.object_like(
                             {
                                 "IndexName": "timestamp-index",
-                                "KeySchema": [
-                                    {"AttributeName": "timestamp", "KeyType": "HASH"}
-                                ],
+                                "KeySchema": [{"AttributeName": "timestamp", "KeyType": "HASH"}],
                                 "Projection": {"ProjectionType": "ALL"},
                             }
                         )

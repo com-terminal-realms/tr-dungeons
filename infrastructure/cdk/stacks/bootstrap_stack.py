@@ -33,8 +33,7 @@ class BootstrapStack(cdk.Stack):
 
         # Reference existing OIDC provider (created in orb-infrastructure)
         oidc_provider_arn = (
-            "arn:aws:iam::432045270100:oidc-provider/"
-            "token.actions.githubusercontent.com"
+            "arn:aws:iam::432045270100:oidc-provider/" "token.actions.githubusercontent.com"
         )
         oidc_provider = iam.OpenIdConnectProvider.from_open_id_connect_provider_arn(
             self, "GitHubOIDCProvider", oidc_provider_arn
