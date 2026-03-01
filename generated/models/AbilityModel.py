@@ -4,8 +4,10 @@
 Generated Python models for Ability
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -20,13 +22,28 @@ class Ability(BaseModel):
     cooldown: float = Field(..., description="Cooldown duration in seconds")
     mana_cost: float = Field(..., description="Mana cost to activate")
     stamina_cost: float = Field(..., description="Stamina cost to activate")
-    cast_time: float = Field(..., description="Cast time in seconds before ability activates")
-    damage: Optional[float] = Field(None, description="Base damage dealt by the ability")
-    projectile_speed: Optional[float] = Field(None, description="Speed of projectile in meters per second (for ranged abilities)")
-    max_range: Optional[float] = Field(None, description="Maximum range in meters (for ranged abilities)")
-    effect_duration: Optional[float] = Field(None, description="Duration of effect in seconds (for buffs/debuffs)")
-    created_at: datetime = Field(..., description="Timestamp when the ability was created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the ability was last updated")
+    cast_time: float = Field(
+        ..., description="Cast time in seconds before ability activates"
+    )
+    damage: Optional[float] = Field(
+        None, description="Base damage dealt by the ability"
+    )
+    projectile_speed: Optional[float] = Field(
+        None,
+        description="Speed of projectile in meters per second (for ranged abilities)",
+    )
+    max_range: Optional[float] = Field(
+        None, description="Maximum range in meters (for ranged abilities)"
+    )
+    effect_duration: Optional[float] = Field(
+        None, description="Duration of effect in seconds (for buffs/debuffs)"
+    )
+    created_at: datetime = Field(
+        ..., description="Timestamp when the ability was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the ability was last updated"
+    )
 
 
 # Response Types

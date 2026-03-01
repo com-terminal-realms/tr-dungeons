@@ -5,7 +5,8 @@ name: EnemyType
 description: Enemy type configuration with stats, AI parameters, and loot table
 targets:
   - api
-  - game
+  - backend
+  - client
 
 model:
   attributes:

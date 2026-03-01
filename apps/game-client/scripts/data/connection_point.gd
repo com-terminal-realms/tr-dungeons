@@ -1,4 +1,4 @@
-class_name ConnectionPoint
+class_name DoorConnectionPoint
 extends RefCounted
 
 ## Represents a location where a door should be placed

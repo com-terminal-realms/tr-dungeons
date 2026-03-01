@@ -1,30 +1,61 @@
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+
 repos:
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.1.0
-    hooks:
-      - id: black
-        files: ^infrastructure/cdk/
-        language_version: python3.13
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.4
-    hooks:
-      - id: ruff
-        files: ^infrastructure/cdk/
-        args: [--fix, --exit-non-zero-on-fix]
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        files: ^infrastructure/cdk/
-        additional_dependencies: [aws-cdk-lib>=2.100.0, constructs>=10.0.0]
-
   - repo: local
     hooks:
+      - id: black-all
+        name: black (all Python)
+        entry: bash -c 'black . --exclude="(\.git|\.mypy_cache|\.ruff_cache|\.venv|\.godot|builds|node_modules)"'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      
+      - id: ruff-all
+        name: ruff (all Python)
+        entry: bash -c 'cd infrastructure/cdk && .venv/bin/ruff check --fix ../.. --exclude="(\.git|\.mypy_cache|\.ruff_cache|\.venv|\.godot|builds|node_modules|addons)"'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      
+      - id: mypy-infrastructure
+        name: mypy (infrastructure/cdk)
+        entry: bash -c 'cd infrastructure/cdk && .venv/bin/mypy stacks/ tests/'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      
+      - id: mypy-api
+        name: mypy (apps/api)
+        entry: bash -c 'cd apps/api && pipenv run mypy models/ || true'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      
+      - id: mypy-generated
+        name: mypy (generated)
+        entry: bash -c 'cd generated/python && python -m mypy models/ || true'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true
+      
       - id: pytest-cdk
-        name: pytest (CDK)
+        name: pytest (infrastructure/cdk)
         entry: bash -c 'cd infrastructure/cdk && .venv/bin/pytest tests/unit/ -v'
         language: system
-        files: ^infrastructure/cdk/.*\.py$
+        stages: [pre-commit]
         pass_filenames: false
+        always_run: true
+      
+      - id: godot-unit-tests
+        name: Godot unit tests (game-client)
+        entry: bash -c 'cd apps/game-client && timeout 30 godot --headless --script addons/gut/gut_cmdln.gd -gdir=res://tests/unit'
+        language: system
+        stages: [pre-commit]
+        pass_filenames: false
+        always_run: true

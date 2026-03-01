@@ -16,10 +16,6 @@ output:
           base_dir: generated/python
           models_subdir: models
           enums_subdir: enums
-        client:
-          base_dir: generated/python/client
-          models_subdir: models
-          enums_subdir: enums
     gdscript:
       targets:
         client:

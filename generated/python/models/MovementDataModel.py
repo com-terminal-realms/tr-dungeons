@@ -4,8 +4,9 @@
 Generated Python models for MovementData
 """
 
-from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -15,7 +16,9 @@ class MovementData(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     move_speed: float = Field(..., description="Movement speed in units per second")
-    rotation_speed: float = Field(..., description="Rotation speed in radians per second")
+    rotation_speed: float = Field(
+        ..., description="Rotation speed in radians per second"
+    )
 
 
 # Response Types

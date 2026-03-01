@@ -4,8 +4,10 @@
 Generated Python models for CombatStats
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -14,19 +16,31 @@ class CombatStats(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    id: str = Field(..., description="Unique identifier for the combat stats configuration")
+    id: str = Field(
+        ..., description="Unique identifier for the combat stats configuration"
+    )
     max_health: float = Field(..., description="Maximum health points")
     max_mana: float = Field(..., description="Maximum mana points for abilities")
-    max_stamina: float = Field(..., description="Maximum stamina points for dodge and sprint")
+    max_stamina: float = Field(
+        ..., description="Maximum stamina points for dodge and sprint"
+    )
     attack_damage: float = Field(..., description="Base attack damage")
     attack_speed: float = Field(..., description="Attacks per second")
     attack_range: float = Field(..., description="Attack range in meters")
     armor: float = Field(..., description="Damage reduction value")
     move_speed: float = Field(..., description="Movement speed in meters per second")
-    critical_chance: float = Field(..., description="Probability of critical hit (0.0 to 1.0)")
-    critical_multiplier: float = Field(..., description="Damage multiplier for critical hits")
-    created_at: datetime = Field(..., description="Timestamp when the stats were created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the stats were last updated")
+    critical_chance: float = Field(
+        ..., description="Probability of critical hit (0.0 to 1.0)"
+    )
+    critical_multiplier: float = Field(
+        ..., description="Damage multiplier for critical hits"
+    )
+    created_at: datetime = Field(
+        ..., description="Timestamp when the stats were created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the stats were last updated"
+    )
 
 
 # Response Types

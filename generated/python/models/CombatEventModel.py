@@ -4,8 +4,10 @@
 Generated Python models for CombatEvent
 """
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import datetime
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # Main Model
@@ -18,20 +20,46 @@ class CombatEvent(BaseModel):
     room_id: str = Field(..., description="Room where the event occurred")
     event_type: str = Field(..., description="Type of combat event")
     timestamp: datetime = Field(..., description="When the event occurred")
-    source_player_id: Optional[str] = Field(None, description="Player who initiated the event (if applicable)")
-    source_enemy_id: Optional[str] = Field(None, description="Enemy who initiated the event (if applicable)")
-    target_player_id: Optional[str] = Field(None, description="Player who was targeted by the event (if applicable)")
-    target_enemy_id: Optional[str] = Field(None, description="Enemy who was targeted by the event (if applicable)")
-    ability_id: Optional[str] = Field(None, description="Ability used (for ability_used events)")
-    damage_amount: Optional[float] = Field(None, description="Amount of damage dealt/taken")
-    is_critical: Optional[bool] = Field(False, description="Whether the damage was a critical hit")
+    source_player_id: Optional[str] = Field(
+        None, description="Player who initiated the event (if applicable)"
+    )
+    source_enemy_id: Optional[str] = Field(
+        None, description="Enemy who initiated the event (if applicable)"
+    )
+    target_player_id: Optional[str] = Field(
+        None, description="Player who was targeted by the event (if applicable)"
+    )
+    target_enemy_id: Optional[str] = Field(
+        None, description="Enemy who was targeted by the event (if applicable)"
+    )
+    ability_id: Optional[str] = Field(
+        None, description="Ability used (for ability_used events)"
+    )
+    damage_amount: Optional[float] = Field(
+        None, description="Amount of damage dealt/taken"
+    )
+    is_critical: Optional[bool] = Field(
+        False, description="Whether the damage was a critical hit"
+    )
     item_id: Optional[str] = Field(None, description="Item involved (for loot events)")
-    item_quantity: Optional[int] = Field(None, description="Quantity of item (for loot events)")
-    position_x: Optional[float] = Field(None, description="X position where event occurred")
-    position_y: Optional[float] = Field(None, description="Y position where event occurred")
-    position_z: Optional[float] = Field(None, description="Z position where event occurred")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional event-specific data as JSON")
-    created_at: datetime = Field(..., description="Timestamp when the event was recorded")
+    item_quantity: Optional[int] = Field(
+        None, description="Quantity of item (for loot events)"
+    )
+    position_x: Optional[float] = Field(
+        None, description="X position where event occurred"
+    )
+    position_y: Optional[float] = Field(
+        None, description="Y position where event occurred"
+    )
+    position_z: Optional[float] = Field(
+        None, description="Z position where event occurred"
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        None, description="Additional event-specific data as JSON"
+    )
+    created_at: datetime = Field(
+        ..., description="Timestamp when the event was recorded"
+    )
 
     @field_validator("is_critical", mode="before")
     @classmethod

@@ -4,8 +4,10 @@
 Generated Python models for EnemyType
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -16,16 +18,34 @@ class EnemyType(BaseModel):
 
     id: str = Field(..., description="Unique identifier for the enemy type")
     name: str = Field(..., description="Display name of the enemy type")
-    combat_stats_id: str = Field(..., description="Reference to CombatStats configuration")
-    detection_radius: float = Field(..., description="Radius in meters for detecting the player")
-    attack_range: float = Field(..., description="Range in meters for attacking the player")
-    patrol_radius: float = Field(..., description="Radius in meters for patrol area around spawn point")
-    attack_cooldown: float = Field(..., description="Cooldown in seconds between attacks")
-    attack_windup: float = Field(..., description="Windup time in seconds before attack deals damage")
-    loot_table_id: Optional[str] = Field(None, description="Reference to LootTable for drops on death")
+    combat_stats_id: str = Field(
+        ..., description="Reference to CombatStats configuration"
+    )
+    detection_radius: float = Field(
+        ..., description="Radius in meters for detecting the player"
+    )
+    attack_range: float = Field(
+        ..., description="Range in meters for attacking the player"
+    )
+    patrol_radius: float = Field(
+        ..., description="Radius in meters for patrol area around spawn point"
+    )
+    attack_cooldown: float = Field(
+        ..., description="Cooldown in seconds between attacks"
+    )
+    attack_windup: float = Field(
+        ..., description="Windup time in seconds before attack deals damage"
+    )
+    loot_table_id: Optional[str] = Field(
+        None, description="Reference to LootTable for drops on death"
+    )
     model_path: str = Field(..., description="Path to 3D model asset in Godot")
-    created_at: datetime = Field(..., description="Timestamp when the enemy type was created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the enemy type was last updated")
+    created_at: datetime = Field(
+        ..., description="Timestamp when the enemy type was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the enemy type was last updated"
+    )
 
 
 # Response Types

@@ -4,8 +4,9 @@
 Generated Python models for CombatData
 """
 
-from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -16,7 +17,9 @@ class CombatData(BaseModel):
 
     attack_damage: int = Field(..., description="Damage dealt per attack")
     attack_range: float = Field(..., description="Maximum attack range in units")
-    attack_cooldown: float = Field(..., description="Cooldown between attacks in seconds")
+    attack_cooldown: float = Field(
+        ..., description="Cooldown between attacks in seconds"
+    )
 
 
 # Response Types

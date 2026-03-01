@@ -12,6 +12,7 @@ This directory tracks issues filed with other teams that affect this project.
 
 | Issue | Team | Resolution |
 |-------|------|------------|
+| [#100](https://github.com/com-oneredboot/orb-schema-generator/issues/100) | orb-schema-generator | Fixed in v2.0.4 - datetime import now included in generated Python models |
 | [#92](https://github.com/com-oneredboot/orb-schema-generator/issues/92) | orb-schema-generator | Fixed in v1.3.1 - GDScript validator warning resolved |
 | [#93](https://github.com/com-oneredboot/orb-schema-generator/issues/93) | orb-schema-generator | Fixed in v1.3.2 - GDScript target resolution fixed |
 | [#94](https://github.com/com-oneredboot/orb-schema-generator/issues/94) | orb-schema-generator | Closed as won't implement - Current target naming system deemed sufficient |

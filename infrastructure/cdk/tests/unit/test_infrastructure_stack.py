@@ -244,7 +244,9 @@ class TestDynamoDBGSIs:
                         Match.object_like(
                             {
                                 "IndexName": "timestamp-index",
-                                "KeySchema": [{"AttributeName": "timestamp", "KeyType": "HASH"}],
+                                "KeySchema": [
+                                    {"AttributeName": "timestamp", "KeyType": "HASH"}
+                                ],
                                 "Projection": {"ProjectionType": "ALL"},
                             }
                         )
@@ -264,7 +266,10 @@ class TestDynamoDBGSIs:
                             {
                                 "IndexName": "git_commit_sha-index",
                                 "KeySchema": [
-                                    {"AttributeName": "git_commit_sha", "KeyType": "HASH"}
+                                    {
+                                        "AttributeName": "git_commit_sha",
+                                        "KeyType": "HASH",
+                                    }
                                 ],
                                 "Projection": {"ProjectionType": "ALL"},
                             }

@@ -94,7 +94,7 @@ func _determine_asset_type(asset_name: String, size: Vector3) -> String:
 func _calculate_bounding_box(node: Node3D) -> AABB:
 	var mesh_aabbs: Array[AABB] = []
 	
-	_collect_mesh_aabbs(node, node.global_transform, mesh_aabbs)
+	_collect_mesh_aabbs(node, Transform3D.IDENTITY, mesh_aabbs)
 	
 	# If no meshes found, return zero-size AABB at origin
 	if mesh_aabbs.is_empty():
@@ -110,6 +110,10 @@ func _calculate_bounding_box(node: Node3D) -> AABB:
 
 ## Recursively collect AABBs from all MeshInstance3D nodes
 func _collect_mesh_aabbs(node: Node, root_transform: Transform3D, mesh_aabbs: Array[AABB]) -> void:
+	_collect_mesh_aabbs_recursive(node, Transform3D.IDENTITY, mesh_aabbs)
+
+## Recursive helper that accumulates transforms
+func _collect_mesh_aabbs_recursive(node: Node, accumulated_transform: Transform3D, mesh_aabbs: Array[AABB]) -> void:
 	# Check if this node is a MeshInstance3D
 	if node is MeshInstance3D:
 		var mesh_instance = node as MeshInstance3D
@@ -117,15 +121,19 @@ func _collect_mesh_aabbs(node: Node, root_transform: Transform3D, mesh_aabbs: Ar
 			# Get the mesh AABB in local space
 			var mesh_aabb = mesh_instance.mesh.get_aabb()
 			
-			# Transform to world space relative to root
-			var world_transform = root_transform.inverse() * mesh_instance.global_transform
-			var transformed_aabb = world_transform * mesh_aabb
+			# Apply accumulated transform to the AABB
+			var node_transform = accumulated_transform * mesh_instance.transform
+			var transformed_aabb = node_transform * mesh_aabb
 			
 			mesh_aabbs.append(transformed_aabb)
 	
-	# Recursively process children
+	# Recursively process children with accumulated transform
+	var node_transform = accumulated_transform
+	if node is Node3D:
+		node_transform = accumulated_transform * (node as Node3D).transform
+	
 	for child in node.get_children():
-		_collect_mesh_aabbs(child, root_transform, mesh_aabbs)
+		_collect_mesh_aabbs_recursive(child, node_transform, mesh_aabbs)
 
 ## Find where origin is relative to geometry center
 func _find_origin_offset(node: Node3D) -> Vector3:
@@ -339,17 +347,19 @@ func _create_room_connections(bbox: AABB, center: Vector3) -> Array[ConnectionPo
 func _extract_collision_geometry(node: Node3D) -> Array[CollisionData]:
 	var collision_data: Array[CollisionData] = []
 	
-	_collect_collision_shapes(node, collision_data)
+	_collect_collision_shapes_recursive(node, Transform3D.IDENTITY, collision_data)
 	
 	return collision_data
 
-## Recursively collect collision shapes
-func _collect_collision_shapes(node: Node, collision_data: Array[CollisionData]) -> void:
+## Recursively collect collision shapes with accumulated transforms
+func _collect_collision_shapes_recursive(node: Node, accumulated_transform: Transform3D, collision_data: Array[CollisionData]) -> void:
 	if node is CollisionShape3D:
 		var collision_shape = node as CollisionShape3D
 		if collision_shape.shape != null:
 			var data = CollisionData.new()
-			data.position = collision_shape.global_position
+			# Apply accumulated transform to get world position
+			var node_transform = accumulated_transform * collision_shape.transform
+			data.position = node_transform.origin
 			
 			# Extract shape-specific data
 			if collision_shape.shape is BoxShape3D:
@@ -370,9 +380,13 @@ func _collect_collision_shapes(node: Node, collision_data: Array[CollisionData])
 			
 			collision_data.append(data)
 	
-	# Recursively process children
+	# Recursively process children with accumulated transform
+	var node_transform = accumulated_transform
+	if node is Node3D:
+		node_transform = accumulated_transform * (node as Node3D).transform
+	
 	for child in node.get_children():
-		_collect_collision_shapes(child, collision_data)
+		_collect_collision_shapes_recursive(child, node_transform, collision_data)
 
 ## Determine default facing direction
 ## Analyzes geometry orientation to determine which way the asset "faces"

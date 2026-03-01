@@ -18,18 +18,16 @@ func before_all() -> void:
 func test_state_storage_on_change() -> void:
 	# Feature: interactive-doors, Property 18: State Storage on Change
 	
-	assert_property_holds("DoorManager stores state immediately on change", func(seed: int) -> Dictionary:
+	# Run multiple iterations manually since we need await
+	for seed in range(10):  # Reduced iterations since we need await
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
 		# Create a test door
 		var test_door: Door = door_scene.instantiate() as Door
 		if not test_door:
-			return {
-				"success": false,
-				"input": "seed=%d" % seed,
-				"reason": "Failed to instantiate door from scene"
-			}
+			fail_test("Failed to instantiate door from scene (seed=%d)" % seed)
+			return
 		
 		# Add door to scene tree
 		add_child_autofree(test_door)
@@ -47,7 +45,7 @@ func test_state_storage_on_change() -> void:
 		
 		# Verify initial state is stored
 		var stored_initial_state: bool = DoorManager.get_door_state(test_door.door_id)
-		var initial_state_matches: bool = (stored_initial_state == initial_state)
+		assert_eq(stored_initial_state, initial_state, "Initial state should be stored (seed=%d)" % seed)
 		
 		# Change door state by toggling
 		var target_state: bool = not initial_state
@@ -61,22 +59,10 @@ func test_state_storage_on_change() -> void:
 		
 		# Verify new state is stored immediately
 		var stored_new_state: bool = DoorManager.get_door_state(test_door.door_id)
-		var new_state_matches: bool = (stored_new_state == target_state)
+		assert_eq(stored_new_state, target_state, "New state should be stored (seed=%d)" % seed)
 		
 		# Unregister door
 		DoorManager.unregister_door(test_door)
-		
-		var success: bool = initial_state_matches and new_state_matches
-		
-		return {
-			"success": success,
-			"input": "seed=%d, initial=%s, target=%s" % [seed, str(initial_state), str(target_state)],
-			"reason": "initial_matches=%s, new_matches=%s" % [
-				str(initial_state_matches),
-				str(new_state_matches)
-			]
-		}
-	)
 
 
 ## Property 19: State Stability During Navigation
@@ -86,7 +72,8 @@ func test_state_storage_on_change() -> void:
 func test_state_stability_during_navigation() -> void:
 	# Feature: interactive-doors, Property 19: State Stability During Navigation
 	
-	assert_property_holds("Door states remain stable during player movement", func(seed: int) -> Dictionary:
+	# Run multiple iterations manually since we need await
+	for seed in range(10):
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -121,24 +108,14 @@ func test_state_stability_during_navigation() -> void:
 			await get_tree().process_frame
 		
 		# Verify all door states remain unchanged
-		var all_states_stable: bool = true
 		for door in doors:
 			var current_state: bool = DoorManager.get_door_state(door.door_id)
 			var expected_state: bool = initial_states[door.door_id]
-			if current_state != expected_state:
-				all_states_stable = false
-				break
+			assert_eq(current_state, expected_state, "Door state should remain stable (seed=%d, door=%s)" % [seed, door.door_id])
 		
 		# Cleanup
 		for door in doors:
 			DoorManager.unregister_door(door)
-		
-		return {
-			"success": all_states_stable,
-			"input": "seed=%d, num_doors=%d" % [seed, num_doors],
-			"reason": "all_states_stable=%s" % str(all_states_stable)
-		}
-	)
 
 
 ## Property 20: Initial State Consistency
@@ -147,14 +124,14 @@ func test_state_stability_during_navigation() -> void:
 func test_initial_state_consistency() -> void:
 	# Feature: interactive-doors, Property 20: Initial State Consistency
 	
-	assert_property_holds("All new doors initialize in closed state", func(seed: int) -> Dictionary:
+	# Run multiple iterations manually since we need await
+	for seed in range(10):
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
 		# Create multiple test doors
 		var num_doors: int = rng.randi_range(2, 5)
 		var doors: Array[Door] = []
-		var all_closed: bool = true
 		
 		for i in range(num_doors):
 			var test_door: Door = door_scene.instantiate() as Door
@@ -170,35 +147,19 @@ func test_initial_state_consistency() -> void:
 			doors.append(test_door)
 			
 			# Check if door is closed
-			if test_door.is_open:
-				all_closed = false
+			assert_false(test_door.is_open, "New door should be closed (seed=%d, door=%d)" % [seed, i])
 		
 		# Wait for registration
 		await get_tree().process_frame
 		
 		# Verify all doors are stored as closed in DoorManager
-		var all_stored_closed: bool = true
 		for door in doors:
 			var stored_state: bool = DoorManager.get_door_state(door.door_id)
-			if stored_state:  # If true (open), then not all are closed
-				all_stored_closed = false
-				break
+			assert_false(stored_state, "Stored state should be closed (seed=%d, door=%s)" % [seed, door.door_id])
 		
 		# Cleanup
 		for door in doors:
 			DoorManager.unregister_door(door)
-		
-		var success: bool = all_closed and all_stored_closed
-		
-		return {
-			"success": success,
-			"input": "seed=%d, num_doors=%d" % [seed, num_doors],
-			"reason": "all_closed=%s, all_stored_closed=%s" % [
-				str(all_closed),
-				str(all_stored_closed)
-			]
-		}
-	)
 
 
 ## Property 21: Save/Load Round Trip
@@ -208,7 +169,8 @@ func test_initial_state_consistency() -> void:
 func test_save_load_round_trip() -> void:
 	# Feature: interactive-doors, Property 21: Save/Load Round Trip
 	
-	assert_property_holds("Save/load preserves all door states", func(seed: int) -> Dictionary:
+	# Run multiple iterations manually since we need await
+	for seed in range(10):
 		var rng := RandomNumberGenerator.new()
 		rng.seed = seed
 		
@@ -241,17 +203,7 @@ func test_save_load_round_trip() -> void:
 		var save_data: Dictionary = DoorManager.save_door_states()
 		
 		# Verify save data has "doors" key
-		var has_doors_key: bool = save_data.has("doors")
-		if not has_doors_key:
-			# Cleanup
-			for door in doors:
-				DoorManager.unregister_door(door)
-			
-			return {
-				"success": false,
-				"input": "seed=%d" % seed,
-				"reason": "Save data missing 'doors' key"
-			}
+		assert_true(save_data.has("doors"), "Save data should have 'doors' key (seed=%d)" % seed)
 		
 		# Modify door states (toggle all doors)
 		for door in doors:
@@ -260,15 +212,6 @@ func test_save_load_round_trip() -> void:
 		# Wait for state changes
 		await get_tree().process_frame
 		
-		# Verify states are different now
-		var states_changed: bool = false
-		for door in doors:
-			var current_state: bool = DoorManager.get_door_state(door.door_id)
-			var original_state: bool = original_states[door.door_id]
-			if current_state != original_state:
-				states_changed = true
-				break
-		
 		# Load saved states
 		DoorManager.load_door_states(save_data)
 		
@@ -276,27 +219,11 @@ func test_save_load_round_trip() -> void:
 		await get_tree().process_frame
 		
 		# Verify all states match original states
-		var all_states_restored: bool = true
 		for door in doors:
 			var restored_state: bool = DoorManager.get_door_state(door.door_id)
 			var original_state: bool = original_states[door.door_id]
-			if restored_state != original_state:
-				all_states_restored = false
-				break
+			assert_eq(restored_state, original_state, "State should be restored (seed=%d, door=%s)" % [seed, door.door_id])
 		
 		# Cleanup
 		for door in doors:
 			DoorManager.unregister_door(door)
-		
-		var success: bool = has_doors_key and states_changed and all_states_restored
-		
-		return {
-			"success": success,
-			"input": "seed=%d, num_doors=%d" % [seed, num_doors],
-			"reason": "has_doors_key=%s, states_changed=%s, all_restored=%s" % [
-				str(has_doors_key),
-				str(states_changed),
-				str(all_states_restored)
-			]
-		}
-	)

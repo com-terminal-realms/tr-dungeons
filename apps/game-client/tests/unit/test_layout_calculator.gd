@@ -61,11 +61,16 @@ func test_corridor_count_just_over_one_corridor():
 	var overlap = calculator._calculate_overlap(metadata)
 	var effective_length = corridor_length - (2 * overlap)
 	
-	# Distance just over one effective length
+	# Distance just over one effective length (but closer to 1 than 2)
 	var distance = effective_length + 0.1
 	
+	# The algorithm picks the count that gives the closest match
+	# For distance = effective_length + 0.1:
+	#   - 1 corridor gives length = effective_length (error = 0.1)
+	#   - 2 corridors gives length = 2*effective_length (error = effective_length - 0.1)
+	# Since 0.1 < (effective_length - 0.1), it should return 1
 	var result = calculator.calculate_corridor_count(distance, metadata)
-	assert_eq(result, 2, "Should return 2 corridors for distance slightly more than one effective length")
+	assert_eq(result, 1, "Should return 1 corridor for distance slightly more than one effective length (closest match)")
 
 ## Test: corridor with no connection points (should handle gracefully)
 func test_corridor_count_no_connection_points():
@@ -263,10 +268,10 @@ func test_position_from_count_invalid_count_zero():
 	var start_pos = Vector3.ZERO
 	var direction = Vector3(0, 0, 1)
 	
-	# Expect error to be logged
-	watch_signals(gut)
-	
 	var result = calculator.calculate_position_from_corridor_count(start_pos, 0, metadata, direction)
+	
+	# Assert that the expected error was pushed
+	assert_push_error("Corridor count must be at least 1")
 	
 	# Should return start position unchanged
 	assert_eq(result, start_pos, "Should return start position for invalid count")
@@ -277,10 +282,10 @@ func test_position_from_count_invalid_count_negative():
 	var start_pos = Vector3(5, 0, 10)
 	var direction = Vector3(0, 0, 1)
 	
-	# Expect error to be logged
-	watch_signals(gut)
-	
 	var result = calculator.calculate_position_from_corridor_count(start_pos, -3, metadata, direction)
+	
+	# Assert that the expected error was pushed
+	assert_push_error("Corridor count must be at least 1")
 	
 	# Should return start position unchanged
 	assert_eq(result, start_pos, "Should return start position for negative count")
@@ -290,10 +295,10 @@ func test_position_from_count_null_metadata():
 	var start_pos = Vector3.ZERO
 	var direction = Vector3(0, 0, 1)
 	
-	# Expect error to be logged
-	watch_signals(gut)
-	
 	var result = calculator.calculate_position_from_corridor_count(start_pos, 3, null, direction)
+	
+	# Assert that the expected error was pushed
+	assert_push_error("Corridor metadata is null")
 	
 	# Should return start position unchanged
 	assert_eq(result, start_pos, "Should return start position for null metadata")

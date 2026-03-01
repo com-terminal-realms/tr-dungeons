@@ -422,7 +422,10 @@ func _validate_door_placements(dungeon_root: Node3D) -> void:
 	# Get all placed doors
 	var doors: Array[Door] = []
 	for door_id in registered_doors.keys():
-		doors.append(registered_doors[door_id])
+		var door = registered_doors[door_id]
+		# Skip doors that have been queued for deletion
+		if is_instance_valid(door) and not door.is_queued_for_deletion():
+			doors.append(door)
 	
 	if doors.is_empty():
 		print("DoorManager: No doors to validate")

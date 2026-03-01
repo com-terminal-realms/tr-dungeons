@@ -12,4 +12,12 @@ from .HealthDataModel import HealthData
 from .LootTableModel import LootTable
 from .MovementDataModel import MovementData
 
-__all__ = ['Ability', 'CombatData', 'CombatStats', 'EnemyType', 'HealthData', 'LootTable', 'MovementData']
+__all__ = [
+    "Ability",
+    "CombatData",
+    "CombatStats",
+    "EnemyType",
+    "HealthData",
+    "LootTable",
+    "MovementData",
+]

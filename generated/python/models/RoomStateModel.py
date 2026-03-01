@@ -4,8 +4,10 @@
 Generated Python models for RoomState
 """
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # Main Model
@@ -15,17 +17,35 @@ class RoomState(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     room_id: str = Field(..., description="Unique identifier for the room instance")
-    dungeon_id: str = Field(..., description="Identifier of the dungeon template this room belongs to")
-    room_type: str = Field(..., description="Type of room (start, combat, boss, treasure, exit)")
-    max_players: int = Field(..., description="Maximum number of players allowed in this room")
-    current_player_count: int = Field(..., description="Current number of players in the room")
-    is_cleared: bool = Field(..., description="Whether all enemies in the room have been defeated")
+    dungeon_id: str = Field(
+        ..., description="Identifier of the dungeon template this room belongs to"
+    )
+    room_type: str = Field(
+        ..., description="Type of room (start, combat, boss, treasure, exit)"
+    )
+    max_players: int = Field(
+        ..., description="Maximum number of players allowed in this room"
+    )
+    current_player_count: int = Field(
+        ..., description="Current number of players in the room"
+    )
+    is_cleared: bool = Field(
+        ..., description="Whether all enemies in the room have been defeated"
+    )
     enemies: List[str] = Field(..., description="Array of enemy instances in the room")
-    loot_drops: List[str] = Field(..., description="Array of loot items dropped in the room")
+    loot_drops: List[str] = Field(
+        ..., description="Array of loot items dropped in the room"
+    )
     doors: List[str] = Field(..., description="Array of door states in the room")
-    created_at: datetime = Field(..., description="Timestamp when the room instance was created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the room state was last updated")
-    expires_at: Optional[datetime] = Field(None, description="Timestamp when this room instance expires (if empty)")
+    created_at: datetime = Field(
+        ..., description="Timestamp when the room instance was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the room state was last updated"
+    )
+    expires_at: Optional[datetime] = Field(
+        None, description="Timestamp when this room instance expires (if empty)"
+    )
 
     @field_validator("is_cleared", mode="before")
     @classmethod

@@ -4,8 +4,10 @@
 Generated Python models for LootTable
 """
 
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Main Model
@@ -17,8 +19,12 @@ class LootTable(BaseModel):
     id: str = Field(..., description="Unique identifier for the loot table")
     name: str = Field(..., description="Display name of the loot table")
     drops: List[str] = Field(..., description="Array of loot drop definitions")
-    created_at: datetime = Field(..., description="Timestamp when the loot table was created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the loot table was last updated")
+    created_at: datetime = Field(
+        ..., description="Timestamp when the loot table was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the loot table was last updated"
+    )
 
 
 # Response Types

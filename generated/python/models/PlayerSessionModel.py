@@ -4,8 +4,10 @@
 Generated Python models for PlayerSession
 """
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from datetime import datetime
 from typing import List, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 # Main Model
@@ -17,18 +19,35 @@ class PlayerSession(BaseModel):
     session_id: str = Field(..., description="Unique identifier for the player session")
     player_id: str = Field(..., description="Unique identifier for the player account")
     character_name: str = Field(..., description="Character display name")
-    room_id: Optional[str] = Field(None, description="Current room/dungeon instance the player is in")
-    combat_stats_id: str = Field(..., description="Reference to player's CombatStats configuration")
+    room_id: Optional[str] = Field(
+        None, description="Current room/dungeon instance the player is in"
+    )
+    combat_stats_id: str = Field(
+        ..., description="Reference to player's CombatStats configuration"
+    )
     current_health: float = Field(..., description="Current health points")
     current_mana: float = Field(..., description="Current mana points")
     current_stamina: float = Field(..., description="Current stamina points")
-    position_x: Optional[float] = Field(None, description="Player X position in world space")
-    position_y: Optional[float] = Field(None, description="Player Y position in world space")
-    position_z: Optional[float] = Field(None, description="Player Z position in world space")
+    position_x: Optional[float] = Field(
+        None, description="Player X position in world space"
+    )
+    position_y: Optional[float] = Field(
+        None, description="Player Y position in world space"
+    )
+    position_z: Optional[float] = Field(
+        None, description="Player Z position in world space"
+    )
     is_alive: bool = Field(..., description="Whether the player is currently alive")
-    last_heartbeat: datetime = Field(..., description="Last time the client sent a heartbeat (for disconnect detection)")
-    created_at: datetime = Field(..., description="Timestamp when the session was created")
-    updated_at: Optional[datetime] = Field(None, description="Timestamp when the session was last updated")
+    last_heartbeat: datetime = Field(
+        ...,
+        description="Last time the client sent a heartbeat (for disconnect detection)",
+    )
+    created_at: datetime = Field(
+        ..., description="Timestamp when the session was created"
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description="Timestamp when the session was last updated"
+    )
 
     @field_validator("is_alive", mode="before")
     @classmethod

@@ -1,0 +1,9 @@
+line-length = 100
+
+[lint]
+select = ["E", "F", "W"]
+
+[lint.per-file-ignores]
+"generated/**/*.py" = ["N999"]
+"apps/game-client/addons/**/*.py" = ["F403", "F405", "E501", "E711", "E402"]
+"scripts/aws/*.py" = ["E501"]

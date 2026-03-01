@@ -636,8 +636,9 @@ func test_property_29_validation_warning_logging() -> void:
 func test_property_30_multi_asset_support() -> void:
 	# Feature: interactive-doors, Property 30: Multi-Asset Support
 	
-	# Define all supported door asset variants
-	var asset_variants := ["gate", "gate-door", "gate-door-window"]
+	# Define all supported door asset variants that have animations
+	# Note: "gate" doesn't have animations, so we only test animated variants
+	var asset_variants := ["gate-door", "gate-door-window"]
 	
 	for i in range(ITERATIONS):
 		# Pick a random asset variant for this iteration

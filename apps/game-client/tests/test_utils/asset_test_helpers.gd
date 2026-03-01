@@ -137,8 +137,7 @@ static func generate_random_distance(rng: RandomNumberGenerator) -> float:
 	return rng.randf_range(5.0, 50.0)
 
 ## Create a simple test asset scene with mesh and collision
-## NOTE: This function adds the scene to the scene tree to enable transform access
-## The caller is responsible for cleanup (removing from tree and freeing)
+## NOTE: The caller is responsible for adding to scene tree and cleanup
 static func create_test_asset_scene(size: Vector3) -> Node3D:
 	var root = Node3D.new()
 	root.name = "TestAsset"
@@ -161,12 +160,6 @@ static func create_test_asset_scene(size: Vector3) -> Node3D:
 	collision_shape.shape = box_shape
 	static_body.add_child(collision_shape)
 	root.add_child(static_body)
-	
-	# FIX: Add to scene tree BEFORE accessing transforms
-	# This prevents "!is_inside_tree()" errors when calling get_global_transform()
-	var tree = Engine.get_main_loop() as SceneTree
-	if tree and tree.root:
-		tree.root.add_child(root)
 	
 	return root
 

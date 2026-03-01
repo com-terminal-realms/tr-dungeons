@@ -5,7 +5,8 @@ name: LootTable
 description: Loot drop configuration with probabilities and quantities
 targets:
   - api
-  - game
+  - backend
+  - client
 
 model:
   attributes:
